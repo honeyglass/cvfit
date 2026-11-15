@@ -136,6 +136,8 @@ Write `profiles/NAME.json` in the data folder: its field `cv` names the master, 
 - Put first what the posting asks for: order the right-column groups by match.
 - Hide what does not help this application, starting with the oldest and least related blocks.
 - Reword a bullet to the posting's keyword only where the master supports the keyword.
+  **A verb, duty or tool that only the posting names is a new claim: STOP and ask.**
+  Example: the master says 'Kunden beraten'; 'Kunden beraten und Verträge abschließen' adds a duty.
 - Name the profile in lower-case words with hyphens, such as `acme-senior-frontend`.
 
 Coming back from 4 Check, change only what the refusal names:
@@ -190,6 +192,8 @@ Write every fact with an oriko command; read `./references/master.md` for the co
 
 - A new master starts with `oriko init`; section titles and the contact title follow its language.
 - Jobs go in newest first, each bullet in the user's words, shortened at most.
+- Employer, job title and place go in as the user named them; ask when the words leave it open.
+  Example: 'bei Siemens, im Werk in Erlangen' gives the employer 'Siemens' and the place 'Erlangen'.
 - A skill gets a level only from a word the user used, by the table in `./references/master.md`.
   A skill named without such a word goes into a `list` block, without a level.
 
