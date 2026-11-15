@@ -3,6 +3,7 @@
  *
  * COLUMN, KINDS: every block kind and the column it lives in.
  * ICONS: the icons a contact line may use.
+ * STYLES: the looks build can give the .docx.
  * LIMITS: the largest sizes the input may have.
  * EXIT: the exit codes of the cli.
  *
@@ -11,6 +12,7 @@
 export const COLUMN = { job: 'left', rated: 'right', list: 'right', entries: 'right' } as const;
 export const KINDS = ['job', 'rated', 'list', 'entries'] as const;
 export const ICONS = ['pin', 'home', 'phone', 'mail', 'globe'] as const;
+export const STYLES = ['classic', 'terminal'] as const;
 export const LIMITS = {
   level: 5,
   text: 300,

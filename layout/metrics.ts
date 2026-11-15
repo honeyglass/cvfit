@@ -1,7 +1,7 @@
 /**
  * Every distance of the page, shared by the estimate and the renderer so the two cannot drift.
  *
- * SPACE, WIDTH: spacing and widths in DXA, the unit of a .docx (20 DXA are 1 pt).
+ * SPACE, WIDTH, HEIGHT: spacing and sizes in DXA, the unit of a .docx (20 DXA are 1 pt).
  * LINE: the height of one line per font, in pt.
  * COLUMN_HEIGHT, LEFT_START: how much a column holds, and where the left one starts, in pt.
  * pt: a DXA length in pt.
@@ -51,6 +51,9 @@ export const WIDTH = {
   name: 4632,
   nameRight: 140,
 } as const;
+
+/** A4. */
+export const HEIGHT = { page: 16838 } as const;
 
 /** Open Sans 10 pt single and at 1.15, Calibri 14 pt, Arial 11 pt. */
 export const LINE = { body: 13.62, wide: 15.66, heading: 17.09, dots: 12.65 } as const;

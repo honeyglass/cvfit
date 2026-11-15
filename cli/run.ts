@@ -15,13 +15,15 @@ import { $try, causeText, refusal, shown, trySync$ } from '@honeyglass/utils/ts'
 import { z } from 'zod';
 import { done, rejected } from '../core/errors.ts';
 import type { Issue, Rejection, Result } from '../core/errors.ts';
-import { COLUMN, EXIT, ICONS, KINDS, LIMITS } from '../core/limits.ts';
+import { COLUMN, EXIT, ICONS, KINDS, LIMITS, STYLES } from '../core/limits.ts';
 import { check, schemaIssues, unknownBlock } from '../data/check.ts';
 import { Block, Master, NewCv, Profile } from '../data/cv.schema.ts';
 import { COMMANDS, apply } from '../edit/apply.ts';
 import { INPUT } from '../edit/edit.schema.ts';
 import { place } from '../layout/place.ts';
+import type { Plan } from '../layout/place.ts';
 import { render } from '../render/docx.ts';
+import { renderTerminal } from '../render/terminal.ts';
 import { preview } from '../preview/text.ts';
 import {
   invalidJson,
@@ -69,6 +71,8 @@ const OPTIONS = {
   json: 'the input of an edit command; without it the input comes from stdin',
   block: 'the id of one block to show in full, for show',
   'dry-run': 'check and answer, but write no file',
+  style:
+    'the look of the .docx, for build: classic, or terminal like the preview; classic when left out',
   output: 'json or text; json when stdout is no terminal',
 };
 
@@ -133,6 +137,7 @@ function parsed(argv: string[]) {
       block: { type: 'string' },
       output: { type: 'string' },
       'dry-run': { type: 'boolean' },
+      style: { type: 'string' },
     },
   });
 }
@@ -356,25 +361,41 @@ async function plan(call: Call): Promise<Result<Fields>> {
 }
 
 async function build(call: Call): Promise<Result<Fields>> {
+  const style = STYLES.find(known => known === (call.values.style ?? 'classic'));
+  if (style === undefined) return rejected('build', [unknownStyle(call.values.style ?? '')]);
   const out = await outputPath(call.io.cwd, call.values.out);
   if (out.error !== null) return out;
   const cv = await checked(call);
   if (cv.error !== null) return cv;
   const placed = place(cv.data);
   if (placed.error !== null) return placed;
-  const picture = await photoBytes(call.home, cv.data.person.photo);
-  if (picture.error !== null) return picture;
-  const docx = await render(cv.data, placed.data, picture.data);
+  const docx = await rendered(call.home, cv.data, placed.data, style);
   if (docx.error !== null) return docx;
   const isDryRun = call.values['dry-run'] === true;
   if (isDryRun === false) await writeAtomic(out.data, docx.data);
   return done({
     out: relative(call.io.cwd, out.data),
+    style,
     bytes: docx.data.length,
     pages: placed.data.pages.length,
     written: isDryRun === false,
   });
 }
+
+// Only the classic look shows the photo, so only it reads the photo file.
+async function rendered(home: string, cv: Master, plan: Plan, style: (typeof STYLES)[number]) {
+  if (style === 'terminal') return renderTerminal(cv, plan);
+  const picture = await photoBytes(home, cv.person.photo);
+  if (picture.error !== null) return picture;
+  return render(cv, plan, picture.data);
+}
+
+const unknownStyle = (style: string): Issue => ({
+  code: 'UNKNOWN_STYLE',
+  path: 'style',
+  message: `No look is called ${shown(style)}`,
+  hint: `Use one of: ${STYLES.join(', ')}`,
+});
 
 async function edit(call: Call, command: string): Promise<Result<Fields>> {
   const input = await payload(call, command);

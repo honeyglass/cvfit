@@ -39,7 +39,7 @@ import type { Result } from '../core/errors.ts';
 import { ICONS, LIMITS } from '../core/limits.ts';
 import type { Block, Master } from '../data/cv.schema.ts';
 import { spacedRole } from '../layout/measure.ts';
-import { SPACE, WIDTH } from '../layout/metrics.ts';
+import { HEIGHT, SPACE, WIDTH } from '../layout/metrics.ts';
 import type { Column, Heading, Placed, Plan } from '../layout/place.ts';
 import { circlePhoto, solidPng } from './images.ts';
 import { stable } from './zip.ts';
@@ -126,7 +126,7 @@ function document(cv: Master, plan: Plan, images: Images) {
       {
         properties: {
           page: {
-            size: { width: WIDTH.page, height: 16838 },
+            size: { width: WIDTH.page, height: HEIGHT.page },
             margin: { top: 660, right: 0, bottom: 280, left: 0, header: 0, footer: 0 },
           },
         },

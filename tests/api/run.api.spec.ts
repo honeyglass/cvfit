@@ -152,6 +152,9 @@ test('build writes the .docx, and with --dry-run it writes nothing', async () =>
   assert.equal(existsSync(join(space.cwd, 'out.docx')), false);
   assert.equal((await call(space, ['build', '--out', 'out.docx'])).exit, 0);
   assert.equal(readFileSync(join(space.cwd, 'out.docx')).subarray(0, 2).toString(), 'PK');
+  const terminal = await call(space, ['build', '--out', 'term.docx', '--style', 'terminal']);
+  assert.deepEqual([terminal.exit, terminal.answer.style], [0, 'terminal']);
+  assert.equal(readFileSync(join(space.cwd, 'term.docx')).subarray(0, 2).toString(), 'PK');
 });
 
 test('photo set stores the picture as a square PNG for a CV, or for one profile', async () => {
@@ -237,6 +240,7 @@ test('refuses bad input with exit code 1 and the code of the reason', async () =
     [['build', '--out', '../out.docx'], 'PATH_OUTSIDE'],
     [['build', '--out', 'out.txt'], 'WRONG_EXTENSION'],
     [['build'], 'MISSING_OPTION'],
+    [['build', '--out', 'out.docx', '--style', 'neon'], 'UNKNOWN_STYLE'],
     [['block', 'remove', '--json', '{broken'], 'INVALID_JSON'],
     [['block', 'remove'], 'MISSING_INPUT'],
     [['paint'], 'UNKNOWN_COMMAND'],
