@@ -111,7 +111,7 @@ function jobLines(cv: Master, placed: Placed) {
   const body = LEFT - DATE;
   const heading =
     placed.heading === null ? [] : [...wrap(placed.heading.text.toUpperCase(), LEFT), ''];
-  const head = wrap(`● ${job.title}`, body);
+  const head = wrap(job.title, body - 2).map((line, index) => `${index === 0 ? '●' : '│'} ${line}`);
   const date = wrap(`${job.from} – ${job.to}`, DATE - 1);
   const employer = `${job.employer} · ${job.place}`;
   const details = [employer, ...job.bullets.map(bullet => `✓ ${bullet}`)].flatMap(line =>
@@ -142,9 +142,10 @@ function blockLines(cv: Master, placed: Placed) {
 function content(block: Exclude<Block, { kind: 'job' }>) {
   switch (block.kind) {
     case 'rated':
-      return block.items.map(
-        item => `${item.name.slice(0, RIGHT - DOTS).padEnd(RIGHT - DOTS)} ${dots(item.level)}`,
-      );
+      return block.items.flatMap(item => {
+        const [first = '', ...rest] = wrap(item.name, RIGHT - DOTS);
+        return [`${first.padEnd(RIGHT - DOTS)} ${dots(item.level)}`, ...rest];
+      });
     case 'list':
       return wrap(block.items.join(', '), RIGHT);
     case 'entries':

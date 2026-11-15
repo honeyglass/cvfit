@@ -25,6 +25,24 @@ test('shows a job with its date and a rated item with its dots', () => {
   assert.ok(lines.some(line => /Python\s+●●●○○ │$/.test(line)));
 });
 
+test('continues a long job title on the timeline, below the title text', () => {
+  const cv = fixture();
+  const job = cv.blocks[0];
+  if (job?.kind === 'job') job.title = 'Apprenticeship IT Specialist for System Integration';
+  const sheet = preview(cv, unwrap(place(cv))).split('\n');
+  const first = sheet.findIndex(line => line.includes('● Apprenticeship IT Specialist for'));
+  assert.match(sheet[first + 1] ?? '', /^│ {19}│ System Integration +│/);
+});
+
+test('wraps a long rated name instead of cutting it off', () => {
+  const cv = fixture();
+  const rated = cv.blocks.find(block => block.kind === 'rated');
+  if (rated?.kind === 'rated') rated.items[0] = { name: 'Event-driven systems at scale', level: 5 };
+  const sheet = preview(cv, unwrap(place(cv))).split('\n');
+  const first = sheet.findIndex(line => /│ Event-driven\s+●●●●● │$/.test(line));
+  assert.match(sheet[first + 1] ?? '', /│ systems at scale {10}│$/);
+});
+
 test('keeps every line within 84 characters, so the frame holds in a narrow terminal', () => {
   assert.deepEqual(
     lines.filter(line => [...line].length > 84),
