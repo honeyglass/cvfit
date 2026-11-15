@@ -166,6 +166,9 @@ Run `oriko build --profile NAME --out NAME.docx` in the user's working directory
 
 - `--out` must be a `.docx` path inside the current folder.
 - Add `--dry-run` only when the user asked for a dry run.
+- Add `--style terminal` when the user asks for the version in the look of the preview; name it
+  `NAME-terminal.docx`. Tell the user to send it by mail to people, not through an upload portal:
+  portals read the text, and the two columns run together line by line.
 
 ### 6 Report
 
