@@ -28,8 +28,8 @@ terminal, and you get a Word file that you open in Google Docs and save as PDF.
 > | Example | Terminal preview | Result |
 > | :--- | :--- | :--- |
 > | Developer at go-e Labs | [preview](examples/showcase/go-e-senior-backend/preview.txt) | [PDF](examples/showcase/go-e-senior-backend/go-e-senior-backend.pdf) · [Word](examples/showcase/go-e-senior-backend/go-e-senior-backend.docx) |
-> | Project manager at DaVita | [preview](examples/showcase/davita-it-projektmanager/preview.txt) | [PDF](examples/showcase/davita-it-projektmanager/davita-it-projektmanager.pdf) · [Word](examples/showcase/davita-it-projektmanager/davita-it-projektmanager.docx) |
-> | Cook at GALERIA Restaurant | [preview](examples/showcase/galeria-koch/preview.txt) | [PDF](examples/showcase/galeria-koch/galeria-koch.pdf) · [Word](examples/showcase/galeria-koch/galeria-koch.docx) |
+> | Project manager at DaVita | [preview](examples/showcase/davita-it-project-manager/preview.txt) | [PDF](examples/showcase/davita-it-project-manager/davita-it-project-manager.pdf) · [Word](examples/showcase/davita-it-project-manager/davita-it-project-manager.docx) |
+> | Cook at GALERIA Restaurant | [preview](examples/showcase/galeria-cook/preview.txt) | [PDF](examples/showcase/galeria-cook/galeria-cook.pdf) · [Word](examples/showcase/galeria-cook/galeria-cook.docx) |
 >
 > More in [Examples](#examples).
 
@@ -148,7 +148,7 @@ A refusal the agent reads and acts on:
 column beside the right one, as in the finished document:
 
 ```text
-╭─ Page 1 of 1 ────────────────────────────────────────┬───────────────────────────╮
+╭─ Page 1 of 3 ────────────────────────────────────────┬───────────────────────────╮
 │    ╭───────╮                                    Jane │ CONTACT                   │
 │    │  ◠ ◠  │                                     Doe │ Germany, Berlin           │
 │    │   ‿   │                 Senior Backend Engineer │ Example Street 1          │
@@ -160,11 +160,11 @@ column beside the right one, as in the finished document:
 │                   │ Northwind Logistics GmbH ·       │ SKILLS                    │
 │                   │   Berlin (DE)                    │ Programming Languages     │
 │                   │ ✓ Rebuilt the shipment           │ Go                  ●●●●● │
-│                   │   tracking service to scale to   │ TypeScript          ●●●●○ │
-│                   │   ten times the load             │ SQL                 ●●●●○ │
-│                   │ ✓ Introduced contract tests      │ Rust                ●●○○○ │
+│                   │   tracking service in Go for ten │ TypeScript          ●●●●○ │
+│                   │   times the load, at 40,000      │ SQL                 ●●●●○ │
+│                   │   events per second              │ Java                ●●●○○ │
 ├──────────────────────────────────────────────────────┴───────────────────────────┤
-│ Left  ▰▰▰▰▰▰▱▱▱▱ 56 % full     Right ▰▰▰▰▰▰▰▰▰▱ 87 % full                        │
+│ Left  ▰▰▰▰▰▰▰▰▱▱ 80 % full     Right ▰▰▰▰▰▰▰▰▰▰ 98 % full                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 ```
 
@@ -212,15 +212,25 @@ Google Docs made from it.
 
 | | Developer | Project manager | Cook |
 | :--- | :--- | :--- | :--- |
-| **Person** | Jane Doe, Berlin, CV in English | Lukas Berger, Hamburg, CV in German | Marco Weber, Munich, CV in German |
-| **Job posting** | [Senior Backend Engineer at go-e Labs](examples/showcase/go-e-senior-backend/posting.md) | [IT-Projektmanager at DaVita](examples/showcase/davita-it-projektmanager/posting.md) | [Koch at GALERIA Restaurant](examples/showcase/galeria-koch/posting.md) |
-| **What the agent did** | [report](examples/showcase/go-e-senior-backend/report.md) | [report](examples/showcase/davita-it-projektmanager/report.md) | [report](examples/showcase/galeria-koch/report.md) |
-| **Result** | [preview](examples/showcase/go-e-senior-backend/preview.txt) · [Word](examples/showcase/go-e-senior-backend/go-e-senior-backend.docx) · [PDF](examples/showcase/go-e-senior-backend/go-e-senior-backend.pdf) | [preview](examples/showcase/davita-it-projektmanager/preview.txt) · [Word](examples/showcase/davita-it-projektmanager/davita-it-projektmanager.docx) · [PDF](examples/showcase/davita-it-projektmanager/davita-it-projektmanager.pdf) | [preview](examples/showcase/galeria-koch/preview.txt) · [Word](examples/showcase/galeria-koch/galeria-koch.docx) · [PDF](examples/showcase/galeria-koch/galeria-koch.pdf) |
+| **Person** | Jane Doe, Berlin | Lukas Berger, Hamburg | Marco Weber, Munich |
+| **Pages** | 3, the right column on 2 | 2, the right column on 2 | 1 |
+| **Job posting** | [Senior Backend Engineer at go-e Labs](examples/showcase/go-e-senior-backend/posting.md) | [IT Project Manager at DaVita](examples/showcase/davita-it-project-manager/posting.md) | [Cook at GALERIA Restaurant](examples/showcase/galeria-cook/posting.md) |
+| **What the agent did** | [report](examples/showcase/go-e-senior-backend/report.md) | [report](examples/showcase/davita-it-project-manager/report.md) | [report](examples/showcase/galeria-cook/report.md) |
+| **Result** | [preview](examples/showcase/go-e-senior-backend/preview.txt) · [Word](examples/showcase/go-e-senior-backend/go-e-senior-backend.docx) · [PDF](examples/showcase/go-e-senior-backend/go-e-senior-backend.pdf) | [preview](examples/showcase/davita-it-project-manager/preview.txt) · [Word](examples/showcase/davita-it-project-manager/davita-it-project-manager.docx) · [PDF](examples/showcase/davita-it-project-manager/davita-it-project-manager.pdf) | [preview](examples/showcase/galeria-cook/preview.txt) · [Word](examples/showcase/galeria-cook/galeria-cook.docx) · [PDF](examples/showcase/galeria-cook/galeria-cook.pdf) |
 
 <p align="center">
-  <img src="examples/showcase/go-e-senior-backend/page-1.png" width="32%" alt="Jane Doe's CV for go-e Labs">
-  <img src="examples/showcase/davita-it-projektmanager/page-1.png" width="32%" alt="Lukas Berger's CV for DaVita">
-  <img src="examples/showcase/galeria-koch/page-1.png" width="32%" alt="Marco Weber's CV for GALERIA Restaurant">
+  <img src="examples/showcase/go-e-senior-backend/page-1.png" width="32%" alt="Jane Doe's CV for go-e Labs, page 1 of 3">
+  <img src="examples/showcase/go-e-senior-backend/page-2.png" width="32%" alt="Jane Doe's CV for go-e Labs, page 2 of 3">
+  <img src="examples/showcase/go-e-senior-backend/page-3.png" width="32%" alt="Jane Doe's CV for go-e Labs, page 3 of 3">
+</p>
+
+<p align="center">
+  <img src="examples/showcase/davita-it-project-manager/page-1.png" width="32%" alt="Lukas Berger's CV for DaVita, page 1 of 2">
+  <img src="examples/showcase/davita-it-project-manager/page-2.png" width="32%" alt="Lukas Berger's CV for DaVita, page 2 of 2">
+</p>
+
+<p align="center">
+  <img src="examples/showcase/galeria-cook/page-1.png" width="32%" alt="Marco Weber's CV for GALERIA Restaurant, page 1 of 1">
 </p>
 
 > [!NOTE]

@@ -32,7 +32,7 @@
       }
     ]
   },
-  "pages": 2,
+  "pages": 3,
   "blocks": [
     {
       "id": "northwind",
@@ -44,8 +44,11 @@
       "place": "Berlin (DE)",
       "employer": "Northwind Logistics GmbH",
       "bullets": [
-        "Rebuilt the shipment tracking service for ten times the load",
-        "Introduced contract tests between twelve services",
+        "Rebuilt the shipment tracking service in Go for ten times the load, at 40,000 events per second",
+        "Introduced contract tests between twelve services and cut failed releases by half",
+        "Moved the event history from PostgreSQL to ClickHouse, so reports run in seconds",
+        "Designed OAuth2 and OIDC sign-in for the partner API with per-tenant scopes",
+        "Led the architecture group of four teams and wrote its decision records",
         "Role: Engineer, Architect, Mentor"
       ]
     },
@@ -59,21 +62,112 @@
       "place": "Hamburg (DE)",
       "employer": "Bluebird Payments AG",
       "bullets": [
-        "Delivered the settlement engine for card payments",
+        "Delivered the settlement engine for card payments in Go and PostgreSQL",
+        "Split the payment monolith into six services behind a gRPC gateway",
+        "Built idempotent Kafka consumers, so no payment was booked twice after a failover",
+        "Ran the on-call rotation of eight engineers and wrote the incident playbooks",
         "Role: Engineer, On-call lead"
+      ]
+    },
+    {
+      "id": "harbor",
+      "section": "Professional Experience",
+      "kind": "job",
+      "from": "01/2015",
+      "to": "05/2017",
+      "title": "Software Engineer",
+      "place": "Hamburg (DE)",
+      "employer": "Harbor Data GmbH",
+      "bullets": [
+        "Wrote the ingestion service for sensor data from 3,000 ship containers over MQTT",
+        "Added multi-tenant storage with row-level security in PostgreSQL",
+        "Built the public REST API with OpenAPI and versioned it without breaking clients",
+        "Role: Engineer"
+      ]
+    },
+    {
+      "id": "lumen",
+      "section": "Professional Experience",
+      "kind": "job",
+      "from": "08/2012",
+      "to": "12/2014",
+      "title": "Junior Software Engineer",
+      "place": "Berlin (DE)",
+      "employer": "Lumen Media GmbH",
+      "bullets": [
+        "Maintained the video publishing backend in Java and moved its jobs to a queue",
+        "Wrote the first integration test suite of the team",
+        "Role: Engineer"
       ]
     },
     {
       "id": "campus",
       "section": "Professional Experience",
-      "page": 2,
       "kind": "job",
-      "from": "10/2014",
-      "to": "05/2017",
+      "from": "10/2009",
+      "to": "07/2012",
       "title": "Working Student",
       "place": "Berlin (DE)",
       "employer": "Campus Software Lab",
-      "bullets": ["Maintained the booking system of the university library", "Role: Engineer"]
+      "bullets": [
+        "Maintained the booking system of the university library",
+        "Moved the booking data from MySQL to PostgreSQL",
+        "Role: Engineer"
+      ]
+    },
+    {
+      "id": "pgqueue",
+      "section": "Open Source",
+      "kind": "job",
+      "from": "05/2016",
+      "to": "today",
+      "title": "Maintainer",
+      "place": "Remote",
+      "employer": "pgqueue, a job queue on PostgreSQL",
+      "bullets": [
+        "Wrote the Go client and the retry logic with exponential backoff",
+        "Reviewed changes from about 60 contributors",
+        "Kept the API backward compatible across four major PostgreSQL versions"
+      ]
+    },
+    {
+      "id": "otel-go",
+      "section": "Open Source",
+      "kind": "job",
+      "from": "02/2019",
+      "to": "11/2020",
+      "title": "Contributor",
+      "place": "Remote",
+      "employer": "OpenTelemetry Go",
+      "bullets": [
+        "Added tracing for the Kafka client library",
+        "Fixed context loss in batch exporters"
+      ]
+    },
+    {
+      "id": "master",
+      "section": "Education",
+      "kind": "job",
+      "from": "10/2010",
+      "to": "09/2012",
+      "title": "M.Sc. Computer Science",
+      "place": "Berlin (DE)",
+      "employer": "Technical University of Berlin",
+      "bullets": [
+        "Focus: distributed systems and databases",
+        "Thesis: consistent snapshots in event-sourced systems"
+      ]
+    },
+    {
+      "id": "bachelor",
+      "section": "Education",
+      "kind": "job",
+      "from": "10/2007",
+      "to": "09/2010",
+      "title": "B.Sc. Computer Science",
+      "place": "Berlin (DE)",
+      "employer": "Technical University of Berlin",
+      "bullets": ["Thesis: a query planner for time series data"]
     },
     {
       "id": "languages",
@@ -94,8 +188,36 @@
           "level": 4
         },
         {
+          "name": "Java",
+          "level": 3
+        },
+        {
           "name": "Rust",
           "level": 2
+        }
+      ]
+    },
+    {
+      "id": "backend",
+      "section": "Skills",
+      "kind": "rated",
+      "title": "Backend",
+      "items": [
+        {
+          "name": "API design",
+          "level": 5
+        },
+        {
+          "name": "Event-driven systems",
+          "level": 5
+        },
+        {
+          "name": "Multi-tenancy",
+          "level": 4
+        },
+        {
+          "name": "OAuth2 and OIDC",
+          "level": 4
         }
       ]
     },
@@ -104,7 +226,16 @@
       "section": "Skills",
       "kind": "list",
       "title": "Tools",
-      "items": ["PostgreSQL", "Kafka", "Kubernetes", "Terraform", "Grafana", "OpenTelemetry"]
+      "items": [
+        "PostgreSQL",
+        "ClickHouse",
+        "Kafka",
+        "gRPC",
+        "Kubernetes",
+        "Terraform",
+        "Grafana",
+        "OpenTelemetry"
+      ]
     },
     {
       "id": "strengths",
@@ -116,7 +247,6 @@
     {
       "id": "spoken",
       "section": "Languages",
-      "page": 2,
       "kind": "rated",
       "items": [
         {
@@ -137,8 +267,33 @@
         {
           "title": "Certified Kubernetes Administrator",
           "note": "09/2022"
+        },
+        {
+          "title": "AWS Certified Solutions Architect",
+          "note": "04/2019"
         }
       ]
+    },
+    {
+      "id": "talks",
+      "section": "Talks",
+      "kind": "entries",
+      "items": [
+        {
+          "title": "Contract tests for twelve services",
+          "note": "GopherCon EU, 2023"
+        },
+        {
+          "title": "Exactly once is a lie",
+          "note": "Kafka Summit, 2020"
+        }
+      ]
+    },
+    {
+      "id": "interests",
+      "section": "Interests",
+      "kind": "list",
+      "items": ["Climbing", "Mechanical keyboards", "Open source"]
     }
   ]
 }

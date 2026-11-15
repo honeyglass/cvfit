@@ -1,0 +1,8 @@
+{
+  "cv": "lukas-berger",
+  "order": ["technology", "methods", "tools", "strengths", "spoken", "certificates"],
+  "blocks": {
+    "spoken": { "page": null },
+    "interests": { "hidden": true }
+  }
+}

@@ -1,7 +1,10 @@
-I tailored your CV (jane-doe) to the Senior Backend Engineer posting at go-e Labs. The new version fits on one page.
+Your CV is tailored to the go-e Labs Senior Backend Engineer posting. The new version
+**go-e-senior-backend** passed the page check, and the .docx is built. All your jobs, open source
+work and education are still in, on three pages. Nothing was added, and no date, title, employer
+or skill level changed.
 
-```
-╭─ Page 1 of 1 ────────────────────────────────────────┬───────────────────────────╮
+```text
+╭─ Page 1 of 3 ────────────────────────────────────────┬───────────────────────────╮
 │    ╭───────╮                                    Jane │ CONTACT                   │
 │    │  ◠ ◠  │                                     Doe │ Germany, Berlin           │
 │    │   ‿   │                 Senior Backend Engineer │ Example Street 1          │
@@ -13,57 +16,158 @@ I tailored your CV (jane-doe) to the Senior Backend Engineer posting at go-e Lab
 │                   │ Northwind Logistics GmbH ·       │ SKILLS                    │
 │                   │   Berlin (DE)                    │ Programming Languages     │
 │                   │ ✓ Rebuilt the shipment           │ Go                  ●●●●● │
-│                   │   tracking service to scale to   │ TypeScript          ●●●●○ │
-│                   │   ten times the load             │ SQL                 ●●●●○ │
-│                   │ ✓ Introduced contract tests      │ Rust                ●●○○○ │
-│                   │   between twelve services        │                           │
-│                   │ ✓ Role: Engineer, Architect,     │ Tools                     │
-│                   │   Mentor                         │ PostgreSQL, Kafka,        │
-│                                                      │ Kubernetes, Terraform,    │
-│ 06/2017 – 02/2021 ● Backend Engineer                 │ Grafana, OpenTelemetry    │
-│                   │ Bluebird Payments AG · Hamburg   │                           │
-│                   │   (DE)                           │ Strengths                 │
-│                   │ ✓ Delivered the settlement       │ Mentoring, Incident       │
-│                   │   engine for card payments       │ handling, Clear writing   │
-│                   │ ✓ Role: Engineer, On-call lead   │                           │
-│                                                      │ LANGUAGES                 │
-│                                                      │ German              ●●●●● │
-│                                                      │ English             ●●●●○ │
+│                   │   tracking service in Go for ten │ TypeScript          ●●●●○ │
+│                   │   times the load, at 40,000      │ SQL                 ●●●●○ │
+│                   │   events per second              │ Java                ●●●○○ │
+│                   │ ✓ Moved the event history from   │ Rust                ●●○○○ │
+│                   │   PostgreSQL to ClickHouse, so   │                           │
+│                   │   reports run in seconds         │ Backend                   │
+│                   │ ✓ Introduced contract tests      │ API design          ●●●●● │
+│                   │   between twelve services and    │ Event-driven        ●●●●● │
+│                   │   cut failed releases by half    │ systems                   │
+│                   │ ✓ Designed OAuth2 and OIDC       │ Multi-tenancy       ●●●●○ │
+│                   │   sign-in for the partner API    │ OAuth2 and OIDC     ●●●●○ │
+│                   │   with per-tenant scopes         │                           │
+│                   │ ✓ Led the architecture group     │ Tools                     │
+│                   │   of four teams and wrote its    │ PostgreSQL, ClickHouse,   │
+│                   │   decision records               │ Kafka, gRPC, Kubernetes,  │
+│                   │ ✓ Role: Engineer, Architect,     │ Terraform, Grafana,       │
+│                   │   Mentor                         │ OpenTelemetry             │
 │                                                      │                           │
-│                                                      │ AWARDS                    │
-│                                                      │ Certified Kubernetes      │
-│                                                      │ Administrator             │
-│                                                      │ 09/2022                   │
+│ 06/2017 – 02/2021 ● Backend Engineer                 │ Strengths                 │
+│                   │ Bluebird Payments AG · Hamburg   │ Mentoring, Incident       │
+│                   │   (DE)                           │ handling, Clear writing   │
+│                   │ ✓ Delivered the settlement       │                           │
+│                   │   engine for card payments in Go │ TALKS                     │
+│                   │   and PostgreSQL                 │ Contract tests for twelve │
+│                   │ ✓ Split the payment monolith     │ services                  │
+│                   │   into six services behind a     │ GopherCon EU, 2023        │
+│                   │   gRPC gateway                   │ Exactly once is a lie     │
+│                   │ ✓ Built idempotent Kafka         │ Kafka Summit, 2020        │
+│                   │   consumers, so no payment was   │                           │
+│                   │   booked twice after a failover  │                           │
+│                   │ ✓ Ran the on-call rotation of    │                           │
+│                   │   eight engineers and wrote the  │                           │
+│                   │   incident playbooks             │                           │
+│                   │ ✓ Role: Engineer, On-call lead   │                           │
 ├──────────────────────────────────────────────────────┴───────────────────────────┤
-│ Left  ▰▰▰▰▰▰▱▱▱▱ 56 % full     Right ▰▰▰▰▰▰▰▰▰▱ 87 % full                        │
+│ Left  ▰▰▰▰▰▰▰▰▱▱ 80 % full     Right ▰▰▰▰▰▰▰▰▰▰ 98 % full                        │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+
+╭─ Page 2 of 3 ────────────────────────────────────────┬───────────────────────────╮
+│ PROFESSIONAL EXPERIENCE                              │ LANGUAGES                 │
+│                                                      │ German              ●●●●● │
+│ 01/2015 – 05/2017 ● Software Engineer                │ English             ●●●●○ │
+│                   │ Harbor Data GmbH · Hamburg       │                           │
+│                   │   (DE)                           │ AWARDS                    │
+│                   │ ✓ Wrote the ingestion service    │ Certified Kubernetes      │
+│                   │   for sensor data from 3,000     │ Administrator             │
+│                   │   ship containers over MQTT      │ 09/2022                   │
+│                   │ ✓ Added multi-tenant storage     │ AWS Certified Solutions   │
+│                   │   with row-level security in     │ Architect                 │
+│                   │   PostgreSQL                     │ 04/2019                   │
+│                   │ ✓ Built the public REST API      │                           │
+│                   │   with OpenAPI and versioned it  │ INTERESTS                 │
+│                   │   without breaking clients       │ Climbing, Mechanical      │
+│                   │ ✓ Role: Engineer                 │ keyboards, Open source    │
+│                                                      │                           │
+│ 08/2012 – 12/2014 ● Junior Software Engineer         │                           │
+│                   │ Lumen Media GmbH · Berlin (DE)   │                           │
+│                   │ ✓ Maintained the video           │                           │
+│                   │   publishing backend in Java and │                           │
+│                   │   moved its jobs to a queue      │                           │
+│                   │ ✓ Wrote the first integration    │                           │
+│                   │   test suite of the team         │                           │
+│                   │ ✓ Role: Engineer                 │                           │
+│                                                      │                           │
+│ 10/2009 – 07/2012 ● Working Student                  │                           │
+│                   │ Campus Software Lab · Berlin     │                           │
+│                   │   (DE)                           │                           │
+│                   │ ✓ Maintained the booking         │                           │
+│                   │   system of the university       │                           │
+│                   │   library                        │                           │
+│                   │ ✓ Moved the booking data from    │                           │
+│                   │   MySQL to PostgreSQL            │                           │
+│                   │ ✓ Role: Engineer                 │                           │
+│                                                      │                           │
+│ OPEN SOURCE                                          │                           │
+│                                                      │                           │
+│ 05/2016 – today   ● Maintainer                       │                           │
+│                   │ pgqueue, a job queue on          │                           │
+│                   │   PostgreSQL · Remote            │                           │
+│                   │ ✓ Wrote the Go client and the    │                           │
+│                   │   retry logic with exponential   │                           │
+│                   │   backoff                        │                           │
+│                   │ ✓ Reviewed changes from about    │                           │
+│                   │   60 contributors                │                           │
+│                   │ ✓ Kept the API backward          │                           │
+│                   │   compatible across four major   │                           │
+│                   │   PostgreSQL versions            │                           │
+│                                                      │                           │
+│ 02/2019 – 11/2020 ● Contributor                      │                           │
+│                   │ OpenTelemetry Go · Remote        │                           │
+│                   │ ✓ Added tracing for the Kafka    │                           │
+│                   │   client library                 │                           │
+│                   │ ✓ Fixed context loss in batch    │                           │
+│                   │   exporters                      │                           │
+├──────────────────────────────────────────────────────┴───────────────────────────┤
+│ Left  ▰▰▰▰▰▰▰▰▰▰ 99 % full     Right ▰▰▰▰▱▱▱▱▱▱ 41 % full                        │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+
+╭─ Page 3 of 3 ────────────────────────────────────────┬───────────────────────────╮
+│ EDUCATION                                            │                           │
+│                                                      │                           │
+│ 10/2010 – 09/2012 ● M.Sc. Computer Science           │                           │
+│                   │ Technical University of Berlin   │                           │
+│                   │   · Berlin (DE)                  │                           │
+│                   │ ✓ Focus: distributed systems     │                           │
+│                   │   and databases                  │                           │
+│                   │ ✓ Thesis: consistent snapshots   │                           │
+│                   │   in event-sourced systems       │                           │
+│                                                      │                           │
+│ 10/2007 – 09/2010 ● B.Sc. Computer Science           │                           │
+│                   │ Technical University of Berlin   │                           │
+│                   │   · Berlin (DE)                  │                           │
+│                   │ ✓ Thesis: a query planner for    │                           │
+│                   │   time series data               │                           │
+├──────────────────────────────────────────────────────┴───────────────────────────┤
+│ Left  ▰▰▰▰▱▱▱▱▱▱ 36 % full     Right ▱▱▱▱▱▱▱▱▱▱ 0 % full                         │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-**Files**
+**Files written**
 
-- Profile: `examples/profiles/go-e-senior-backend.json` (your master CV is unchanged)
+- Profile: `examples/profiles/go-e-senior-backend.json`
 - Word file: `examples/showcase/go-e-senior-backend/go-e-senior-backend.docx`
 
-**What changed and why**
+**What changed, and why**
 
-- Hidden: the Working Student job at Campus Software Lab (2014 to 2017). The posting asks for a senior engineer who drives architecture, and a university library booking system adds nothing to that. It is also your oldest job.
-- Moved up: Languages no longer starts on page 2. With the student job hidden, everything fits on one page, and your English level now appears on page 1 for a posting written in English.
-- Reworded: "Rebuilt the shipment tracking service for ten times the load" is now "Rebuilt the shipment tracking service to scale to ten times the load". The posting's first task is scaling services under high load, and your bullet already describes that.
-- Kept as they are: the job title (it already matches the posting), the order of the skills (Go and TypeScript first match the must-haves; PostgreSQL, Kafka and Kubernetes lead the tools; Mentoring leads the strengths for "coach other senior engineers"), and Rust (a nice-to-have).
+- **Hidden:** nothing. You asked to keep your full history, and it fits on three pages.
+- **Reordered, Northwind bullets:** the ClickHouse move is now second, right after the Go scaling
+  work. The first task in the posting is to scale Go services with ClickHouse and PostgreSQL behind
+  them. Contract tests, OAuth2/OIDC and the architecture group follow, in the same order as the
+  posting's tasks (API design, security, architecture).
+- **Reordered, right column:** Talks moved up to page 1, right after Skills. Your GopherCon talk on
+  contract tests matches the posting's contract-first API work. Languages, Awards and Interests now
+  follow on page 2.
+- **Shortened or reworded:** nothing. Your master bullets already use the posting's terms (Go,
+  ClickHouse, PostgreSQL, OAuth2/OIDC, gRPC, OpenAPI, multi-tenant, backward compatible, MQTT,
+  architecture across teams). Your role line "Senior Backend Engineer" is the posting's own title.
 
-**What the posting asks for and your CV does not show**
+**What the posting asks for that your CV does not show**
 
-If any of these are true for you, add them to your master CV and I will update this version:
+If any of these are true for you, tell me and I can add them to your master CV.
 
-- ClickHouse or another OLAP store, and PostgreSQL at large scale (for example, request rates or data volumes)
-- API design: OpenAPI, gRPC, GraphQL, contract-first design, backward compatibility
-- Security: identity, OAuth2/OIDC, fine-grained access control, Zero Trust
-- Multi-tenant platforms and data residency
-- High-concurrency, event-driven systems (Kafka is listed, but no bullet describes such a system)
-- Architecture decisions across several teams (your role says "Architect", but no bullet shows work across teams)
-- IoT protocols such as OCPP or MQTT; edge and hybrid deployments
-- Domain-driven design; C++ or Zig
+- Scale near 250,000 requests per second (your CV shows 40,000 events per second)
+- TypeScript in a job: it is in your skills at level 4, but no job bullet mentions it
+- GraphQL
+- Zero Trust, or fine-grained access control beyond per-tenant scopes and row-level security
+- Data residency, or a white-label platform for customers
+- Coaching senior engineers specifically (your CV says Mentor and Mentoring)
+- OCPP, EV chargers or energy, edge or hybrid deployments, domain-driven design
+- C++ or Zig
 
-**Next step**
+**Next step:** upload the .docx to Google Docs, then choose File, Download, PDF.
 
-Upload `go-e-senior-backend.docx` to Google Docs, then choose File, Download, PDF.
+Please read the preview and the PDF line by line before you send it. An agent can misread or
+reword a fact, and only you know the facts of your career.

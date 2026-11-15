@@ -1,21 +1,21 @@
 {
-  "language": "de",
+  "language": "en",
   "person": {
     "firstName": "Marco",
     "lastName": "Weber",
-    "role": "Koch",
+    "role": "Cook",
     "photo": "cvs/marco-weber.png"
   },
   "contact": {
-    "title": "Kontakt",
+    "title": "Contact",
     "items": [
       {
         "icon": "pin",
-        "lines": ["Deutschland, München"]
+        "lines": ["Germany, Munich"]
       },
       {
         "icon": "home",
-        "lines": ["Musterstraße 3", "80331 München"]
+        "lines": ["Sample Street 3", "80331 Munich"]
       },
       {
         "icon": "phone",
@@ -31,131 +31,131 @@
   "blocks": [
     {
       "id": "isarblick",
-      "section": "Berufserfahrung",
+      "section": "Professional Experience",
       "kind": "job",
       "from": "05/2021",
-      "to": "heute",
-      "title": "Koch",
-      "place": "München (DE)",
+      "to": "today",
+      "title": "Cook",
+      "place": "Munich (DE)",
       "employer": "Hotel Isarblick",
       "bullets": [
-        "Täglich bis zu 250 Gerichte für Frühstücks- und Mittagsbuffet zubereitet",
-        "Warenannahme, Lagerung und monatliche Inventur verantwortet",
-        "HACCP-Standards im Tagesgeschäft umgesetzt",
-        "Rolle: Koch, Einarbeitung von Auszubildenden"
+        "Prepared up to 250 dishes a day for the breakfast and lunch buffet",
+        "Responsible for receiving goods, storage and the monthly stocktake",
+        "Applied HACCP standards in daily work",
+        "Role: Cook, Training of apprentices"
       ]
     },
     {
       "id": "zum-loewen",
-      "section": "Berufserfahrung",
+      "section": "Professional Experience",
       "kind": "job",
       "from": "08/2018",
       "to": "04/2021",
-      "title": "Jungkoch",
+      "title": "Junior Cook",
       "place": "Augsburg (DE)",
       "employer": "Gasthaus Zum Löwen",
       "bullets": [
-        "À-la-carte-Küche mit regionaler Ausrichtung",
-        "Posten Fleisch und Beilagen vor- und nachbereitet",
-        "Rolle: Jungkoch"
+        "À la carte kitchen with a regional focus",
+        "Prepared and cleaned up the meat and side dish station",
+        "Role: Junior cook"
       ]
     },
     {
-      "id": "ausbildung",
-      "section": "Berufserfahrung",
+      "id": "apprenticeship",
+      "section": "Professional Experience",
       "kind": "job",
       "from": "09/2015",
       "to": "07/2018",
-      "title": "Ausbildung zum Koch",
+      "title": "Apprenticeship as a Cook",
       "place": "Augsburg (DE)",
       "employer": "Gasthaus Zum Löwen",
-      "bullets": ["Abschluss vor der IHK Schwaben"]
+      "bullets": ["Final exam at the Swabia Chamber of Commerce"]
     },
     {
       "id": "cafe-lindner",
-      "section": "Berufserfahrung",
+      "section": "Professional Experience",
       "kind": "job",
       "from": "06/2013",
       "to": "08/2015",
-      "title": "Aushilfe im Service",
+      "title": "Service Assistant",
       "place": "Augsburg (DE)",
       "employer": "Café Lindner",
-      "bullets": ["Bedienung und Kasse am Wochenende"]
+      "bullets": ["Served guests and ran the till at weekends"]
     },
     {
-      "id": "kueche",
-      "section": "Kenntnisse",
+      "id": "kitchen",
+      "section": "Skills",
       "kind": "rated",
-      "title": "Küche",
+      "title": "Kitchen",
       "items": [
         {
-          "name": "Regionale Küche",
+          "name": "Regional cuisine",
           "level": 5
         },
         {
-          "name": "Buffet und Bankett",
+          "name": "Buffet and banquet",
           "level": 4
         },
         {
-          "name": "Vegetarische Küche",
+          "name": "Vegetarian cuisine",
           "level": 4
         },
         {
-          "name": "Patisserie",
+          "name": "Pastry",
           "level": 2
         }
       ]
     },
     {
-      "id": "fachwissen",
-      "section": "Kenntnisse",
+      "id": "know-how",
+      "section": "Skills",
       "kind": "list",
-      "title": "Fachwissen",
-      "items": ["HACCP", "Allergenkennzeichnung", "Warenwirtschaft", "Kalkulation"]
+      "title": "Know-how",
+      "items": ["HACCP", "Allergen labelling", "Stock management", "Costing"]
     },
     {
-      "id": "staerken",
-      "section": "Kenntnisse",
+      "id": "strengths",
+      "section": "Skills",
       "kind": "list",
-      "title": "Stärken",
-      "items": ["Zuverlässigkeit", "Teamfähigkeit", "Organisation", "Gastorientierung"]
+      "title": "Strengths",
+      "items": ["Reliability", "Teamwork", "Organisation", "Guest focus"]
     },
     {
-      "id": "sprachen",
-      "section": "Sprachen",
+      "id": "spoken",
+      "section": "Languages",
       "page": 2,
       "kind": "rated",
       "items": [
         {
-          "name": "Deutsch",
+          "name": "German",
           "level": 5
         },
         {
-          "name": "Englisch",
+          "name": "English",
           "level": 2
         }
       ]
     },
     {
-      "id": "weiterbildungen",
-      "section": "Weiterbildungen",
+      "id": "training",
+      "section": "Training",
       "kind": "entries",
       "items": [
         {
-          "title": "Hygieneschulung nach § 43 IfSG",
+          "title": "Hygiene training under § 43 IfSG",
           "note": "08/2015"
         },
         {
-          "title": "Grundkurs Patisserie",
+          "title": "Pastry basics course",
           "note": "02/2020"
         }
       ]
     },
     {
-      "id": "interessen",
-      "section": "Interessen",
+      "id": "interests",
+      "section": "Interests",
       "kind": "list",
-      "items": ["Fußball", "Wandern", "Kochen mit Kindern"]
+      "items": ["Football", "Hiking", "Cooking with children"]
     }
   ]
 }

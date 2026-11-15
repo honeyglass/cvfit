@@ -1,21 +1,21 @@
 {
-  "language": "de",
+  "language": "en",
   "person": {
     "firstName": "Lukas",
     "lastName": "Berger",
-    "role": "IT-Projektmanager",
+    "role": "IT Project Manager",
     "photo": "cvs/lukas-berger.png"
   },
   "contact": {
-    "title": "Kontakt",
+    "title": "Contact",
     "items": [
       {
         "icon": "pin",
-        "lines": ["Deutschland, Hamburg"]
+        "lines": ["Germany, Hamburg"]
       },
       {
         "icon": "home",
-        "lines": ["Beispielweg 7", "20095 Hamburg"]
+        "lines": ["Sample Lane 7", "20095 Hamburg"]
       },
       {
         "icon": "phone",
@@ -30,67 +30,67 @@
   "pages": 2,
   "blocks": [
     {
-      "id": "hanse-logistik",
-      "section": "Berufserfahrung",
+      "id": "hanse-logistics",
+      "section": "Professional Experience",
       "kind": "job",
       "from": "04/2020",
-      "to": "heute",
-      "title": "IT-Projektleiter",
+      "to": "today",
+      "title": "IT Project Lead",
       "place": "Hamburg (DE)",
       "employer": "Hanse Logistik IT GmbH",
       "bullets": [
-        "Migration von 120 Servern nach Azure geleitet, per Rehost und Replatform",
-        "Budget von 1,2 Mio. € und Zeitpläne für drei Infrastrukturprojekte verantwortet",
-        "Terraform als Standard für neue Umgebungen eingeführt",
-        "Fünf externe Dienstleister gesteuert",
-        "Rolle: Projektleitung, Dienstleistersteuerung, Reporting"
+        "Led the migration of 120 servers to Azure, by rehost and replatform",
+        "Owned budget of 1.2 million euros and schedules for three infrastructure projects",
+        "Made Terraform the standard for new environments",
+        "Managed five external service providers",
+        "Role: Project lead, Vendor management, Reporting"
       ]
     },
     {
       "id": "nordbank-services",
-      "section": "Berufserfahrung",
+      "section": "Professional Experience",
       "kind": "job",
       "from": "01/2016",
       "to": "03/2020",
-      "title": "IT-Projektmanager",
+      "title": "IT Project Manager",
       "place": "Hamburg (DE)",
       "employer": "Nordbank Services AG",
       "bullets": [
-        "Rechenzentrumsumzug mit 40 Anwendungen ohne Ausfall koordiniert",
-        "Scrum-Teams im Workplace-Projekt für 900 Arbeitsplätze begleitet",
-        "Rolle: Projektleitung, Risikomanagement"
+        "Coordinated a data center move with 40 applications without downtime",
+        "Supported Scrum teams in a workplace project for 900 desks",
+        "Role: Project lead, Risk management"
       ]
     },
     {
-      "id": "elbe-medien",
-      "section": "Berufserfahrung",
+      "id": "elbe-media",
+      "section": "Professional Experience",
       "kind": "job",
       "from": "08/2012",
       "to": "12/2015",
-      "title": "Systemadministrator",
+      "title": "System Administrator",
       "place": "Hamburg (DE)",
       "employer": "Elbe Medien GmbH",
       "bullets": [
-        "Betrieb von VMware- und Windows-Server-Umgebungen",
-        "Backup- und Disaster-Recovery-Konzept umgesetzt"
+        "Ran VMware and Windows Server environments",
+        "Put a backup and disaster recovery concept into practice"
       ]
     },
     {
-      "id": "ausbildung",
-      "section": "Berufserfahrung",
+      "id": "apprenticeship",
+      "section": "Professional Experience",
       "kind": "job",
       "from": "08/2009",
       "to": "07/2012",
-      "title": "Ausbildung Fachinformatiker Systemintegration",
+      "title": "Apprenticeship IT Specialist for System Integration",
       "place": "Hamburg (DE)",
       "employer": "Elbe Medien GmbH",
-      "bullets": ["Abschluss vor der IHK Hamburg"]
+      "bullets": ["Final exam at the Hamburg Chamber of Commerce"]
     },
     {
-      "id": "methoden",
-      "section": "Kenntnisse",
+      "id": "methods",
+      "section": "Skills",
       "kind": "rated",
-      "title": "Methoden",
+      "title": "Methods",
       "items": [
         {
           "name": "PRINCE2",
@@ -111,10 +111,10 @@
       ]
     },
     {
-      "id": "technik",
-      "section": "Kenntnisse",
+      "id": "technology",
+      "section": "Skills",
       "kind": "rated",
-      "title": "Technik",
+      "title": "Technology",
       "items": [
         {
           "name": "Azure",
@@ -135,38 +135,38 @@
       ]
     },
     {
-      "id": "werkzeuge",
-      "section": "Kenntnisse",
+      "id": "tools",
+      "section": "Skills",
       "kind": "list",
-      "title": "Werkzeuge",
+      "title": "Tools",
       "items": ["Jira", "Confluence", "MS Project", "Power Automate"]
     },
     {
-      "id": "staerken",
-      "section": "Kenntnisse",
+      "id": "strengths",
+      "section": "Skills",
       "kind": "list",
-      "title": "Stärken",
-      "items": ["Kommunikation", "Moderation", "Struktur", "Stakeholder-Management"]
+      "title": "Strengths",
+      "items": ["Communication", "Facilitation", "Structure", "Stakeholder management"]
     },
     {
-      "id": "sprachen",
-      "section": "Sprachen",
+      "id": "spoken",
+      "section": "Languages",
       "page": 2,
       "kind": "rated",
       "items": [
         {
-          "name": "Deutsch",
+          "name": "German",
           "level": 5
         },
         {
-          "name": "Englisch",
+          "name": "English",
           "level": 4
         }
       ]
     },
     {
-      "id": "zertifikate",
-      "section": "Zertifikate",
+      "id": "certificates",
+      "section": "Certificates",
       "kind": "entries",
       "items": [
         {
@@ -184,10 +184,10 @@
       ]
     },
     {
-      "id": "interessen",
-      "section": "Interessen",
+      "id": "interests",
+      "section": "Interests",
       "kind": "list",
-      "items": ["Segeln", "Fotografie", "Brettspiele"]
+      "items": ["Sailing", "Photography", "Board games"]
     }
   ]
 }

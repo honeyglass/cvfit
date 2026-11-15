@@ -1,14 +1,16 @@
 {
   "cv": "jane-doe",
+  "order": ["languages", "backend", "tools", "strengths", "talks", "spoken", "awards", "interests"],
   "blocks": {
     "northwind": {
       "bullets": [
-        "Rebuilt the shipment tracking service to scale to ten times the load",
-        "Introduced contract tests between twelve services",
+        "Rebuilt the shipment tracking service in Go for ten times the load, at 40,000 events per second",
+        "Moved the event history from PostgreSQL to ClickHouse, so reports run in seconds",
+        "Introduced contract tests between twelve services and cut failed releases by half",
+        "Designed OAuth2 and OIDC sign-in for the partner API with per-tenant scopes",
+        "Led the architecture group of four teams and wrote its decision records",
         "Role: Engineer, Architect, Mentor"
       ]
-    },
-    "campus": { "hidden": true },
-    "spoken": { "page": null }
+    }
   }
 }

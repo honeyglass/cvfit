@@ -1,4 +1,4 @@
-╭─ Page 1 of 1 ────────────────────────────────────────┬───────────────────────────╮
+╭─ Page 1 of 3 ────────────────────────────────────────┬───────────────────────────╮
 │    ╭───────╮                                    Jane │ CONTACT                   │
 │    │  ◠ ◠  │                                     Doe │ Germany, Berlin           │
 │    │   ‿   │                 Senior Backend Engineer │ Example Street 1          │
@@ -10,27 +10,120 @@
 │                   │ Northwind Logistics GmbH ·       │ SKILLS                    │
 │                   │   Berlin (DE)                    │ Programming Languages     │
 │                   │ ✓ Rebuilt the shipment           │ Go                  ●●●●● │
-│                   │   tracking service to scale to   │ TypeScript          ●●●●○ │
-│                   │   ten times the load             │ SQL                 ●●●●○ │
-│                   │ ✓ Introduced contract tests      │ Rust                ●●○○○ │
-│                   │   between twelve services        │                           │
-│                   │ ✓ Role: Engineer, Architect,     │ Tools                     │
-│                   │   Mentor                         │ PostgreSQL, Kafka,        │
-│                                                      │ Kubernetes, Terraform,    │
-│ 06/2017 – 02/2021 ● Backend Engineer                 │ Grafana, OpenTelemetry    │
-│                   │ Bluebird Payments AG · Hamburg   │                           │
-│                   │   (DE)                           │ Strengths                 │
-│                   │ ✓ Delivered the settlement       │ Mentoring, Incident       │
-│                   │   engine for card payments       │ handling, Clear writing   │
-│                   │ ✓ Role: Engineer, On-call lead   │                           │
-│                                                      │ LANGUAGES                 │
-│                                                      │ German              ●●●●● │
-│                                                      │ English             ●●●●○ │
+│                   │   tracking service in Go for ten │ TypeScript          ●●●●○ │
+│                   │   times the load, at 40,000      │ SQL                 ●●●●○ │
+│                   │   events per second              │ Java                ●●●○○ │
+│                   │ ✓ Moved the event history from   │ Rust                ●●○○○ │
+│                   │   PostgreSQL to ClickHouse, so   │                           │
+│                   │   reports run in seconds         │ Backend                   │
+│                   │ ✓ Introduced contract tests      │ API design          ●●●●● │
+│                   │   between twelve services and    │ Event-driven        ●●●●● │
+│                   │   cut failed releases by half    │ systems                   │
+│                   │ ✓ Designed OAuth2 and OIDC       │ Multi-tenancy       ●●●●○ │
+│                   │   sign-in for the partner API    │ OAuth2 and OIDC     ●●●●○ │
+│                   │   with per-tenant scopes         │                           │
+│                   │ ✓ Led the architecture group     │ Tools                     │
+│                   │   of four teams and wrote its    │ PostgreSQL, ClickHouse,   │
+│                   │   decision records               │ Kafka, gRPC, Kubernetes,  │
+│                   │ ✓ Role: Engineer, Architect,     │ Terraform, Grafana,       │
+│                   │   Mentor                         │ OpenTelemetry             │
 │                                                      │                           │
-│                                                      │ AWARDS                    │
-│                                                      │ Certified Kubernetes      │
-│                                                      │ Administrator             │
-│                                                      │ 09/2022                   │
+│ 06/2017 – 02/2021 ● Backend Engineer                 │ Strengths                 │
+│                   │ Bluebird Payments AG · Hamburg   │ Mentoring, Incident       │
+│                   │   (DE)                           │ handling, Clear writing   │
+│                   │ ✓ Delivered the settlement       │                           │
+│                   │   engine for card payments in Go │ TALKS                     │
+│                   │   and PostgreSQL                 │ Contract tests for twelve │
+│                   │ ✓ Split the payment monolith     │ services                  │
+│                   │   into six services behind a     │ GopherCon EU, 2023        │
+│                   │   gRPC gateway                   │ Exactly once is a lie     │
+│                   │ ✓ Built idempotent Kafka         │ Kafka Summit, 2020        │
+│                   │   consumers, so no payment was   │                           │
+│                   │   booked twice after a failover  │                           │
+│                   │ ✓ Ran the on-call rotation of    │                           │
+│                   │   eight engineers and wrote the  │                           │
+│                   │   incident playbooks             │                           │
+│                   │ ✓ Role: Engineer, On-call lead   │                           │
 ├──────────────────────────────────────────────────────┴───────────────────────────┤
-│ Left  ▰▰▰▰▰▰▱▱▱▱ 56 % full     Right ▰▰▰▰▰▰▰▰▰▱ 87 % full                        │
+│ Left  ▰▰▰▰▰▰▰▰▱▱ 80 % full     Right ▰▰▰▰▰▰▰▰▰▰ 98 % full                        │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+
+╭─ Page 2 of 3 ────────────────────────────────────────┬───────────────────────────╮
+│ PROFESSIONAL EXPERIENCE                              │ LANGUAGES                 │
+│                                                      │ German              ●●●●● │
+│ 01/2015 – 05/2017 ● Software Engineer                │ English             ●●●●○ │
+│                   │ Harbor Data GmbH · Hamburg       │                           │
+│                   │   (DE)                           │ AWARDS                    │
+│                   │ ✓ Wrote the ingestion service    │ Certified Kubernetes      │
+│                   │   for sensor data from 3,000     │ Administrator             │
+│                   │   ship containers over MQTT      │ 09/2022                   │
+│                   │ ✓ Added multi-tenant storage     │ AWS Certified Solutions   │
+│                   │   with row-level security in     │ Architect                 │
+│                   │   PostgreSQL                     │ 04/2019                   │
+│                   │ ✓ Built the public REST API      │                           │
+│                   │   with OpenAPI and versioned it  │ INTERESTS                 │
+│                   │   without breaking clients       │ Climbing, Mechanical      │
+│                   │ ✓ Role: Engineer                 │ keyboards, Open source    │
+│                                                      │                           │
+│ 08/2012 – 12/2014 ● Junior Software Engineer         │                           │
+│                   │ Lumen Media GmbH · Berlin (DE)   │                           │
+│                   │ ✓ Maintained the video           │                           │
+│                   │   publishing backend in Java and │                           │
+│                   │   moved its jobs to a queue      │                           │
+│                   │ ✓ Wrote the first integration    │                           │
+│                   │   test suite of the team         │                           │
+│                   │ ✓ Role: Engineer                 │                           │
+│                                                      │                           │
+│ 10/2009 – 07/2012 ● Working Student                  │                           │
+│                   │ Campus Software Lab · Berlin     │                           │
+│                   │   (DE)                           │                           │
+│                   │ ✓ Maintained the booking         │                           │
+│                   │   system of the university       │                           │
+│                   │   library                        │                           │
+│                   │ ✓ Moved the booking data from    │                           │
+│                   │   MySQL to PostgreSQL            │                           │
+│                   │ ✓ Role: Engineer                 │                           │
+│                                                      │                           │
+│ OPEN SOURCE                                          │                           │
+│                                                      │                           │
+│ 05/2016 – today   ● Maintainer                       │                           │
+│                   │ pgqueue, a job queue on          │                           │
+│                   │   PostgreSQL · Remote            │                           │
+│                   │ ✓ Wrote the Go client and the    │                           │
+│                   │   retry logic with exponential   │                           │
+│                   │   backoff                        │                           │
+│                   │ ✓ Reviewed changes from about    │                           │
+│                   │   60 contributors                │                           │
+│                   │ ✓ Kept the API backward          │                           │
+│                   │   compatible across four major   │                           │
+│                   │   PostgreSQL versions            │                           │
+│                                                      │                           │
+│ 02/2019 – 11/2020 ● Contributor                      │                           │
+│                   │ OpenTelemetry Go · Remote        │                           │
+│                   │ ✓ Added tracing for the Kafka    │                           │
+│                   │   client library                 │                           │
+│                   │ ✓ Fixed context loss in batch    │                           │
+│                   │   exporters                      │                           │
+├──────────────────────────────────────────────────────┴───────────────────────────┤
+│ Left  ▰▰▰▰▰▰▰▰▰▰ 99 % full     Right ▰▰▰▰▱▱▱▱▱▱ 41 % full                        │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+
+╭─ Page 3 of 3 ────────────────────────────────────────┬───────────────────────────╮
+│ EDUCATION                                            │                           │
+│                                                      │                           │
+│ 10/2010 – 09/2012 ● M.Sc. Computer Science           │                           │
+│                   │ Technical University of Berlin   │                           │
+│                   │   · Berlin (DE)                  │                           │
+│                   │ ✓ Focus: distributed systems     │                           │
+│                   │   and databases                  │                           │
+│                   │ ✓ Thesis: consistent snapshots   │                           │
+│                   │   in event-sourced systems       │                           │
+│                                                      │                           │
+│ 10/2007 – 09/2010 ● B.Sc. Computer Science           │                           │
+│                   │ Technical University of Berlin   │                           │
+│                   │   · Berlin (DE)                  │                           │
+│                   │ ✓ Thesis: a query planner for    │                           │
+│                   │   time series data               │                           │
+├──────────────────────────────────────────────────────┴───────────────────────────┤
+│ Left  ▰▰▰▰▱▱▱▱▱▱ 36 % full     Right ▱▱▱▱▱▱▱▱▱▱ 0 % full                         │
 ╰──────────────────────────────────────────────────────────────────────────────────╯

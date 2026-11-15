@@ -1,0 +1,8 @@
+{
+  "cv": "marco-weber",
+  "order": ["strengths", "know-how", "kitchen"],
+  "blocks": {
+    "spoken": { "page": null },
+    "interests": { "hidden": true }
+  }
+}
