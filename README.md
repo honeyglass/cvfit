@@ -1,8 +1,6 @@
 <div align="center">
 
-```text
- ◈   C V F I T   ◈
-```
+<h1>◈ &nbsp; C V F I T &nbsp; ◈</h1>
 
 **One CV, tailored to every job posting, laid out so no job ever breaks across a page.**
 
