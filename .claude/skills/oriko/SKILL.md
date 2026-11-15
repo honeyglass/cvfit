@@ -146,6 +146,7 @@ Coming back from 4 Check, change only what the refusal names:
 | :------------------------ | :------------------------------------------------------------------------------------------------ |
 | 'PAGE_OVERFLOW'           | first clear a 'page' pin of a named block in the profile; then hide or shorten the least relevant |
 | 'BLOCK_TOO_TALL'          | shorten the named block                                                                           |
+| 'ROLE_TOO_LONG'           | shorten 'person.role' in the profile, keeping only words the master or the posting's title uses   |
 | 'SCHEMA', 'UNKNOWN_BLOCK' | fix the named path                                                                                |
 
 Raising `pages` in the master is the user's decision: STOP and ask.

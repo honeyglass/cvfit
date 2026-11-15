@@ -76,6 +76,17 @@ test('refuses a CV that needs more pages than it allows, and names the blocks', 
   assert.match(result.error?.issues[0]?.message ?? '', /campus/);
 });
 
+// Google Docs broke this role as "Clou d" onto a second line, below the name block.
+test('refuses a role that does not fit on one line beside the photo', () => {
+  const cv = fixture();
+  cv.person.role = 'IT-Projektmanager Infrastruktur & Cloud';
+  const result = place(cv);
+  assert.deepEqual(codes(result), ['ROLE_TOO_LONG']);
+  assert.equal(result.error?.issues[0]?.path, 'person.role');
+  cv.person.role = 'IT-Projektmanager Infrastruktur';
+  assert.equal(place(cv).error, null);
+});
+
 test('refuses a block that is higher than a page', () => {
   const cv = fixture();
   const northwind = cv.blocks[0];

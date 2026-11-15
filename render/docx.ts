@@ -38,6 +38,7 @@ import { done, rejected } from '../core/errors.ts';
 import type { Result } from '../core/errors.ts';
 import { ICONS, LIMITS } from '../core/limits.ts';
 import type { Block, Master } from '../data/cv.schema.ts';
+import { spacedRole } from '../layout/measure.ts';
 import { SPACE, WIDTH } from '../layout/metrics.ts';
 import type { Column, Heading, Placed, Plan } from '../layout/place.ts';
 import { circlePhoto, solidPng } from './images.ts';
@@ -56,7 +57,7 @@ const FONT = { sans: 'Open Sans', light: 'Open Sans Light', head: 'Calibri', sym
 const ICON_SIZE = { pin: 9.64, home: 9.64, phone: 7.94, mail: 8.79, globe: 7.94 } as const;
 const ASSETS = join(import.meta.dirname, '..', 'assets');
 const JOB_COLUMNS = [WIDTH.date, WIDTH.rail, WIDTH.rail, WIDTH.jobTitle, WIDTH.place];
-const NAME_COLUMNS = [754, 1190, 1190, 4632];
+const NAME_COLUMNS = [754, 1190, 1190, WIDTH.name];
 const GUTTER = WIDTH.page - WIDTH.left - WIDTH.right;
 
 type Images = {
@@ -237,14 +238,14 @@ function leftCell(cv: Master, column: Column, page: number, images: Images) {
 
 function nameBlock(person: Master['person'], photo: Uint8Array) {
   const [margin = 0, half = 0, , name = 0] = NAME_COLUMNS;
-  const right = { alignment: AlignmentType.RIGHT, indent: { right: 140 } };
+  const right = { alignment: AlignmentType.RIGHT, indent: { right: WIDTH.nameRight } };
   const nameRun = (text: string, size: number, characterSpacing: number) =>
     new TextRun({ text, font: FONT.head, size, color: COLOR.black, characterSpacing });
   const nameCell = cell(
     [
       para([nameRun(person.firstName, 40, -30)], { ...right, spacing: { before: 1540 } }),
       para([nameRun(person.lastName, 50, -20)], right),
-      para([run(spaced(person.role), { font: FONT.light, size: 16 })], {
+      para([run(spacedRole(person.role), { font: FONT.light, size: 16 })], {
         ...right,
         spacing: { before: 150 },
       }),
@@ -279,13 +280,6 @@ function nameBlock(person: Master['person'], photo: Uint8Array) {
     }),
   ]);
 }
-
-// Google Docs ignores letter spacing, so the spaced-out role is written with real spaces.
-const spaced = (role: string) =>
-  role
-    .split(' ')
-    .map(word => [...word].join(' '))
-    .join('    ');
 
 function jobRowsOf(cv: Master, placed: Placed, images: Images) {
   const block = blockOf(cv, placed);

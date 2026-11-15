@@ -13,7 +13,8 @@ import { done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
 import { COLUMN } from '../core/limits.ts';
 import type { Block, Master } from '../data/cv.schema.ts';
-import { blockHeight, contactHeight } from './measure.ts';
+import { shown } from '@honeyglass/utils/ts';
+import { blockHeight, contactHeight, roleLines } from './measure.ts';
 import { COLUMN_HEIGHT, LEFT_START, LINE, SPACE, pt } from './metrics.ts';
 
 type Side = 'left' | 'right';
@@ -35,6 +36,7 @@ export function place(cv: Master): Result<Plan> {
   const left = fillColumn(cv, 'left');
   const right = fillColumn(cv, 'right');
   const issues = [
+    ...roleTooLong(cv.person.role),
     ...tooTall(left),
     ...tooTall(right),
     ...overflow(cv, left, 'left'),
@@ -99,6 +101,19 @@ function gapBelowHeading(block: Block) {
 function heightWith(heading: Heading | null, block: Block) {
   if (heading === null) return blockHeight(block);
   return pt(heading.before + heading.after) + LINE.heading + blockHeight(block);
+}
+
+// The name block has a fixed height, so a second role line would fall below it.
+function roleTooLong(role: string): Issue[] {
+  if (roleLines(role) === 1) return [];
+  return [
+    {
+      code: 'ROLE_TOO_LONG',
+      path: 'person.role',
+      message: `The role ${shown(role)} takes more than one line beside the photo`,
+      hint: 'Shorten the role, in the master or with "person.role" in the profile',
+    },
+  ];
 }
 
 function tooTall(spots: Spot[]) {

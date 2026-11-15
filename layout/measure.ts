@@ -4,6 +4,7 @@
  * lineCount: the lines a text takes in a given width.
  * blockHeight: the height of a block without its section heading, in pt.
  * contactHeight: the height of the contact block at the top of the first page, in pt.
+ * spacedRole, roleLines: the role below the name as the document writes it, and its lines.
  *
  * Nothing here can ask Google Docs how high a line is. The glyph widths are those of Open Sans
  * and the line heights those of the reference PDF, which the tests check against that PDF.
@@ -181,6 +182,31 @@ function entriesHeight(items: { title: string; note: string }[]) {
     height += LINE.body * lines + pt(SPACE.afterEntryTitle);
   }
   return height;
+}
+
+/**
+ * Google Docs ignores letter spacing, so the role is spaced out with real spaces.
+ *
+ * @param role - the role of the person
+ * @returns the role with a space between letters and four between words
+ */
+export const spacedRole = (role: string) =>
+  role
+    .split(' ')
+    .map(word => [...word].join(' '))
+    .join('    ');
+
+const ROLE_FONT_SIZE = 8;
+
+/**
+ * Every letter of the spaced role is a word, so a role too wide breaks inside a word.
+ *
+ * @param role - the role of the person
+ * @returns the lines the role takes beside the photo
+ */
+export function roleLines(role: string) {
+  const width = pt(WIDTH.name - WIDTH.nameRight) * (FONT_SIZE / ROLE_FONT_SIZE);
+  return lineCount(spacedRole(role), width, 'light');
 }
 
 /**

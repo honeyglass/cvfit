@@ -48,6 +48,8 @@ export const WIDTH = {
   jobIndent: 292,
   bulletIndent: 632,
   bulletHanging: 340,
+  name: 4632,
+  nameRight: 140,
 } as const;
 
 /** Open Sans 10 pt single and at 1.15, Calibri 14 pt, Arial 11 pt. */
