@@ -22,17 +22,6 @@ it: it moves the matching skills up, hides what does not help and shortens long 
 never invents anything. You see the result right away as a preview of every page in the
 terminal, and you get a Word file that you open in Google Docs and save as PDF.
 
-> [!TIP]
-> **See it in action:** three real job postings, tailored by the agent.
->
-> | Example | Terminal preview | Result |
-> | :--- | :--- | :--- |
-> | Developer at go-e Labs | [preview](examples/showcase/go-e-senior-backend/preview.txt) | [PDF](examples/showcase/go-e-senior-backend/go-e-senior-backend.pdf) · [Word](examples/showcase/go-e-senior-backend/go-e-senior-backend.docx) |
-> | Project manager at DaVita | [preview](examples/showcase/davita-it-project-manager/preview.txt) | [PDF](examples/showcase/davita-it-project-manager/davita-it-project-manager.pdf) · [Word](examples/showcase/davita-it-project-manager/davita-it-project-manager.docx) |
-> | Cook at GALERIA Restaurant | [preview](examples/showcase/galeria-cook/preview.txt) | [PDF](examples/showcase/galeria-cook/galeria-cook.pdf) · [Word](examples/showcase/galeria-cook/galeria-cook.docx) |
->
-> More in [Examples](#examples).
-
 ### Why oriko?
 
 - 🤖 **Built for AI assistants**: oriko is a command-line tool an AI agent can drive on its own,
@@ -100,15 +89,6 @@ Create a new CV for me. Since 03/2021 I have worked as a data engineer at …
 > No CV yet? Paste a job posting anyway. The agent asks you a few short questions (your name,
 > where you live, where you have worked, what you can do), creates your CV from your answers, and
 > then tailors it to the posting.
-
-> [!IMPORTANT]
-> The agent never adds a skill, a level, a date or a fact you did not state. It never changes your
-> CV for a single job, and never overwrites a version you already have. When it needs any of that,
-> it stops and asks you.
-
-> [!WARNING]
-> An agent can still misread or reword a fact. Before you send a CV, read the terminal preview
-> and the PDF line by line: names, employers, places, dates and levels.
 
 ## Built for agents
 
@@ -193,6 +173,9 @@ oriko preview --profile go-e-senior-backend   # the version for one job posting
 oriko preview --cv jane-doe                   # your CV as it stands
 ```
 
+<details>
+<summary><b>What the marks mean</b></summary>
+
 | Mark | Meaning |
 | :--- | :--- |
 | `╭───────╮` with `◠ ◠` | where your photo goes; the terminal shows a face, the file shows the photo |
@@ -201,6 +184,8 @@ oriko preview --cv jane-doe                   # your CV as it stands
 | `✓` | a bullet point of a job |
 | `●●●●○` | a skill level, from 0 to 5 dots |
 | `▰▰▰▱▱` | how full the column is; at 100 % the next block moves to the next page |
+
+</details>
 
 When your CV needs more pages than allowed, the preview names the blocks that do not fit and says
 what to change:
@@ -212,17 +197,8 @@ Nothing was written.
 - PAGE_OVERFLOW at pages: "These blocks of the left column land after page 1: campus". Hide or shorten blocks of the left column, remove a page pin, or raise "pages".
 ```
 
-> [!TIP]
-> A page that looks too empty usually has a block pinned to the next page in your CV
-> (`"page": 2`). A version can clear the pin with `"page": null`.
-
 In a pipe, `preview` answers JSON with the sheets in the field `preview`; `--output text` prints
 the sheets there too.
-
-> [!WARNING]
-> The preview shows what stands on which page, in which order, and how full each column is. It
-> does not show fonts, exact distances or the photo. The page plan behind it is the one `build`
-> uses.
 
 ## Examples
 
@@ -342,6 +318,19 @@ Upload `acme.docx` to Google Docs and save it there with File, Download, PDF.
 > The layout is tuned to how Google Docs sets the file, with Open Sans and Calibri. Word or
 > LibreOffice set the same file with other line breaks, and a block that fits in Google Docs may
 > spill over elsewhere.
+
+## Good to know
+
+- ❗ **Important:** the agent never adds a skill, a level, a date or a fact you did not state. It
+  never changes your CV for a single job, and never overwrites a version you already have. When
+  it needs any of that, it stops and asks you.
+- ⚠️ **Warning:** an agent can still misread or reword a fact. Before you send a CV, read the
+  terminal preview and the PDF line by line: names, employers, places, dates and levels.
+- ⚠️ **Warning:** the preview shows what stands on which page, in which order, and how full each
+  column is. It does not show fonts, exact distances or the photo. The page plan behind it is the
+  one `build` uses.
+- 💡 **Tip:** a page that looks too empty usually has a block pinned to the next page in your CV
+  (`"page": 2`). A version can clear the pin with `"page": null`.
 
 ## Development
 
