@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@honeyglass/utils": "github:honeyglass/utils#a6c8b941393ba0831b2909a54dae0a59d40f50bf",
-    "docx": "9.15.4",
+    "docx": "9.15.3",
     "jpeg-js": "0.4.4",
     "jszip": "3.10.2",
     "pngjs": "7.0.0",
