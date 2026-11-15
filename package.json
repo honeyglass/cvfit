@@ -2,6 +2,7 @@
   "name": "oriko",
   "version": "0.1.0",
   "private": true,
+  "license": "AGPL-3.0-only",
   "description": "Builds a two-column CV as .docx from a JSON master file and a profile per job posting.",
   "type": "module",
   "bin": {
