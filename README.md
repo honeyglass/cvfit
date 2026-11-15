@@ -110,18 +110,40 @@ Create a new CV for me. Since 03/2021 I have worked as a data engineer at …
 > An agent can still misread or reword a fact. Before you send a CV, read the terminal preview
 > and the PDF line by line: names, employers, places, dates and levels.
 
-<details>
-<summary><b>🔬 For developers: what makes oriko agent-driven</b></summary>
+## Built for agents
 
-| Property | What the agent gets |
-| :--- | :--- |
-| JSON in, JSON out | each command takes its input as `--json` or stdin and answers one JSON object |
-| Self-describing | `oriko schema` lists the commands, `oriko schema <command>` the exact input |
-| Refusals that say what to do | exit 1 with an issue code, the path of the wrong value and a hint |
-| Nothing half-written | a refused command writes nothing, and every write goes through the same checks |
-| Dry runs | `--dry-run` answers what would happen and writes no file |
-| Page plan before the file | `plan` says which block lands on which page, so the agent fixes an overflow first |
-| A fixed flow | the skill is a state machine with bounded retries; it stops and asks after three |
+oriko has two parts. The **CLI** does the work and checks every input. The **skill** in
+[`.claude/skills/oriko/`](.claude/skills/oriko/SKILL.md) is the agent's manual: which command to
+run when, what it may change, and when it stops and asks you.
+
+### The skill: a fixed flow
+
+The skill is a state machine with two paths. To tailor a CV, the agent reads the posting, inspects
+your CV, drafts a version, checks it, builds it and reports. To write a CV, it sorts your facts,
+writes them, checks them and hands over; with no CV at all, it first asks you a few short
+questions. The agent moves only along the listed steps. A refused check sends it back one step, at
+most three times; then it stops and asks you.
+
+### The CLI: Agent DX rules
+
+The rules start from Justin Poehnelt's article
+[Rewrite your CLI for AI agents](https://justin.poehnelt.com/posts/rewrite-your-cli-for-ai-agents/)
+(2026), with the [Google Workspace CLI](https://github.com/googleworkspace/cli) as its reference
+implementation. oriko adds its own rules on top.
+
+| Rule | From | In oriko |
+| :--- | :--- | :--- |
+| Raw JSON input | article | every command takes its input as `--json` or stdin |
+| Schema at runtime | article | `oriko schema` lists the commands, `oriko schema <command>` the exact input |
+| JSON when piped | article | text in a terminal, one JSON object in a pipe; `--output` overrides it |
+| Input hardening | article | the `.docx` and every photo path must stay inside their folder |
+| Dry runs | article | `--dry-run` answers what would happen and writes no file |
+| Agent skill | article | the skill ships in the repository, next to the code |
+| Checks in layers | added | the shape first, then the profile, then the page rules |
+| Errors with a hint | added | each issue names a code, the path of the wrong value and what to change |
+| All or nothing | added | a refused command writes nothing, and every write passes the same checks |
+| Exit codes 0, 1, 2 | added | ok, a refusal the agent can fix, a fatal error |
+| Plan before the file | added | `plan` says which block lands on which page, before a file exists |
 
 A refusal the agent reads and acts on:
 
@@ -139,8 +161,6 @@ A refusal the agent reads and acts on:
   ]
 }
 ```
-
-</details>
 
 ## Terminal preview
 
