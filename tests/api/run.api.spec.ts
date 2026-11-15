@@ -201,10 +201,30 @@ test('schema answers the accepted input of a command', async () => {
   assert.equal(JSON.stringify(answer.input).includes('"after"'), true);
 });
 
-test('the packaged example and its profile build', async () => {
+test('every packaged example CV and profile fits and builds', async () => {
   const space = { ...workspace(), home: fileURLToPath(new URL('../../examples', import.meta.url)) };
-  assert.equal((await call(space, ['build', '--out', 'jane.docx'])).exit, 0);
-  assert.equal((await call(space, ['build', '--profile', 'acme', '--out', 'acme.docx'])).exit, 0);
+  const cvs = (await call(space, ['cvs'])).answer.cvs;
+  const profiles = (await call(space, ['profiles'])).answer.profiles;
+  const List = z.array(z.looseObject({ name: z.string(), fits: z.boolean() }));
+  const listed = [...List.parse(cvs), ...List.parse(profiles)];
+  assert.deepEqual(
+    listed.filter(entry => entry.fits === false),
+    [],
+  );
+  for (const { name } of List.parse(cvs)) {
+    assert.equal(
+      (await call(space, ['build', '--cv', name, '--out', `${name}.docx`])).exit,
+      0,
+      name,
+    );
+  }
+  for (const { name } of List.parse(profiles)) {
+    assert.equal(
+      (await call(space, ['build', '--profile', name, '--out', `${name}.docx`])).exit,
+      0,
+      name,
+    );
+  }
 });
 
 test('refuses bad input with exit code 1 and the code of the reason', async () => {

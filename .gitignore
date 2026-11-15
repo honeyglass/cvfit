@@ -1,3 +1,5 @@
 node_modules/
 *.docx
+# The showcase keeps its built files, so readers see the result without running oriko.
+!examples/showcase/**/*.docx
 *.tmp

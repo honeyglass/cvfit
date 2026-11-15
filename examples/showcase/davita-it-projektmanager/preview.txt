@@ -1,0 +1,58 @@
+╭─ Page 1 of 1 ────────────────────────────────────────┬───────────────────────────╮
+│    ╭───────╮                                   Lukas │ KONTAKT                   │
+│    │  ◠ ◠  │                                  Berger │ Deutschland, Hamburg      │
+│    │   ‿   │ IT-Projektmanager Infrastruktur & Cloud │ Beispielweg 7             │
+│    ╰───────╯                                         │ 20095 Hamburg             │
+│                                                      │ +49 (0) 40 111 222        │
+│ BERUFSERFAHRUNG                                      │ lukas.berger@example.com  │
+│                                                      │                           │
+│ 04/2020 – heute   ● IT-Projektleiter                 │ KENNTNISSE                │
+│                   │ Hanse Logistik IT GmbH ·         │ Technik                   │
+│                   │   Hamburg (DE)                   │ Azure               ●●●●○ │
+│                   │ ✓ Cloud-Migration von 120        │ VMware              ●●●●○ │
+│                   │   Servern nach Azure geleitet,   │ AWS                 ●●●○○ │
+│                   │   per Rehost und Replatform      │ Terraform           ●●●○○ │
+│                   │ ✓ Budget von 1,2 Mio. € und      │                           │
+│                   │   Zeitpläne für drei             │ Methoden                  │
+│                   │   Infrastrukturprojekte          │ PRINCE2             ●●●●○ │
+│                   │   verantwortet                   │ Scrum               ●●●●○ │
+│                   │ ✓ Infrastructure as Code mit     │ Kanban              ●●●○○ │
+│                   │   Terraform als Standard für     │ ITIL                ●●●○○ │
+│                   │   neue Umgebungen eingeführt     │                           │
+│                   │ ✓ Fünf externe Dienstleister     │ Werkzeuge                 │
+│                   │   gesteuert                      │ Jira, Confluence, MS      │
+│                   │ ✓ Rolle: Projektleitung,         │ Project, Power Automate   │
+│                   │   Dienstleistersteuerung,        │                           │
+│                   │   Reporting                      │ SPRACHEN                  │
+│                                                      │ Deutsch             ●●●●● │
+│ 01/2016 – 03/2020 ● IT-Projektmanager                │ Englisch            ●●●●○ │
+│                   │ Nordbank Services AG · Hamburg   │                           │
+│                   │   (DE)                           │ ZERTIFIKATE               │
+│                   │ ✓ Rechenzentrumsumzug mit 40     │ PRINCE2 Practitioner      │
+│                   │   Anwendungen ohne Ausfall       │ 06/2018                   │
+│                   │   koordiniert                    │ Professional Scrum Master │
+│                   │ ✓ Scrum-Teams im                 │ I                         │
+│                   │   Workplace-Projekt für 900      │ 03/2021                   │
+│                   │   Arbeitsplätze begleitet        │ Microsoft Azure           │
+│                   │ ✓ Rolle: Projektleitung,         │ Fundamentals              │
+│                   │   Risikomanagement               │ 11/2022                   │
+│                                                      │                           │
+│ 08/2012 – 12/2015 ● Systemadministrator              │                           │
+│                   │ Elbe Medien GmbH · Hamburg       │                           │
+│                   │   (DE)                           │                           │
+│                   │ ✓ Betrieb der                    │                           │
+│                   │   VMware-Virtualisierung und der │                           │
+│                   │   Windows-Server-Umgebungen      │                           │
+│                   │ ✓ Backup- und                    │                           │
+│                   │   Disaster-Recovery-Konzept      │                           │
+│                   │   umgesetzt                      │                           │
+│                                                      │                           │
+│ 08/2009 – 07/2012 ● Ausbildung Fachinformatiker      │                           │
+│                   Systemintegration                  │                           │
+│                   │ Elbe Medien GmbH · Hamburg       │                           │
+│                   │   (DE)                           │                           │
+│                   │ ✓ Abschluss vor der IHK          │                           │
+│                   │   Hamburg                        │                           │
+├──────────────────────────────────────────────────────┴───────────────────────────┤
+│ Left  ▰▰▰▰▰▰▰▰▰▰ 95 % full     Right ▰▰▰▰▰▰▰▰▰▰ 97 % full                        │
+╰──────────────────────────────────────────────────────────────────────────────────╯

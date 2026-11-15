@@ -1,0 +1,14 @@
+{
+  "cv": "jane-doe",
+  "blocks": {
+    "northwind": {
+      "bullets": [
+        "Rebuilt the shipment tracking service to scale to ten times the load",
+        "Introduced contract tests between twelve services",
+        "Role: Engineer, Architect, Mentor"
+      ]
+    },
+    "campus": { "hidden": true },
+    "spoken": { "page": null }
+  }
+}

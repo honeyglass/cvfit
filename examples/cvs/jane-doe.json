@@ -36,8 +36,8 @@
   "blocks": [
     {
       "id": "northwind",
-      "kind": "job",
       "section": "Professional Experience",
+      "kind": "job",
       "from": "03/2021",
       "to": "today",
       "title": "Senior Backend Engineer",
@@ -51,8 +51,8 @@
     },
     {
       "id": "bluebird",
-      "kind": "job",
       "section": "Professional Experience",
+      "kind": "job",
       "from": "06/2017",
       "to": "02/2021",
       "title": "Backend Engineer",
@@ -65,9 +65,9 @@
     },
     {
       "id": "campus",
-      "kind": "job",
       "section": "Professional Experience",
       "page": 2,
+      "kind": "job",
       "from": "10/2014",
       "to": "05/2017",
       "title": "Working Student",
@@ -77,8 +77,8 @@
     },
     {
       "id": "languages",
-      "kind": "rated",
       "section": "Skills",
+      "kind": "rated",
       "title": "Programming Languages",
       "items": [
         {
@@ -101,23 +101,23 @@
     },
     {
       "id": "tools",
-      "kind": "list",
       "section": "Skills",
+      "kind": "list",
       "title": "Tools",
       "items": ["PostgreSQL", "Kafka", "Kubernetes", "Terraform", "Grafana", "OpenTelemetry"]
     },
     {
       "id": "strengths",
-      "kind": "list",
       "section": "Skills",
+      "kind": "list",
       "title": "Strengths",
       "items": ["Mentoring", "Incident handling", "Clear writing"]
     },
     {
       "id": "spoken",
-      "kind": "rated",
       "section": "Languages",
       "page": 2,
+      "kind": "rated",
       "items": [
         {
           "name": "German",
@@ -131,8 +131,8 @@
     },
     {
       "id": "awards",
-      "kind": "entries",
       "section": "Awards",
+      "kind": "entries",
       "items": [
         {
           "title": "Certified Kubernetes Administrator",

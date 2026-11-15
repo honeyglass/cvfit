@@ -1,0 +1,193 @@
+{
+  "language": "de",
+  "person": {
+    "firstName": "Lukas",
+    "lastName": "Berger",
+    "role": "IT-Projektmanager",
+    "photo": "cvs/lukas-berger.png"
+  },
+  "contact": {
+    "title": "Kontakt",
+    "items": [
+      {
+        "icon": "pin",
+        "lines": ["Deutschland, Hamburg"]
+      },
+      {
+        "icon": "home",
+        "lines": ["Beispielweg 7", "20095 Hamburg"]
+      },
+      {
+        "icon": "phone",
+        "lines": ["+49 (0) 40 111 222"]
+      },
+      {
+        "icon": "mail",
+        "lines": ["lukas.berger@example.com"]
+      }
+    ]
+  },
+  "pages": 2,
+  "blocks": [
+    {
+      "id": "hanse-logistik",
+      "section": "Berufserfahrung",
+      "kind": "job",
+      "from": "04/2020",
+      "to": "heute",
+      "title": "IT-Projektleiter",
+      "place": "Hamburg (DE)",
+      "employer": "Hanse Logistik IT GmbH",
+      "bullets": [
+        "Migration von 120 Servern nach Azure geleitet, per Rehost und Replatform",
+        "Budget von 1,2 Mio. € und Zeitpläne für drei Infrastrukturprojekte verantwortet",
+        "Terraform als Standard für neue Umgebungen eingeführt",
+        "Fünf externe Dienstleister gesteuert",
+        "Rolle: Projektleitung, Dienstleistersteuerung, Reporting"
+      ]
+    },
+    {
+      "id": "nordbank-services",
+      "section": "Berufserfahrung",
+      "kind": "job",
+      "from": "01/2016",
+      "to": "03/2020",
+      "title": "IT-Projektmanager",
+      "place": "Hamburg (DE)",
+      "employer": "Nordbank Services AG",
+      "bullets": [
+        "Rechenzentrumsumzug mit 40 Anwendungen ohne Ausfall koordiniert",
+        "Scrum-Teams im Workplace-Projekt für 900 Arbeitsplätze begleitet",
+        "Rolle: Projektleitung, Risikomanagement"
+      ]
+    },
+    {
+      "id": "elbe-medien",
+      "section": "Berufserfahrung",
+      "kind": "job",
+      "from": "08/2012",
+      "to": "12/2015",
+      "title": "Systemadministrator",
+      "place": "Hamburg (DE)",
+      "employer": "Elbe Medien GmbH",
+      "bullets": [
+        "Betrieb von VMware- und Windows-Server-Umgebungen",
+        "Backup- und Disaster-Recovery-Konzept umgesetzt"
+      ]
+    },
+    {
+      "id": "ausbildung",
+      "section": "Berufserfahrung",
+      "kind": "job",
+      "from": "08/2009",
+      "to": "07/2012",
+      "title": "Ausbildung Fachinformatiker Systemintegration",
+      "place": "Hamburg (DE)",
+      "employer": "Elbe Medien GmbH",
+      "bullets": ["Abschluss vor der IHK Hamburg"]
+    },
+    {
+      "id": "methoden",
+      "section": "Kenntnisse",
+      "kind": "rated",
+      "title": "Methoden",
+      "items": [
+        {
+          "name": "PRINCE2",
+          "level": 4
+        },
+        {
+          "name": "Scrum",
+          "level": 4
+        },
+        {
+          "name": "Kanban",
+          "level": 3
+        },
+        {
+          "name": "ITIL",
+          "level": 3
+        }
+      ]
+    },
+    {
+      "id": "technik",
+      "section": "Kenntnisse",
+      "kind": "rated",
+      "title": "Technik",
+      "items": [
+        {
+          "name": "Azure",
+          "level": 4
+        },
+        {
+          "name": "VMware",
+          "level": 4
+        },
+        {
+          "name": "AWS",
+          "level": 3
+        },
+        {
+          "name": "Terraform",
+          "level": 3
+        }
+      ]
+    },
+    {
+      "id": "werkzeuge",
+      "section": "Kenntnisse",
+      "kind": "list",
+      "title": "Werkzeuge",
+      "items": ["Jira", "Confluence", "MS Project", "Power Automate"]
+    },
+    {
+      "id": "staerken",
+      "section": "Kenntnisse",
+      "kind": "list",
+      "title": "Stärken",
+      "items": ["Kommunikation", "Moderation", "Struktur", "Stakeholder-Management"]
+    },
+    {
+      "id": "sprachen",
+      "section": "Sprachen",
+      "page": 2,
+      "kind": "rated",
+      "items": [
+        {
+          "name": "Deutsch",
+          "level": 5
+        },
+        {
+          "name": "Englisch",
+          "level": 4
+        }
+      ]
+    },
+    {
+      "id": "zertifikate",
+      "section": "Zertifikate",
+      "kind": "entries",
+      "items": [
+        {
+          "title": "PRINCE2 Practitioner",
+          "note": "06/2018"
+        },
+        {
+          "title": "Professional Scrum Master I",
+          "note": "03/2021"
+        },
+        {
+          "title": "Microsoft Azure Fundamentals",
+          "note": "11/2022"
+        }
+      ]
+    },
+    {
+      "id": "interessen",
+      "section": "Interessen",
+      "kind": "list",
+      "items": ["Segeln", "Fotografie", "Brettspiele"]
+    }
+  ]
+}

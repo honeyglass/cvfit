@@ -1,0 +1,36 @@
+╭─ Page 1 of 1 ────────────────────────────────────────┬───────────────────────────╮
+│    ╭───────╮                                    Jane │ CONTACT                   │
+│    │  ◠ ◠  │                                     Doe │ Germany, Berlin           │
+│    │   ‿   │                 Senior Backend Engineer │ Example Street 1          │
+│    ╰───────╯                                         │ 10115 Berlin              │
+│                                                      │ +49 (0) 30 000 000        │
+│ PROFESSIONAL EXPERIENCE                              │ jane.doe@example.com      │
+│                                                      │ Profile »                 │
+│ 03/2021 – today   ● Senior Backend Engineer          │                           │
+│                   │ Northwind Logistics GmbH ·       │ SKILLS                    │
+│                   │   Berlin (DE)                    │ Programming Languages     │
+│                   │ ✓ Rebuilt the shipment           │ Go                  ●●●●● │
+│                   │   tracking service to scale to   │ TypeScript          ●●●●○ │
+│                   │   ten times the load             │ SQL                 ●●●●○ │
+│                   │ ✓ Introduced contract tests      │ Rust                ●●○○○ │
+│                   │   between twelve services        │                           │
+│                   │ ✓ Role: Engineer, Architect,     │ Tools                     │
+│                   │   Mentor                         │ PostgreSQL, Kafka,        │
+│                                                      │ Kubernetes, Terraform,    │
+│ 06/2017 – 02/2021 ● Backend Engineer                 │ Grafana, OpenTelemetry    │
+│                   │ Bluebird Payments AG · Hamburg   │                           │
+│                   │   (DE)                           │ Strengths                 │
+│                   │ ✓ Delivered the settlement       │ Mentoring, Incident       │
+│                   │   engine for card payments       │ handling, Clear writing   │
+│                   │ ✓ Role: Engineer, On-call lead   │                           │
+│                                                      │ LANGUAGES                 │
+│                                                      │ German              ●●●●● │
+│                                                      │ English             ●●●●○ │
+│                                                      │                           │
+│                                                      │ AWARDS                    │
+│                                                      │ Certified Kubernetes      │
+│                                                      │ Administrator             │
+│                                                      │ 09/2022                   │
+├──────────────────────────────────────────────────────┴───────────────────────────┤
+│ Left  ▰▰▰▰▰▰▱▱▱▱ 56 % full     Right ▰▰▰▰▰▰▰▰▰▱ 87 % full                        │
+╰──────────────────────────────────────────────────────────────────────────────────╯

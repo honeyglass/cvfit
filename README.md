@@ -24,6 +24,17 @@ it: it moves the matching skills up, hides what does not help and shortens long 
 never invents anything. You see the result right away as a preview of every page in the
 terminal, and you get a Word file that you open in Google Docs and save as PDF.
 
+> [!TIP]
+> **See it in action:** three real job postings, tailored by the agent.
+>
+> | Example | Terminal preview | Result |
+> | :--- | :--- | :--- |
+> | Developer at go-e Labs | [preview](examples/showcase/go-e-senior-backend/preview.txt) | [PDF](examples/showcase/go-e-senior-backend/go-e-senior-backend.pdf) · [Word](examples/showcase/go-e-senior-backend/go-e-senior-backend.docx) |
+> | Project manager at DaVita | [preview](examples/showcase/davita-it-projektmanager/preview.txt) | [PDF](examples/showcase/davita-it-projektmanager/davita-it-projektmanager.pdf) · [Word](examples/showcase/davita-it-projektmanager/davita-it-projektmanager.docx) |
+> | Cook at GALERIA Restaurant | [preview](examples/showcase/galeria-koch/preview.txt) | [PDF](examples/showcase/galeria-koch/galeria-koch.pdf) · [Word](examples/showcase/galeria-koch/galeria-koch.docx) |
+>
+> More in [Examples](#examples).
+
 ### Why oriko?
 
 - 🤖 **Built for AI assistants**: oriko is a command-line tool an AI agent can drive on its own,
@@ -130,28 +141,29 @@ A refusal the agent reads and acts on:
 column beside the right one, as in the finished document:
 
 ```text
-╭─ Page 1 of 2 ────────────────────────────────────────┬───────────────────────────╮
+╭─ Page 1 of 1 ────────────────────────────────────────┬───────────────────────────╮
 │    ╭───────╮                                    Jane │ CONTACT                   │
 │    │  ◠ ◠  │                                     Doe │ Germany, Berlin           │
 │    │   ‿   │                 Senior Backend Engineer │ Example Street 1          │
 │    ╰───────╯                                         │ 10115 Berlin              │
-│                                                      │ jane.doe@example.com      │
-│ PROFESSIONAL EXPERIENCE                              │                           │
-│                                                      │ SKILLS                    │
-│ 03/2021 – today   ● Senior Backend Engineer          │ Tools                     │
-│                   │ Northwind Logistics GmbH ·       │ PostgreSQL, Kafka,        │
-│                   │   Berlin (DE)                    │ Kubernetes, Terraform     │
-│                   │ ✓ Rebuilt the shipment           │                           │
-│                   │   tracking service               │ Programming Languages     │
-│                   │ ✓ Role: Engineer, Architect      │ Go                  ●●●●● │
+│                                                      │ +49 (0) 30 000 000        │
+│ PROFESSIONAL EXPERIENCE                              │ jane.doe@example.com      │
+│                                                      │ Profile »                 │
+│ 03/2021 – today   ● Senior Backend Engineer          │                           │
+│                   │ Northwind Logistics GmbH ·       │ SKILLS                    │
+│                   │   Berlin (DE)                    │ Programming Languages     │
+│                   │ ✓ Rebuilt the shipment           │ Go                  ●●●●● │
+│                   │   tracking service to scale to   │ TypeScript          ●●●●○ │
+│                   │   ten times the load             │ SQL                 ●●●●○ │
+│                   │ ✓ Introduced contract tests      │ Rust                ●●○○○ │
 ├──────────────────────────────────────────────────────┴───────────────────────────┤
-│ Left  ▰▰▰▰▰▰▱▱▱▱ 56 % full     Right ▰▰▰▰▰▰▰▱▱▱ 74 % full                        │
+│ Left  ▰▰▰▰▰▰▱▱▱▱ 56 % full     Right ▰▰▰▰▰▰▰▰▰▱ 87 % full                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 ```
 
 ```sh
-oriko preview --profile acme      # the version for one job posting
-oriko preview --cv jane-doe       # your CV as it stands
+oriko preview --profile go-e-senior-backend   # the version for one job posting
+oriko preview --cv jane-doe                   # your CV as it stands
 ```
 
 | Mark | Meaning |
@@ -184,6 +196,30 @@ the sheets there too.
 > The preview shows what stands on which page, in which order, and how full each column is. It
 > does not show fonts, exact distances or the photo. The page plan behind it is the one `build`
 > uses.
+
+## Examples
+
+Three made-up people, three real job postings, one agent run each. Every example holds the
+summary of the posting, the agent's report, the terminal preview, the Word file and the PDF that
+Google Docs made from it.
+
+| | Developer | Project manager | Cook |
+| :--- | :--- | :--- | :--- |
+| **Person** | Jane Doe, Berlin, CV in English | Lukas Berger, Hamburg, CV in German | Marco Weber, Munich, CV in German |
+| **Job posting** | [Senior Backend Engineer at go-e Labs](examples/showcase/go-e-senior-backend/posting.md) | [IT-Projektmanager at DaVita](examples/showcase/davita-it-projektmanager/posting.md) | [Koch at GALERIA Restaurant](examples/showcase/galeria-koch/posting.md) |
+| **What the agent did** | [report](examples/showcase/go-e-senior-backend/report.md) | [report](examples/showcase/davita-it-projektmanager/report.md) | [report](examples/showcase/galeria-koch/report.md) |
+| **Result** | [preview](examples/showcase/go-e-senior-backend/preview.txt) · [Word](examples/showcase/go-e-senior-backend/go-e-senior-backend.docx) · [PDF](examples/showcase/go-e-senior-backend/go-e-senior-backend.pdf) | [preview](examples/showcase/davita-it-projektmanager/preview.txt) · [Word](examples/showcase/davita-it-projektmanager/davita-it-projektmanager.docx) · [PDF](examples/showcase/davita-it-projektmanager/davita-it-projektmanager.pdf) | [preview](examples/showcase/galeria-koch/preview.txt) · [Word](examples/showcase/galeria-koch/galeria-koch.docx) · [PDF](examples/showcase/galeria-koch/galeria-koch.pdf) |
+
+<p align="center">
+  <img src="examples/showcase/go-e-senior-backend/page-1.png" width="32%" alt="Jane Doe's CV for go-e Labs">
+  <img src="examples/showcase/davita-it-projektmanager/page-1.png" width="32%" alt="Lukas Berger's CV for DaVita">
+  <img src="examples/showcase/galeria-koch/page-1.png" width="32%" alt="Marco Weber's CV for GALERIA Restaurant">
+</p>
+
+> [!NOTE]
+> The people are invented. The postings are real, summarized in our own words with a link to the
+> source, and may be gone by now. The portraits are drawn avatars from
+> [DiceBear](https://www.dicebear.com/styles/lorelei/) (Lorelei, CC0 1.0).
 
 ## Your data
 

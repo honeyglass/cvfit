@@ -1,0 +1,161 @@
+{
+  "language": "de",
+  "person": {
+    "firstName": "Marco",
+    "lastName": "Weber",
+    "role": "Koch",
+    "photo": "cvs/marco-weber.png"
+  },
+  "contact": {
+    "title": "Kontakt",
+    "items": [
+      {
+        "icon": "pin",
+        "lines": ["Deutschland, München"]
+      },
+      {
+        "icon": "home",
+        "lines": ["Musterstraße 3", "80331 München"]
+      },
+      {
+        "icon": "phone",
+        "lines": ["+49 (0) 89 333 444"]
+      },
+      {
+        "icon": "mail",
+        "lines": ["marco.weber@example.com"]
+      }
+    ]
+  },
+  "pages": 2,
+  "blocks": [
+    {
+      "id": "isarblick",
+      "section": "Berufserfahrung",
+      "kind": "job",
+      "from": "05/2021",
+      "to": "heute",
+      "title": "Koch",
+      "place": "München (DE)",
+      "employer": "Hotel Isarblick",
+      "bullets": [
+        "Täglich bis zu 250 Gerichte für Frühstücks- und Mittagsbuffet zubereitet",
+        "Warenannahme, Lagerung und monatliche Inventur verantwortet",
+        "HACCP-Standards im Tagesgeschäft umgesetzt",
+        "Rolle: Koch, Einarbeitung von Auszubildenden"
+      ]
+    },
+    {
+      "id": "zum-loewen",
+      "section": "Berufserfahrung",
+      "kind": "job",
+      "from": "08/2018",
+      "to": "04/2021",
+      "title": "Jungkoch",
+      "place": "Augsburg (DE)",
+      "employer": "Gasthaus Zum Löwen",
+      "bullets": [
+        "À-la-carte-Küche mit regionaler Ausrichtung",
+        "Posten Fleisch und Beilagen vor- und nachbereitet",
+        "Rolle: Jungkoch"
+      ]
+    },
+    {
+      "id": "ausbildung",
+      "section": "Berufserfahrung",
+      "kind": "job",
+      "from": "09/2015",
+      "to": "07/2018",
+      "title": "Ausbildung zum Koch",
+      "place": "Augsburg (DE)",
+      "employer": "Gasthaus Zum Löwen",
+      "bullets": ["Abschluss vor der IHK Schwaben"]
+    },
+    {
+      "id": "cafe-lindner",
+      "section": "Berufserfahrung",
+      "kind": "job",
+      "from": "06/2013",
+      "to": "08/2015",
+      "title": "Aushilfe im Service",
+      "place": "Augsburg (DE)",
+      "employer": "Café Lindner",
+      "bullets": ["Bedienung und Kasse am Wochenende"]
+    },
+    {
+      "id": "kueche",
+      "section": "Kenntnisse",
+      "kind": "rated",
+      "title": "Küche",
+      "items": [
+        {
+          "name": "Regionale Küche",
+          "level": 5
+        },
+        {
+          "name": "Buffet und Bankett",
+          "level": 4
+        },
+        {
+          "name": "Vegetarische Küche",
+          "level": 4
+        },
+        {
+          "name": "Patisserie",
+          "level": 2
+        }
+      ]
+    },
+    {
+      "id": "fachwissen",
+      "section": "Kenntnisse",
+      "kind": "list",
+      "title": "Fachwissen",
+      "items": ["HACCP", "Allergenkennzeichnung", "Warenwirtschaft", "Kalkulation"]
+    },
+    {
+      "id": "staerken",
+      "section": "Kenntnisse",
+      "kind": "list",
+      "title": "Stärken",
+      "items": ["Zuverlässigkeit", "Teamfähigkeit", "Organisation", "Gastorientierung"]
+    },
+    {
+      "id": "sprachen",
+      "section": "Sprachen",
+      "page": 2,
+      "kind": "rated",
+      "items": [
+        {
+          "name": "Deutsch",
+          "level": 5
+        },
+        {
+          "name": "Englisch",
+          "level": 2
+        }
+      ]
+    },
+    {
+      "id": "weiterbildungen",
+      "section": "Weiterbildungen",
+      "kind": "entries",
+      "items": [
+        {
+          "title": "Hygieneschulung nach § 43 IfSG",
+          "note": "08/2015"
+        },
+        {
+          "title": "Grundkurs Patisserie",
+          "note": "02/2020"
+        }
+      ]
+    },
+    {
+      "id": "interessen",
+      "section": "Interessen",
+      "kind": "list",
+      "items": ["Fußball", "Wandern", "Kochen mit Kindern"]
+    }
+  ]
+}
