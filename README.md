@@ -102,6 +102,53 @@ node bin/oriko.ts schema
 
 The examples below write `oriko` for `node bin/oriko.ts`.
 
+## Working with an agent
+
+[`.claude/skills/oriko/`](.claude/skills/oriko/SKILL.md) is a skill for Claude Code. In a session
+in this repository, you write what you want in plain words:
+
+```text
+Pass meinen Lebenslauf an diese Stelle an: <the job posting>
+Leg mir einen neuen Lebenslauf an. Ich arbeite seit 03/2021 als Data Engineer bei …
+```
+
+For a posting, the agent picks the CV in the posting's language, reads the blocks that matter,
+writes a profile, checks it with `oriko plan`, builds the `.docx` and shows you the preview with
+every change and its reason. For a text about your career, it creates or extends a CV with the
+`init`, `block`, `item` and `contact` commands.
+
+### What makes it agent-driven
+
+| Property | What the agent gets |
+| :--- | :--- |
+| JSON in, JSON out | each command takes its input as `--json` or stdin and answers one JSON object |
+| Self-describing | `oriko schema` lists the commands, `oriko schema <command>` the exact input |
+| Refusals that say what to do | exit 1 with an issue code, the path of the wrong value and a hint |
+| Nothing half-written | a refused command writes nothing, and every write goes through the same checks |
+| Dry runs | `--dry-run` answers what would happen and writes no file |
+| Page plan before the file | `plan` says which block lands on which page, so the agent fixes an overflow before it builds |
+| Rules of truth | the skill never adds a skill, level, date or fact you did not state, and asks instead |
+
+A refusal the agent reads and acts on:
+
+```json
+{
+  "ok": false,
+  "kind": "fix",
+  "issues": [
+    {
+      "code": "PAGE_OVERFLOW",
+      "path": "pages",
+      "message": "These blocks of the left column land after page 1: campus",
+      "hint": "Hide or shorten blocks of the left column, remove a page pin, or raise \"pages\""
+    }
+  ]
+}
+```
+
+The skill runs as a fixed flow, from setup over the posting to the build, with at most three
+attempts to make a profile fit before it stops and asks you.
+
 ## Your data
 
 Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points oriko at another one.
@@ -115,7 +162,7 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
 
 [`examples/`](examples/) holds a complete data folder to try it: pass `--home examples`.
 
-## First steps
+## First steps by hand
 
 An agent runs these same commands for you (see [Working with an agent](#working-with-an-agent)).
 By hand, they look like this.
@@ -229,53 +276,6 @@ the input one accepts.
 | `init`, `cv update` | create a CV, change its language, pages, person or contact title |
 | `block …`, `item …`, `contact …` | add, update, remove and move blocks, their items and contact lines |
 | `photo set <file>` | stores a PNG or JPEG as the square photo of a CV, or of one profile |
-
-## Working with an agent
-
-[`.claude/skills/oriko/`](.claude/skills/oriko/SKILL.md) is a skill for Claude Code. In a session
-in this repository, you write what you want in plain words:
-
-```text
-Pass meinen Lebenslauf an diese Stelle an: <the job posting>
-Leg mir einen neuen Lebenslauf an. Ich arbeite seit 03/2021 als Data Engineer bei …
-```
-
-For a posting, the agent picks the CV in the posting's language, reads the blocks that matter,
-writes a profile, checks it with `oriko plan`, builds the `.docx` and shows you the preview with
-every change and its reason. For a text about your career, it creates or extends a CV with the
-`init`, `block`, `item` and `contact` commands.
-
-### What makes it agent-driven
-
-| Property | What the agent gets |
-| :--- | :--- |
-| JSON in, JSON out | each command takes its input as `--json` or stdin and answers one JSON object |
-| Self-describing | `oriko schema` lists the commands, `oriko schema <command>` the exact input |
-| Refusals that say what to do | exit 1 with an issue code, the path of the wrong value and a hint |
-| Nothing half-written | a refused command writes nothing, and every write goes through the same checks |
-| Dry runs | `--dry-run` answers what would happen and writes no file |
-| Page plan before the file | `plan` says which block lands on which page, so the agent fixes an overflow before it builds |
-| Rules of truth | the skill never adds a skill, level, date or fact you did not state, and asks instead |
-
-A refusal the agent reads and acts on:
-
-```json
-{
-  "ok": false,
-  "kind": "fix",
-  "issues": [
-    {
-      "code": "PAGE_OVERFLOW",
-      "path": "pages",
-      "message": "These blocks of the left column land after page 1: campus",
-      "hint": "Hide or shorten blocks of the left column, remove a page pin, or raise \"pages\""
-    }
-  ]
-}
-```
-
-The skill runs as a fixed flow, from setup over the posting to the build, with at most three
-attempts to make a profile fit before it stops and asks you.
 
 ## Development
 
