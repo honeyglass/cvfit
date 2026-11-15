@@ -1,0 +1,46 @@
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import { place } from '../../layout/place.ts';
+import { preview } from '../../preview/text.ts';
+import { fixture, unwrap } from '../utils/fixture.ts';
+
+const text = preview(fixture(), unwrap(place(fixture())));
+const lines = text.split('\n');
+
+test('shows every page with the blocks the plan puts on it', () => {
+  const secondPage = text.indexOf('Page 2 of 2');
+  assert.ok(text.indexOf('Page 1 of 2') >= 0 && secondPage > 0);
+  assert.ok(text.indexOf('Northwind Logistics GmbH') < secondPage);
+  assert.ok(text.indexOf('Campus Software Lab') > secondPage);
+  assert.ok(text.indexOf('Team Award') > secondPage);
+});
+
+test('shows a job with its date and a rated item with its dots', () => {
+  assert.ok(lines.some(line => line.includes('03/2021 – today') && line.includes('● Senior Backend Engineer')));
+  assert.ok(lines.some(line => /Go\s+●●●●● │$/.test(line)));
+  assert.ok(lines.some(line => /Python\s+●●●○○ │$/.test(line)));
+});
+
+test('keeps every line within 84 characters, so the frame holds in a narrow terminal', () => {
+  assert.deepEqual(lines.filter(line => [...line].length > 84), []);
+});
+
+test('frames every page, so all of its lines are equally wide', () => {
+  const widths = new Set(lines.filter(line => line !== '').map(line => [...line].length));
+  assert.equal(widths.size, 1);
+  assert.equal(lines.filter(line => line.startsWith('╭─ Page')).length, 2);
+});
+
+test('shows a face where the photo stands, on the first page only', () => {
+  assert.equal(text.split('◠ ◠').length - 1, 1);
+  assert.ok(text.indexOf('◠ ◠') < text.indexOf('Page 2 of 2'));
+  assert.ok(lines.some(line => line.includes('╭───────╮') && line.includes('Jane')));
+});
+
+test('shows how full each column of a page is', () => {
+  const half = { used: 394, free: 394, blocks: [] };
+  const full = { used: 788, free: 0, blocks: [] };
+  const sheet = preview(fixture(), { pages: [{ left: half, right: full }] });
+  assert.ok(sheet.includes('Left  ▰▰▰▰▰▱▱▱▱▱ 50 % full'));
+  assert.ok(sheet.includes('Right ▰▰▰▰▰▰▰▰▰▰ 100 % full'));
+});

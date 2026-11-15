@@ -1,0 +1,18 @@
+{
+  "cv": "jane-doe",
+  "order": [
+    "tools",
+    "languages"
+  ],
+  "blocks": {
+    "strengths": {
+      "hidden": true
+    },
+    "northwind": {
+      "bullets": [
+        "Rebuilt the shipment tracking service for ten times the load",
+        "Role: Engineer, Architect, Mentor"
+      ]
+    }
+  }
+}

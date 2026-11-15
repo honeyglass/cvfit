@@ -1,0 +1,30 @@
+{
+  "name": "oriko",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Builds a two-column CV as .docx from a JSON master file and a profile per job posting.",
+  "type": "module",
+  "bin": {
+    "oriko": "bin/oriko.ts"
+  },
+  "scripts": {
+    "test": "node --test 'tests/api/*.api.spec.ts' 'tests/internals/*.internals.spec.ts'",
+    "typecheck": "tsc -p . --noEmit"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "@honeyglass/utils": "github:honeyglass/utils#a6c8b941393ba0831b2909a54dae0a59d40f50bf",
+    "docx": "9.15.4",
+    "jpeg-js": "0.4.4",
+    "jszip": "3.10.2",
+    "pngjs": "7.0.0",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "@types/pngjs": "6.0.5",
+    "typescript": "5.9.3"
+  }
+}
