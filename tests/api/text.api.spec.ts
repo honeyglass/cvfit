@@ -56,16 +56,19 @@ test('frames every page, so all of its lines are equally wide', () => {
   assert.equal(lines.filter(line => line.startsWith('╭─ Page')).length, 2);
 });
 
+// Six rows tall, so the place of the photo stands out on paper too.
 test('shows a face where the photo stands, on the first page only', () => {
-  assert.equal(text.split('◠ ◠').length - 1, 1);
-  assert.ok(text.indexOf('◠ ◠') < text.indexOf('Page 2 of 2'));
-  assert.ok(lines.some(line => line.includes('╭───────╮') && line.includes('Jane')));
+  assert.equal(text.split('◠   ◠').length - 1, 1);
+  assert.ok(text.indexOf('◠   ◠') < text.indexOf('Page 2 of 2'));
+  const top = lines.findIndex(line => line.includes('╭─────────╮'));
+  assert.ok(lines[top + 5]?.includes('╰─────────╯'));
+  assert.ok(lines.slice(top, top + 6).some(line => line.includes('Jane')));
 });
 
 test('shows how full each column of a page is', () => {
   const half = { used: 394, free: 394, blocks: [] };
   const full = { used: 788, free: 0, blocks: [] };
   const sheet = preview(fixture(), { pages: [{ left: half, right: full }] });
-  assert.ok(sheet.includes('Left  ▰▰▰▰▰▱▱▱▱▱ 50 % full'));
-  assert.ok(sheet.includes('Right ▰▰▰▰▰▰▰▰▰▰ 100 % full'));
+  assert.ok(sheet.includes('Left  ■■■■■□□□□□ 50 % full'));
+  assert.ok(sheet.includes('Right ■■■■■■■■■■ 100 % full'));
 });

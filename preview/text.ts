@@ -2,6 +2,7 @@
  * A CV as text for the terminal, page by page, to pick a profile before it is built.
  *
  * preview: the pages of a plan as text, each page a framed sheet with its two columns.
+ * sheets: the same sheets as lists of lines, padded with empty rows to a given height.
  *
  * It shows what stands on which page, in which order, and how full each column is. It does not
  * show fonts or exact distances, and a drawn face stands where the photo is; those exist only
@@ -20,8 +21,15 @@ const DOTS = LIMITS.level + 1;
 /** The cells of a fill bar; one cell is a tenth of a column. */
 const BAR = 10;
 /** The placeholder for the photo: the terminal shows where it stands, never the picture. */
-const FACE = ['   ╭───────╮', '   │  ◠ ◠  │', '   │   ‿   │', '   ╰───────╯'];
-const FACE_WIDTH = 12;
+const FACE = [
+  '   ╭─────────╮',
+  '   │         │',
+  '   │  ◠   ◠  │',
+  '   │    ◡    │',
+  '   │         │',
+  '   ╰─────────╯',
+];
+const FACE_WIDTH = 14;
 
 /**
  * @param cv - a checked CV
@@ -29,24 +37,34 @@ const FACE_WIDTH = 12;
  * @returns the text, one line per row of the terminal, every line 84 characters wide
  */
 export function preview(cv: Master, plan: Plan) {
-  const count = plan.pages.length;
-  const sheets = plan.pages.map((page, index) => {
-    const title = `Page ${index + 1} of ${count}`;
-    const fill = `Left  ${bar(page.left)}     Right ${bar(page.right)}`;
-    return sheet(
-      title,
-      leftLines(cv, page.left, index),
-      rightLines(cv, page.right, index),
-      fill,
-    ).join('\n');
-  });
-  return `${sheets.join('\n\n')}\n`;
+  return `${sheets(cv, plan)
+    .map(lines => lines.join('\n'))
+    .join('\n\n')}\n`;
 }
 
+/**
+ * @param cv - a checked CV
+ * @param plan - the plan place() made for this CV
+ * @param height - the least number of lines of a sheet; empty rows above the fill bars make it up
+ * @returns one sheet per page, each a list of lines 84 characters wide
+ */
+export function sheets(cv: Master, plan: Plan, height = 0) {
+  const count = plan.pages.length;
+  return plan.pages.map((page, index) => {
+    const title = `Page ${index + 1} of ${count}`;
+    const fill = `Left  ${bar(page.left)}     Right ${bar(page.right)}`;
+    const left = leftLines(cv, page.left, index);
+    return sheet(title, left, rightLines(cv, page.right, index), fill, height);
+  });
+}
+
+/** The lines of a sheet around its rows: the top edge, and the fill bars with their two edges. */
+const FRAME_LINES = 4;
+
 // One page as a sheet: a frame, the two columns, and below them how full each column is.
-function sheet(title: string, left: string[], right: string[], fill: string) {
+function sheet(title: string, left: string[], right: string[], fill: string, height: number) {
   const [leftRows, rightRows] = [withoutBlankEnd(left), withoutBlankEnd(right)];
-  const rows = Math.max(leftRows.length, rightRows.length);
+  const rows = Math.max(leftRows.length, rightRows.length, height - FRAME_LINES);
   const body = Array.from(
     { length: rows },
     (_, row) =>
@@ -67,7 +85,7 @@ const withoutBlankEnd = (lines: string[]) =>
 function bar(column: Column) {
   const share = column.used / (column.used + column.free);
   const cells = Math.min(BAR, Math.round(share * BAR));
-  return `${'▰'.repeat(cells)}${'▱'.repeat(BAR - cells)} ${Math.round(share * 100)} % full`;
+  return `${'■'.repeat(cells)}${'□'.repeat(BAR - cells)} ${Math.round(share * 100)} % full`;
 }
 
 // Breaks at spaces; a word longer than the line is cut, so no line grows past the column.
@@ -98,7 +116,7 @@ function leftLines(cv: Master, column: Column, page: number) {
 // The face on the left, name and role right-aligned beside it, as the document sets them.
 function nameBlock(person: Master['person']) {
   const room = LEFT - FACE_WIDTH;
-  const beside = [person.firstName, person.lastName, person.role, ''];
+  const beside = ['', person.firstName, person.lastName, person.role];
   return FACE.map((line, row) => `${line}${shortened(beside[row] ?? '', room).padStart(room)}`);
 }
 
