@@ -98,10 +98,19 @@ Create a new CV for me. Since 03/2021 I have worked as a data engineer at …
 5. Builds the Word file and shows you the preview, every change, and why it made it.
 6. Tells you what the posting asks for that your CV does not show yet.
 
+> [!TIP]
+> No CV yet? Paste a job posting anyway. The agent asks you a few short questions (your name,
+> where you live, where you have worked, what you can do), creates your CV from your answers, and
+> then tailors it to the posting.
+
 > [!IMPORTANT]
 > The agent never adds a skill, a level, a date or a fact you did not state. It never changes your
 > CV for a single job, and never overwrites a version you already have. When it needs any of that,
 > it stops and asks you.
+
+> [!WARNING]
+> An agent can still misread or reword a fact. Before you send a CV, read the terminal preview
+> and the PDF line by line: names, employers, places, dates and levels.
 
 <details>
 <summary><b>🔬 For developers: what makes oriko agent-driven</b></summary>

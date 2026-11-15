@@ -80,7 +80,8 @@ A block with `page` starts on that page at the earliest.
 | :----------- | :----------- | :-------------------------------------------------------------- |
 | 0 Setup      | 1 Posting    | 'oriko cvs' answers ok and the user gave a posting     |
 | 0 Setup      | 7 Facts      | the user gives career facts or asks for a new CV |
-| 0 Setup      | STOP         | neither oriko nor Node 24 runs, or no master for a posting      |
+| 0 Setup      | 11 Interview | the user gave a posting and no master is found |
+| 0 Setup      | STOP         | neither oriko nor Node 24 runs |
 | 1 Posting    | 2 Inspect    | the posting text is at hand                                     |
 | 1 Posting    | STOP         | no posting, the URL cannot be read, or the master unclear       |
 | 2 Inspect    | 3 Draft      | every block that may change has been read                       |
@@ -98,7 +99,11 @@ A block with `page` starts on that page at the earliest.
 | 9 Verify     | 8 Write      | 'oriko plan' refuses the master (**back edge**, bound 3)        |
 | 9 Verify     | STOP         | 'oriko plan' refused the master a third time                    |
 | 9 Verify     | 10 Hand over | 'oriko plan' answers ok                                         |
-| 10 Hand over | done         | the report is given                                             |
+| 10 Hand over | 1 Posting    | the report is given and a posting waits from the start |
+| 10 Hand over | done         | the report is given and no posting waits |
+| 11 Interview | 7 Facts      | the user answered the questions |
+| 11 Interview | 0 Setup      | the user names a folder that holds a CV (**back edge**) |
+| 11 Interview | STOP         | the user does not want a new CV |
 
 ### 0 Setup
 
@@ -106,8 +111,7 @@ Find how to run oriko, then run `oriko cvs` and `oriko profiles`.
 
 - `oriko cvs` lists every master with its name, language and person, and whether it fits its pages.
 - `oriko profiles` lists the existing profiles, their master, and whether each one builds.
-- The issue `NO_CV` means no master: for a posting STOP, since only the user knows where the CV is.
-  For a new CV, go on to 7 Facts.
+- The issue `NO_CV` means no master: for a posting, go on to 11 Interview; for a new CV, to 7 Facts.
 
 ### 1 Posting
 
@@ -169,6 +173,8 @@ Show the preview, then say what changed and why.
 - List what you hid, reordered, shortened and reworded, each with its reason from the posting.
 - List what the posting asks for and the CV does not show, so the user can add it to the master.
 - Name the next manual step: upload the `.docx` to Google Docs, then File, Download, PDF.
+- **Close by asking the user to read the preview and the PDF line by line before sending it.**
+  An agent can misread or reword a fact; only the user knows the facts.
 
 ### 7 Facts
 
@@ -202,3 +208,18 @@ Show the preview, then say what you wrote.
 - List every level you derived from the user's words, with the word, so the user can correct it.
 - List what a CV usually holds and the text did not give: education, phone, photo (`oriko photo set`).
 - Build a `.docx` only when the user asks for one: `oriko build --cv NAME --out NAME.docx`.
+- **Ask the user to read the preview line by line; an agent can misread or reword a fact.**
+- A posting from the start still waits: go on to 1 Posting with the new master.
+
+### 11 Interview
+
+The user gave a posting but has no CV yet: offer to create one, and ask for the facts in short rounds.
+
+- First ask whether an oriko CV lies in another folder; a named folder goes back to 0 Setup with `--home`.
+- Then ask in three rounds, one message each, and wait for each answer:
+  1. name, the job title the user holds, city, e-mail and phone
+  2. every job, newest first: from and to, job title, employer, place, and what the user did there
+  3. skills with how well the user knows each one, and languages with their level
+- Ask in the language the user writes in, and say why: the CV holds only what the user says.
+- Take every answer as the user's own words; a question the user skips stays out of the CV.
+- Keep the posting for 1 Posting, which follows after 10 Hand over.
