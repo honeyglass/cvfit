@@ -15,12 +15,79 @@ import { LINE, SPACE, WIDTH, pt } from './metrics.ts';
 
 /** Advance widths of Open Sans Regular, in thousandths of the font size. */
 const GLYPH: Record<string, number> = {
-  ' ': 260, a: 556, b: 613, c: 476, d: 613, e: 562, f: 339, g: 548, h: 614, i: 253, j: 253, k: 525, l: 253, m: 930,
-  n: 614, o: 604, p: 613, q: 613, r: 408, s: 477, t: 353, u: 614, v: 501, w: 778, x: 524, y: 504, z: 468,
-  A: 633, B: 648, C: 631, D: 729, E: 556, F: 516, G: 728, H: 739, I: 279, J: 267, K: 614, L: 519, M: 903,
-  N: 754, O: 779, P: 602, Q: 779, R: 618, S: 549, T: 553, U: 728, V: 595, W: 926, X: 577, Y: 560, Z: 571,
-  0: 571, 1: 571, 2: 571, 3: 571, 4: 571, 5: 571, 6: 571, 7: 571, 8: 571, 9: 571,
-  ',': 245, '.': 266, ':': 266, ';': 266, '-': 322, '/': 367, '(': 296, ')': 296, '&': 729, '+': 571,
+  ' ': 260,
+  a: 556,
+  b: 613,
+  c: 476,
+  d: 613,
+  e: 562,
+  f: 339,
+  g: 548,
+  h: 614,
+  i: 253,
+  j: 253,
+  k: 525,
+  l: 253,
+  m: 930,
+  n: 614,
+  o: 604,
+  p: 613,
+  q: 613,
+  r: 408,
+  s: 477,
+  t: 353,
+  u: 614,
+  v: 501,
+  w: 778,
+  x: 524,
+  y: 504,
+  z: 468,
+  A: 633,
+  B: 648,
+  C: 631,
+  D: 729,
+  E: 556,
+  F: 516,
+  G: 728,
+  H: 739,
+  I: 279,
+  J: 267,
+  K: 614,
+  L: 519,
+  M: 903,
+  N: 754,
+  O: 779,
+  P: 602,
+  Q: 779,
+  R: 618,
+  S: 549,
+  T: 553,
+  U: 728,
+  V: 595,
+  W: 926,
+  X: 577,
+  Y: 560,
+  Z: 571,
+  0: 571,
+  1: 571,
+  2: 571,
+  3: 571,
+  4: 571,
+  5: 571,
+  6: 571,
+  7: 571,
+  8: 571,
+  9: 571,
+  ',': 245,
+  '.': 266,
+  ':': 266,
+  ';': 266,
+  '-': 322,
+  '/': 367,
+  '(': 296,
+  ')': 296,
+  '&': 729,
+  '+': 571,
 };
 /** Wider than most letters, so an unknown character never makes a text look shorter than it is. */
 const UNKNOWN_GLYPH = 650;
@@ -84,14 +151,17 @@ function jobHeight(job: Extract<Block, { kind: 'job' }>) {
   const titleLines = lineCount(job.title, pt(WIDTH.jobTitle - WIDTH.jobIndent), 'bold');
   const employerLines = lineCount(job.employer, DETAIL_WIDTH - pt(WIDTH.jobIndent));
   let bulletLines = 0;
-  for (const bullet of job.bullets) bulletLines += lineCount(bullet, DETAIL_WIDTH - pt(WIDTH.bulletIndent));
+  for (const bullet of job.bullets)
+    bulletLines += lineCount(bullet, DETAIL_WIDTH - pt(WIDTH.bulletIndent));
   const head = pt(SPACE.jobGap) + LINE.wide * titleLines + pt(SPACE.afterJobTitle);
   return head + LINE.body * (employerLines + bulletLines) + pt(SPACE.afterEmployer);
 }
 
 function titleHeight(title: string | undefined) {
   if (title === undefined) return 0;
-  return pt(SPACE.beforeTitle) + LINE.body * lineCount(title, TEXT_WIDTH, 'bold') + pt(SPACE.afterTitle);
+  return (
+    pt(SPACE.beforeTitle) + LINE.body * lineCount(title, TEXT_WIDTH, 'bold') + pt(SPACE.afterTitle)
+  );
 }
 
 function ratedHeight(items: { name: string }[]) {

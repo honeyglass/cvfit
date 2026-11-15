@@ -22,13 +22,19 @@ test('refuses a level above five', () => {
   assert.equal(languages?.kind, 'rated');
   if (languages?.kind === 'rated') languages.items[0] = { name: 'TypeScript', level: 6 };
   const result = check(cv);
-  assert.deepEqual(result.error?.issues.map(issue => issue.path), ['blocks.7.items.0.level']);
+  assert.deepEqual(
+    result.error?.issues.map(issue => issue.path),
+    ['blocks.7.items.0.level'],
+  );
 });
 
 test('refuses a language that is not a two-letter code', () => {
   const cv: Record<string, unknown> = fixture();
   cv.language = 'english';
-  assert.deepEqual(check(cv).error?.issues.map(issue => issue.path), ['language']);
+  assert.deepEqual(
+    check(cv).error?.issues.map(issue => issue.path),
+    ['language'],
+  );
 });
 
 test('a profile may name the CV it belongs to', () => {
@@ -70,7 +76,10 @@ test('a profile hides a block, replaces fields, reorders and names its own photo
   };
   const cv = unwrap(check(fixture(), profile));
   assert.deepEqual([cv.person.role, cv.person.photo], ['Staff Engineer', 'photos/acme.png']);
-  assert.deepEqual(cv.blocks.slice(0, 3).map(block => block.id), ['bluebird', 'northwind', 'lumen']);
+  assert.deepEqual(
+    cv.blocks.slice(0, 3).map(block => block.id),
+    ['bluebird', 'northwind', 'lumen'],
+  );
   const northwind = cv.blocks[1];
   assert.deepEqual(northwind?.kind === 'job' && northwind.bullets, ['Only this']);
 });
@@ -84,8 +93,13 @@ test('a profile shows a block the master hides', () => {
 });
 
 test('refuses a profile that names an unknown block or changes a kind', () => {
-  assert.deepEqual(codes(check(fixture(), { blocks: { nobody: { hidden: true } } })), ['UNKNOWN_BLOCK']);
+  assert.deepEqual(codes(check(fixture(), { blocks: { nobody: { hidden: true } } })), [
+    'UNKNOWN_BLOCK',
+  ]);
   assert.deepEqual(codes(check(fixture(), { order: ['nobody'] })), ['UNKNOWN_BLOCK']);
   const changed = check(fixture(), { blocks: { northwind: { kind: 'list' } } });
-  assert.deepEqual(changed.error?.issues.map(issue => issue.path), ['blocks.northwind']);
+  assert.deepEqual(
+    changed.error?.issues.map(issue => issue.path),
+    ['blocks.northwind'],
+  );
 });

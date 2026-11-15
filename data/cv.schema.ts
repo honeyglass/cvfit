@@ -20,7 +20,10 @@ const text = z.string().max(LIMITS.text).refine(isVisibleLine, 'Expected one lin
 const id = z
   .string()
   .max(60)
-  .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'Expected lower-case words joined by hyphens, such as additional-skills');
+  .regex(
+    /^[a-z0-9]+(-[a-z0-9]+)*$/,
+    'Expected lower-case words joined by hyphens, such as additional-skills',
+  );
 const level = z.int().min(0).max(LIMITS.level);
 const page = z.int().min(1).max(LIMITS.pages);
 const link = z
@@ -47,9 +50,24 @@ const Job = z.strictObject({
   bullets: z.array(text).max(LIMITS.items),
 });
 // A right-column block may leave out its title when it is the only block of its section.
-const Rated = z.strictObject({ ...common, kind: z.literal('rated'), title: text.optional(), items: items(RatedItem) });
-const List = z.strictObject({ ...common, kind: z.literal('list'), title: text.optional(), items: items(text) });
-const Entries = z.strictObject({ ...common, kind: z.literal('entries'), title: text.optional(), items: items(EntryItem) });
+const Rated = z.strictObject({
+  ...common,
+  kind: z.literal('rated'),
+  title: text.optional(),
+  items: items(RatedItem),
+});
+const List = z.strictObject({
+  ...common,
+  kind: z.literal('list'),
+  title: text.optional(),
+  items: items(text),
+});
+const Entries = z.strictObject({
+  ...common,
+  kind: z.literal('entries'),
+  title: text.optional(),
+  items: items(EntryItem),
+});
 
 export const Block = z.discriminatedUnion('kind', [Job, Rated, List, Entries]);
 export type Block = z.output<typeof Block>;
@@ -66,15 +84,26 @@ export const PATCH = {
 };
 
 export const ITEM = { job: text, rated: RatedItem, list: text, entries: EntryItem };
-export const ITEM_PATCH = { job: text, rated: RatedItem.partial(), list: text, entries: EntryItem.partial() };
+export const ITEM_PATCH = {
+  job: text,
+  rated: RatedItem.partial(),
+  list: text,
+  entries: EntryItem.partial(),
+};
 
 // A path relative to the data folder; the place that opens the file checks where it leads.
 const photo = z.string().min(1).max(200);
 
-export const ContactItem = z.strictObject({ icon: z.enum(ICONS), lines: z.array(text).min(1).max(3), link: link.optional() });
+export const ContactItem = z.strictObject({
+  icon: z.enum(ICONS),
+  lines: z.array(text).min(1).max(3),
+  link: link.optional(),
+});
 
 /** An ISO 639-1 code such as 'en' or 'de', so an agent can pick the CV in the posting's language. */
-const language = z.string().regex(/^[a-z]{2}$/, 'Expected a two-letter language code, such as en or de');
+const language = z
+  .string()
+  .regex(/^[a-z]{2}$/, 'Expected a two-letter language code, such as en or de');
 
 export const Master = z.strictObject({
   language,

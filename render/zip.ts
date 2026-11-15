@@ -33,7 +33,8 @@ export async function stable(docx: Uint8Array) {
 }
 
 // The ids of the links, in the order the document uses them.
-const linkIds = (xml: string) => [...xml.matchAll(/<w:hyperlink[^>]*r:id="([^"]+)"/g)].flatMap(match => match[1] ?? []);
+const linkIds = (xml: string) =>
+  [...xml.matchAll(/<w:hyperlink[^>]*r:id="([^"]+)"/g)].flatMap(match => match[1] ?? []);
 
 function rewritten(name: string, bytes: Uint8Array, links: string[]) {
   const text = () => new TextDecoder().decode(bytes);
@@ -46,11 +47,15 @@ function rewritten(name: string, bytes: Uint8Array, links: string[]) {
 // Google Docs sizes a line by the font of its runs. With a 1 pt font on the photo run, the
 // timeline below starts right at the photo, not one text descent lower. The photo is the first drawing.
 const shrinkPhotoRun = (xml: string) =>
-  xml.replace('<w:r><w:drawing>', '<w:r><w:rPr><w:sz w:val="2"/><w:szCs w:val="2"/></w:rPr><w:drawing>');
+  xml.replace(
+    '<w:r><w:drawing>',
+    '<w:r><w:rPr><w:sz w:val="2"/><w:szCs w:val="2"/></w:rPr><w:drawing>',
+  );
 
 function renameLinks(xml: string, links: string[]) {
   let renamed = xml;
-  for (const [index, id] of links.entries()) renamed = renamed.replaceAll(`"${id}"`, `"rIdLink${index + 1}"`);
+  for (const [index, id] of links.entries())
+    renamed = renamed.replaceAll(`"${id}"`, `"rIdLink${index + 1}"`);
   return renamed;
 }
 

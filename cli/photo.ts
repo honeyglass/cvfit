@@ -64,9 +64,14 @@ async function cvOwner(home: string, explicit: string | undefined): Promise<Resu
   const raw = await readJson(cv.data.path, 'cv');
   if (raw.error !== null) return raw;
   const master = Master.safeParse(raw.data);
-  if (master.success === false) return rejected('photo set', schemaIssues(master.error, [], 'master'));
+  if (master.success === false)
+    return rejected('photo set', schemaIssues(master.error, [], 'master'));
   const photo = `cvs/${cv.data.name}.png`;
-  return done({ path: cv.data.path, photo, content: { ...master.data, person: { ...master.data.person, photo } } });
+  return done({
+    path: cv.data.path,
+    photo,
+    content: { ...master.data, person: { ...master.data.person, photo } },
+  });
 }
 
 // A profile with its own photo; the name is one profilePath() found among the existing files.
@@ -76,9 +81,14 @@ async function profileOwner(home: string, name: string): Promise<Result<Owner>> 
   const raw = await readJson(path.data, 'profile');
   if (raw.error !== null) return raw;
   const profile = Profile.safeParse(raw.data);
-  if (profile.success === false) return rejected('photo set', schemaIssues(profile.error, [], 'profile'));
+  if (profile.success === false)
+    return rejected('photo set', schemaIssues(profile.error, [], 'profile'));
   const photo = `profiles/${name}.png`;
-  return done({ path: path.data, photo, content: { ...profile.data, person: { ...profile.data.person, photo } } });
+  return done({
+    path: path.data,
+    photo,
+    content: { ...profile.data, person: { ...profile.data.person, photo } },
+  });
 }
 
 async function squared(path: string): Promise<Result<Uint8Array>> {

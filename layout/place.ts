@@ -34,7 +34,12 @@ type Spot = Placed & { page: number; bottom: number };
 export function place(cv: Master): Result<Plan> {
   const left = fillColumn(cv, 'left');
   const right = fillColumn(cv, 'right');
-  const issues = [...tooTall(left), ...tooTall(right), ...overflow(cv, left, 'left'), ...overflow(cv, right, 'right')];
+  const issues = [
+    ...tooTall(left),
+    ...tooTall(right),
+    ...overflow(cv, left, 'left'),
+    ...overflow(cv, right, 'right'),
+  ];
   if (issues.length > 0) return rejected('place', issues);
   const count = Math.max(1, ...[...left, ...right].map(spot => spot.page + 1));
   const pages = Array.from({ length: count }, (_, page) => ({
@@ -53,7 +58,9 @@ function fillColumn(cv: Master, side: Side) {
     if (COLUMN[block.kind] !== side) continue;
     const pinned = (block.page ?? 1) - 1;
     if (pinned > page) [page, y, previous] = [pinned, columnStart(cv, side, pinned), null];
-    const fitsHere = previous === null || y + heightWith(headingOf(block, previous, side, page), block) <= COLUMN_HEIGHT;
+    const fitsHere =
+      previous === null ||
+      y + heightWith(headingOf(block, previous, side, page), block) <= COLUMN_HEIGHT;
     if (fitsHere === false) [page, y, previous] = [page + 1, columnStart(cv, side, page + 1), null];
     const heading = headingOf(block, previous, side, page);
     const height = heightWith(heading, block);

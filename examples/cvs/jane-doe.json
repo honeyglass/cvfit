@@ -11,34 +11,23 @@
     "items": [
       {
         "icon": "pin",
-        "lines": [
-          "Germany, Berlin"
-        ]
+        "lines": ["Germany, Berlin"]
       },
       {
         "icon": "home",
-        "lines": [
-          "Example Street 1",
-          "10115 Berlin"
-        ]
+        "lines": ["Example Street 1", "10115 Berlin"]
       },
       {
         "icon": "phone",
-        "lines": [
-          "+49 (0) 30 000 000"
-        ]
+        "lines": ["+49 (0) 30 000 000"]
       },
       {
         "icon": "mail",
-        "lines": [
-          "jane.doe@example.com"
-        ]
+        "lines": ["jane.doe@example.com"]
       },
       {
         "icon": "globe",
-        "lines": [
-          "Profile »"
-        ],
+        "lines": ["Profile »"],
         "link": "https://example.com/jane"
       }
     ]
@@ -84,10 +73,7 @@
       "title": "Working Student",
       "place": "Berlin (DE)",
       "employer": "Campus Software Lab",
-      "bullets": [
-        "Maintained the booking system of the university library",
-        "Role: Engineer"
-      ]
+      "bullets": ["Maintained the booking system of the university library", "Role: Engineer"]
     },
     {
       "id": "languages",
@@ -118,25 +104,14 @@
       "kind": "list",
       "section": "Skills",
       "title": "Tools",
-      "items": [
-        "PostgreSQL",
-        "Kafka",
-        "Kubernetes",
-        "Terraform",
-        "Grafana",
-        "OpenTelemetry"
-      ]
+      "items": ["PostgreSQL", "Kafka", "Kubernetes", "Terraform", "Grafana", "OpenTelemetry"]
     },
     {
       "id": "strengths",
       "kind": "list",
       "section": "Skills",
       "title": "Strengths",
-      "items": [
-        "Mentoring",
-        "Incident handling",
-        "Clear writing"
-      ]
+      "items": ["Mentoring", "Incident handling", "Clear writing"]
     },
     {
       "id": "spoken",

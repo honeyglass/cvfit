@@ -1,9 +1,6 @@
 {
   "cv": "jane-doe",
-  "order": [
-    "tools",
-    "languages"
-  ],
+  "order": ["tools", "languages"],
   "blocks": {
     "strengths": {
       "hidden": true

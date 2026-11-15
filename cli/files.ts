@@ -31,7 +31,8 @@ export async function readJson(path: string, option: string): Promise<Result<unk
   if (text === null) return rejected('read', [fileNotFound(path, option)]);
   if (Buffer.byteLength(text) > LIMITS.inputBytes) return rejected('read', [tooLarge(option)]);
   const value = trySync$((): unknown => JSON.parse(text));
-  if (value.error !== null) return rejected('read', [invalidJson(`The file ${shown(path)}`)], value.error);
+  if (value.error !== null)
+    return rejected('read', [invalidJson(`The file ${shown(path)}`)], value.error);
   return done(value.data);
 }
 
@@ -66,7 +67,8 @@ export async function photoBytes(folder: string, photo: string): Promise<Result<
   if (leaves(folder, path)) return rejected('read', [pathOutside('person.photo', photo, folder)]);
   const real = await $try(realpath(path), { or: null, expected: isMissing });
   if (real === null) return rejected('read', [fileNotFound(path, 'person.photo')]);
-  if (leaves(await realpath(folder), real)) return rejected('read', [pathOutside('person.photo', photo, folder)]);
+  if (leaves(await realpath(folder), real))
+    return rejected('read', [pathOutside('person.photo', photo, folder)]);
   return done(await readFile(real));
 }
 
@@ -76,7 +78,8 @@ export async function photoBytes(folder: string, photo: string): Promise<Result<
  * @returns the absolute path to write the .docx to
  */
 export async function outputPath(cwd: string, out: string | undefined): Promise<Result<string>> {
-  if (out === undefined) return rejected('build', [missingOption('out', 'the path of the .docx to write')]);
+  if (out === undefined)
+    return rejected('build', [missingOption('out', 'the path of the .docx to write')]);
   if (out.endsWith('.docx') === false) return rejected('build', [wrongExtension(out)]);
   const path = resolve(cwd, out);
   if (leaves(cwd, path)) return rejected('build', [pathOutside('out', out, cwd)]);
