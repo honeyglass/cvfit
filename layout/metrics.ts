@@ -53,8 +53,13 @@ export const WIDTH = {
 /** Open Sans 10 pt single and at 1.15, Calibri 14 pt, Arial 11 pt. */
 export const LINE = { body: 13.62, wide: 15.66, heading: 17.09, dots: 12.65 } as const;
 
-/** The body is 794.9 pt high; spacer paragraphs take 3 pt and the estimate may miss by 4 pt. */
-export const COLUMN_HEIGHT = 788;
+/**
+ * The body is 794.9 pt high; spacer paragraphs take 3 pt, and 8 pt stay free for the estimate.
+ *
+ * Google Docs set a column of the reference CV up to 4.1 pt lower than estimated, summed over its
+ * jobs, so the reserve is twice that.
+ */
+export const COLUMN_HEIGHT = 784;
 
 /** Below the name block on the first page, measured in the reference PDF; below a spacer on the others. */
 export const LEFT_START = { first: 181, other: 3 } as const;
