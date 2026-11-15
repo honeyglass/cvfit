@@ -15,59 +15,124 @@
 
 ---
 
-## Introduction
+## What is oriko?
 
-oriko is an agent-driven CLI. You give an AI agent such as Claude Code a job posting; the agent
-reads your CV through oriko, writes a version for that posting, checks that it fits the pages and
-builds the file. Every answer is JSON and every refusal says how to fix it, so the agent works
-without you in the loop, and you can run each command yourself as well
-([what makes it agent-driven](#working-with-an-agent)).
+oriko makes a fitting version of your CV for every job you apply to.
+You name the job, an AI assistant does the rest.
 
-oriko keeps your CV as a JSON file and builds it as a two-column `.docx` that Google Docs opens
-and saves as PDF. For each job posting you write a small profile that hides, reorders or shortens
-parts of the CV. oriko places every block whole on the pages: a job with its bullets, or a skill
-group with its title, moves to the next page as one piece when it no longer fits.
+**How it works, in one minute:**
 
-**Why use oriko?**
+1. 📝 **You write your CV once.** Jobs, skills, languages, contact details.
+2. 📨 **You give the AI assistant a job posting.** In plain words, in any language.
+3. 🤖 **The assistant tailors your CV.** It moves the matching skills up, hides what does not
+   help, and shortens long lists. It never invents anything.
+4. 👀 **You see the result right away**, as a preview of every page in the terminal.
+5. 📄 **You get a Word file.** Open it in Google Docs and save it as PDF.
 
-- 🤖 **Agent-driven**: JSON in and out, a schema for every command, refusals with a hint, and a
-  Claude Code skill that runs the whole flow.
-- 🧱 **Whole blocks**: a job never breaks across a page; a block that no longer fits moves as one
-  piece.
-- 🎯 **One master, many versions**: a profile of a few lines per posting; a new job in the master
-  reaches every version.
-- ✅ **Nothing invented**: a version hides, reorders and shortens what you wrote, and the skill asks
-  before it states anything new.
-- 🔍 **Preview before build**: the pages as sheets in the terminal, with how full each column is.
-- 🌍 **Several CVs**: one per language or per person, side by side in one data folder.
-- 🛡️ **Pinned supply chain**: pnpm with a three-day release age, no install scripts, exact
-  versions.
+### Why oriko?
+
+- 🤖 **Built for AI assistants**: oriko is a command-line tool an AI agent can drive on its own,
+  from the first look at your CV to the finished file.
+- 🧱 **Clean pages**: a job never breaks across two pages. If it does not fit, it moves to the next
+  page as a whole.
+- 🎯 **One CV, many versions**: each job posting gets a small version file. Add a new job to your
+  CV once, and every version has it.
+- ✅ **Honest by design**: a version only hides, reorders and shortens what you wrote. New claims
+  need your yes.
+- 👀 **Preview before you build**: see every page in the terminal, and how full it is.
+- 🌍 **Several CVs**: one per language or per person, side by side.
+- 🛡️ **Safe dependencies**: new package versions wait three days, no install scripts run, every
+  version is pinned.
 
 ### oriko vs editing a document by hand
 
 | Task | Word or Google Docs by hand | **oriko** |
 | :--- | :--- | :--- |
-| **Add a job** | ⚠️ move text boxes and lines yourself | ✅ `block add`; the rest moves down |
-| **A version per posting** | ❌ copy the document, edit each copy | ✅ a profile of a few lines |
-| **Change every version** | ❌ in every copy | ✅ once, in the master |
-| **Page breaks** | ⚠️ checked by eye after the edit | ✅ planned before the build, blocks stay whole |
-| **Work with an agent** | ❌ copy and paste | ✅ commands, JSON answers and a skill |
-| **Stay truthful** | ⚠️ up to you | ✅ the skill adds no fact you did not state |
+| **Add a job** | ⚠️ move text boxes and lines yourself | ✅ one command; everything below moves down |
+| **A version per job posting** | ❌ copy the document, edit every copy | ✅ a small file with the changes |
+| **Change all versions** | ❌ in every copy | ✅ once, in your CV |
+| **Page breaks** | ⚠️ checked by eye, after the edit | ✅ planned before the file exists |
+| **Work with an AI assistant** | ❌ copy and paste | ✅ the assistant runs oriko itself |
+| **Stay truthful** | ⚠️ up to you | ✅ nothing is added that you did not say |
+
+## Installation
+
+oriko needs Node 24 or newer and pnpm.
+
+```sh
+git clone git@github.com:honeyglass/oriko.git
+cd oriko
+pnpm install --frozen-lockfile
+node bin/oriko.ts schema
+```
+
+> [!NOTE]
+> There is no build step: Node runs the TypeScript sources directly. The examples below write
+> `oriko` for `node bin/oriko.ts`.
+
+## Working with an agent
+
+Open [Claude Code](https://claude.com/claude-code) in this folder and say what you want. The skill
+in [`.claude/skills/oriko/`](.claude/skills/oriko/SKILL.md) tells the agent how to use oriko.
+
+```text
+Tailor my CV to this job: <paste the job posting>
+Create a new CV for me. Since 03/2021 I have worked as a data engineer at …
+```
+
+> [!TIP]
+> You can write to the agent in any language. It keeps your CV in the CV's own language.
+
+**What the agent does for a job posting:**
+
+1. Picks your CV in the language of the posting.
+2. Reads the parts of your CV that matter for this job.
+3. Writes a version: matching skills first, unrelated old jobs hidden, long lists shortened.
+4. Checks that every block fits on the pages, and fixes it if not.
+5. Builds the Word file and shows you the preview, every change, and why it made it.
+6. Tells you what the posting asks for that your CV does not show yet.
+
+> [!IMPORTANT]
+> The agent never adds a skill, a level, a date or a fact you did not state. It never changes your
+> CV for a single job, and never overwrites a version you already have. When it needs any of that,
+> it stops and asks you.
 
 <details>
-<summary><b>🔬 How a version is made</b></summary>
+<summary><b>🔬 For developers: what makes oriko agent-driven</b></summary>
 
-| Step | Command | Result |
-| :--- | :--- | :--- |
-| Read the CV | `oriko show` | the outline, then single blocks in full |
-| Write the version | a file in `profiles/` | hidden blocks, an order, shorter or reworded bullets |
-| Check the pages | `oriko plan` | which block lands on which page, or what overflows |
-| Look at it | `oriko preview` | the sheets below |
-| Build | `oriko build` | the `.docx` for Google Docs |
+| Property | What the agent gets |
+| :--- | :--- |
+| JSON in, JSON out | each command takes its input as `--json` or stdin and answers one JSON object |
+| Self-describing | `oriko schema` lists the commands, `oriko schema <command>` the exact input |
+| Refusals that say what to do | exit 1 with an issue code, the path of the wrong value and a hint |
+| Nothing half-written | a refused command writes nothing, and every write goes through the same checks |
+| Dry runs | `--dry-run` answers what would happen and writes no file |
+| Page plan before the file | `plan` says which block lands on which page, so the agent fixes an overflow first |
+| A fixed flow | the skill is a state machine with bounded retries; it stops and asks after three |
+
+A refusal the agent reads and acts on:
+
+```json
+{
+  "ok": false,
+  "kind": "fix",
+  "issues": [
+    {
+      "code": "PAGE_OVERFLOW",
+      "path": "pages",
+      "message": "These blocks of the left column land after page 1: campus",
+      "hint": "Hide or shorten blocks of the left column, remove a page pin, or raise \"pages\""
+    }
+  ]
+}
+```
 
 </details>
 
-Before you build, the terminal shows each page as a sheet ([more on the preview](#terminal-preview)):
+## Terminal preview
+
+**See your CV before the file exists.** `oriko preview` draws every page in the terminal, the left
+column beside the right one, as in the finished document:
 
 ```text
 ╭─ Page 1 of 2 ────────────────────────────────────────┬───────────────────────────╮
@@ -89,65 +154,41 @@ Before you build, the terminal shows each page as a sheet ([more on the preview]
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-## Installation
-
-oriko needs Node 24 or newer, which runs its TypeScript directly, and pnpm.
-
 ```sh
-git clone git@github.com:honeyglass/oriko.git
-cd oriko
-pnpm install --frozen-lockfile
-node bin/oriko.ts schema
+oriko preview --profile acme      # the version for one job posting
+oriko preview --cv jane-doe       # your CV as it stands
 ```
 
-The examples below write `oriko` for `node bin/oriko.ts`.
+| Mark | Meaning |
+| :--- | :--- |
+| `╭───────╮` with `◠ ◠` | where your photo goes; the terminal shows a face, the file shows the photo |
+| `UPPER CASE` | a section heading, such as Professional Experience |
+| `●` and `│` | a job: its dates, its marker and its timeline |
+| `✓` | a bullet point of a job |
+| `●●●●○` | a skill level, from 0 to 5 dots |
+| `▰▰▰▱▱` | how full the column is; at 100 % the next block moves to the next page |
 
-## Working with an agent
-
-[`.claude/skills/oriko/`](.claude/skills/oriko/SKILL.md) is a skill for Claude Code. In a session
-in this repository, you write what you want in plain words:
+When your CV needs more pages than allowed, the preview names the blocks that do not fit and says
+what to change:
 
 ```text
-Pass meinen Lebenslauf an diese Stelle an: <the job posting>
-Leg mir einen neuen Lebenslauf an. Ich arbeite seit 03/2021 als Data Engineer bei …
+Refused (fix) at place: the input has 2 issue(s).
+Next: fix every listed issue and call again.
+Nothing was written.
+- PAGE_OVERFLOW at pages: "These blocks of the left column land after page 1: campus". Hide or shorten blocks of the left column, remove a page pin, or raise "pages".
 ```
 
-For a posting, the agent picks the CV in the posting's language, reads the blocks that matter,
-writes a profile, checks it with `oriko plan`, builds the `.docx` and shows you the preview with
-every change and its reason. For a text about your career, it creates or extends a CV with the
-`init`, `block`, `item` and `contact` commands.
+> [!TIP]
+> A page that looks too empty usually has a block pinned to the next page in your CV
+> (`"page": 2`). A version can clear the pin with `"page": null`.
 
-### What makes it agent-driven
+In a pipe, `preview` answers JSON with the sheets in the field `preview`; `--output text` prints
+the sheets there too.
 
-| Property | What the agent gets |
-| :--- | :--- |
-| JSON in, JSON out | each command takes its input as `--json` or stdin and answers one JSON object |
-| Self-describing | `oriko schema` lists the commands, `oriko schema <command>` the exact input |
-| Refusals that say what to do | exit 1 with an issue code, the path of the wrong value and a hint |
-| Nothing half-written | a refused command writes nothing, and every write goes through the same checks |
-| Dry runs | `--dry-run` answers what would happen and writes no file |
-| Page plan before the file | `plan` says which block lands on which page, so the agent fixes an overflow before it builds |
-| Rules of truth | the skill never adds a skill, level, date or fact you did not state, and asks instead |
-
-A refusal the agent reads and acts on:
-
-```json
-{
-  "ok": false,
-  "kind": "fix",
-  "issues": [
-    {
-      "code": "PAGE_OVERFLOW",
-      "path": "pages",
-      "message": "These blocks of the left column land after page 1: campus",
-      "hint": "Hide or shorten blocks of the left column, remove a page pin, or raise \"pages\""
-    }
-  ]
-}
-```
-
-The skill runs as a fixed flow, from setup over the posting to the build, with at most three
-attempts to make a profile fit before it stops and asks you.
+> [!WARNING]
+> The preview shows what stands on which page, in which order, and how full each column is. It
+> does not show fonts, exact distances or the photo. The page plan behind it is the one `build`
+> uses.
 
 ## Your data
 
@@ -155,17 +196,38 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
 
 ```text
 ~/.oriko/
-  cvs/jane-doe.json        a master CV: language, person, contact, pages, blocks
+  cvs/jane-doe.json        your CV: language, person, contact, pages, blocks
   cvs/jane-doe.png         its photo
-  profiles/acme.json       one profile per job posting, naming its master in "cv"
+  profiles/acme.json       one version per job posting, naming its CV in "cv"
 ```
 
-[`examples/`](examples/) holds a complete data folder to try it: pass `--home examples`.
+> [!NOTE]
+> Your CVs never go into the repository. They stay in `~/.oriko` on your computer. An AI
+> assistant you work with reads the parts of them it needs, as with any file you show it.
+
+> [!TIP]
+> Try oriko without your own data: [`examples/`](examples/) holds a complete data folder. Add
+> `--home examples` to any command.
+
+## Commands
+
+Every command answers one JSON object, exit 0 for success and 1 for a refusal with its issues and a
+hint each. `oriko schema` lists every command and option, `oriko schema <command>` the input one
+accepts.
+
+| Command | What it does |
+| :--- | :--- |
+| `cvs`, `profiles` | list your CVs and versions, and whether each one fits its pages |
+| `show` | outline of a CV; `--block <id>` shows one block in full |
+| `plan`, `preview` | the page plan as JSON, or as the sheets above |
+| `build --out <file>.docx` | writes the Word file; `--dry-run` writes nothing |
+| `init`, `cv update` | create a CV, change its language, pages, person or contact title |
+| `block …`, `item …`, `contact …` | add, update, remove and move blocks, their items and contact lines |
+| `photo set <file>` | stores a PNG or JPEG as the square photo of a CV, or of one version |
 
 ## First steps by hand
 
-An agent runs these same commands for you (see [Working with an agent](#working-with-an-agent)).
-By hand, they look like this.
+The agent runs these commands for you. By hand, they look like this.
 
 Create a CV and fill it:
 
@@ -177,7 +239,7 @@ oriko block add --json '{"block":{"id":"tools","kind":"list","section":"Skills",
 oriko photo set ~/Pictures/portrait.jpg
 ```
 
-Tailor it to a posting with a profile in `~/.oriko/profiles/acme.json`:
+Write a version for one job posting in `~/.oriko/profiles/acme.json`:
 
 ```json
 { "cv": "jane-doe", "blocks": { "tools": { "items": ["Go", "Kafka"] } } }
@@ -197,85 +259,6 @@ Upload `acme.docx` to Google Docs and save it there with File, Download, PDF.
 > The layout is tuned to how Google Docs sets the file, with Open Sans and Calibri. Word or
 > LibreOffice set the same file with other line breaks, and a block that fits in Google Docs may
 > spill over elsewhere.
-
-## Terminal preview
-
-`oriko preview` draws the pages as oriko will lay them out, so you can compare profiles before you
-build one. It needs no Google Docs, no fonts and no network.
-
-```sh
-oriko preview --profile acme      # a profile, with its master
-oriko preview --cv jane-doe       # a master as it stands
-```
-
-In a terminal it prints the sheets. In a pipe it answers JSON with the same text in the field
-`preview`; `--output text` prints the sheets there too.
-
-### What a sheet shows
-
-Each page is one frame of 84 characters, the left column beside the right one, as in the
-document. The second page of the example profile `acme`:
-
-```text
-╭─ Page 2 of 2 ────────────────────────────────────────┬───────────────────────────╮
-│ PROFESSIONAL EXPERIENCE                              │ LANGUAGES                 │
-│                                                      │ German              ●●●●● │
-│ 10/2014 – 05/2017 ● Working Student                  │ English             ●●●●○ │
-│                   │ Campus Software Lab · Berlin     │                           │
-│                   │   (DE)                           │ AWARDS                    │
-│                   │ ✓ Maintained the booking         │ Certified Kubernetes      │
-│                   │   system of the university       │ Administrator             │
-│                   │   library                        │ 09/2022                   │
-│                   │ ✓ Role: Engineer                 │                           │
-├──────────────────────────────────────────────────────┴───────────────────────────┤
-│ Left  ▰▰▰▱▱▱▱▱▱▱ 26 % full     Right ▰▰▱▱▱▱▱▱▱▱ 23 % full                        │
-╰──────────────────────────────────────────────────────────────────────────────────╯
-```
-
-| Mark | Meaning |
-| :--- | :--- |
-| `╭───────╮` with `◠ ◠` | where the photo stands; the terminal shows a face, never the picture |
-| `UPPER CASE` | a section heading, printed once per page above its first block |
-| `●` and `│` | a job's date, its marker and its timeline, with the employer and place below |
-| `✓` | a bullet of a job |
-| `●●●●○` | a rated skill, one filled dot per level from 0 to 5 |
-| `▰▰▰▱▱` | how full the column is; at 100 % the next block moves to the next page |
-
-The fill bars tell you where room is left. A short page, as page 2 above, often comes from a
-block pinned to a page in the master (`"page": 2`); a profile clears the pin with `"page": null`.
-
-### When the CV does not fit
-
-When the blocks need more pages than the master allows, `preview` draws nothing and names the
-blocks that land too late, with what to change:
-
-```text
-Refused (fix) at place: the input has 2 issue(s).
-Next: fix every listed issue and call again.
-Nothing was written.
-- PAGE_OVERFLOW at pages: "These blocks of the left column land after page 1: campus". Hide or shorten blocks of the left column, remove a page pin, or raise "pages".
-```
-
-> [!WARNING]
-> The preview shows what stands on which page, in which order, and how full each column is. It
-> does not show fonts, exact distances or the photo, and its line breaks are the terminal's, not
-> the document's. The page plan behind it is the one `build` uses.
-
-## Commands
-
-Every command answers one JSON object on stdout, exit 0 for success and 1 for a refusal with its
-issues and a hint each. `oriko schema` lists every command and option, `oriko schema <command>`
-the input one accepts.
-
-| Command | What it does |
-| :--- | :--- |
-| `cvs`, `profiles` | list the CVs and the profiles, and whether each one fits its pages |
-| `show` | outline of a CV; `--block <id>` shows one block in full |
-| `plan`, `preview` | the page plan as JSON, or as the sheets above |
-| `build --out <file>.docx` | writes the `.docx`; `--dry-run` writes nothing |
-| `init`, `cv update` | create a CV, change its language, pages, person or contact title |
-| `block …`, `item …`, `contact …` | add, update, remove and move blocks, their items and contact lines |
-| `photo set <file>` | stores a PNG or JPEG as the square photo of a CV, or of one profile |
 
 ## Development
 
