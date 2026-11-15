@@ -17,17 +17,12 @@
 
 ## What is oriko?
 
-oriko makes a fitting version of your CV for every job you apply to.
-You name the job, an AI assistant does the rest.
-
-**How it works, in one minute:**
-
-1. 📝 **You write your CV once.** Jobs, skills, languages, contact details.
-2. 📨 **You give the AI assistant a job posting.** In plain words, in any language.
-3. 🤖 **The assistant tailors your CV.** It moves the matching skills up, hides what does not
-   help, and shortens long lists. It never invents anything.
-4. 👀 **You see the result right away**, as a preview of every page in the terminal.
-5. 📄 **You get a Word file.** Open it in Google Docs and save it as PDF.
+oriko makes a fitting version of your CV for every job you apply to. You write your CV once,
+with your jobs, skills, languages and contact details. When you find a job you like, you give the
+posting to an AI assistant, in plain words and in any language. The assistant tailors your CV to
+it: it moves the matching skills up, hides what does not help and shortens long lists, and it
+never invents anything. You see the result right away as a preview of every page in the
+terminal, and you get a Word file that you open in Google Docs and save as PDF.
 
 ### Why oriko?
 
