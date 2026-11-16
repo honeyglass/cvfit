@@ -8,44 +8,43 @@
 │   ╰────────╯                                         │ +49 (0) 30 000 000        │
 │                                                      │ jane.doe@example.com      │
 │                                                      │ Profile »                 │
-│ PROFESSIONAL EXPERIENCE ──────────────────────────── │                           │
 │                                                      │                           │
-│ ● Senior Backend Engineer            03/2021 – today │ SKILLS ────────────────── │
-│ │                                                    │                           │
-│ │ Northwind Logistics GmbH · Berlin (DE)             │ Programming Languages     │
-│ │ › Rebuilt the shipment tracking service in Go      │   Go                ●●●●● │
-│ │   for ten times the load, at 40,000 events per     │   TypeScript        ●●●●○ │
-│ │   second                                           │   SQL               ●●●●○ │
-│ │ › Moved the event history from PostgreSQL to       │   Java              ●●●○○ │
-│ │   ClickHouse, so reports run in seconds            │   Rust              ●●○○○ │
-│ │ › Introduced contract tests between twelve         │                           │
-│ │   services and cut failed releases by half         │ Backend                   │
-│ │ › Designed OAuth2 and OIDC sign-in for the         │   API design        ●●●●● │
-│ │   partner API with per-tenant scopes               │   Event-driven      ●●●●● │
-│ │ › Led the architecture group of four teams and     │   systems                 │
-│ │   wrote its decision records                       │   Multi-tenancy     ●●●●○ │
-│ │ › Role: Engineer, Architect, Mentor                │   OAuth2 and OIDC   ●●●●○ │
+│ PROFESSIONAL EXPERIENCE ──────────────────────────── │ SKILLS ────────────────── │
 │                                                      │                           │
-│ ● Backend Engineer                 06/2017 – 02/2021 │ Tools                     │
-│ │                                                    │   PostgreSQL, ClickHouse, │
-│ │ Bluebird Payments AG · Hamburg (DE)                │   Kafka, gRPC,            │
-│ │ › Delivered the settlement engine for card         │   Kubernetes, Terraform,  │
-│ │   payments in Go and PostgreSQL                    │   Grafana, OpenTelemetry  │
-│ │ › Split the payment monolith into six services     │                           │
-│ │   behind a gRPC gateway                            │ Strengths                 │
-│ │ › Built idempotent Kafka consumers, so no          │   Mentoring, Incident     │
-│ │   payment was booked twice after a failover        │   handling, Clear writing │
-│ │ › Ran the on-call rotation of eight engineers      │                           │
+│ ● Senior Backend Engineer            03/2021 – today │ Programming Languages     │
+│ │                                                    │   Go                ●●●●● │
+│ │ Northwind Logistics GmbH · Berlin (DE)             │   TypeScript        ●●●●○ │
+│ │ › Rebuilt the shipment tracking service in Go      │   SQL               ●●●●○ │
+│ │   for ten times the load, at 40,000 events per     │   Java              ●●●○○ │
+│ │   second                                           │   Rust              ●●○○○ │
+│ │ › Moved the event history from PostgreSQL to       │                           │
+│ │   ClickHouse, so reports run in seconds            │ Backend                   │
+│ │ › Introduced contract tests between twelve         │   API design        ●●●●● │
+│ │   services and cut failed releases by half         │   Event-driven      ●●●●● │
+│ │ › Designed OAuth2 and OIDC sign-in for the         │   systems                 │
+│ │   partner API with per-tenant scopes               │   Multi-tenancy     ●●●●○ │
+│ │ › Led the architecture group of four teams and     │   OAuth2 and OIDC   ●●●●○ │
+│ │   wrote its decision records                       │                           │
+│ │ › Role: Engineer, Architect, Mentor                │ Tools                     │
+│                                                      │   PostgreSQL, ClickHouse, │
+│ ● Backend Engineer                 06/2017 – 02/2021 │   Kafka, gRPC,            │
+│ │                                                    │   Kubernetes, Terraform,  │
+│ │ Bluebird Payments AG · Hamburg (DE)                │   Grafana, OpenTelemetry  │
+│ │ › Delivered the settlement engine for card         │                           │
+│ │   payments in Go and PostgreSQL                    │ Strengths                 │
+│ │ › Split the payment monolith into six services     │   Mentoring, Incident     │
+│ │   behind a gRPC gateway                            │   handling, Clear writing │
+│ │ › Built idempotent Kafka consumers, so no          │                           │
+│ │   payment was booked twice after a failover        │                           │
+│ │ › Ran the on-call rotation of eight engineers      │ TALKS ─────────────────── │
 │ │   and wrote the incident playbooks                 │                           │
-│ │ › Role: Engineer, On-call lead                     │ TALKS ─────────────────── │
-│                                                      │                           │
-│                                                      │ Contract tests for twelve │
+│ │ › Role: Engineer, On-call lead                     │ Contract tests for twelve │
 │                                                      │ services                  │
 │                                                      │ GopherCon EU, 2023        │
 │                                                      │ Exactly once is a lie     │
 │                                                      │ Kafka Summit, 2020        │
 ├──────────────────────────────────────────────────────┴───────────────────────────┤
-│ Left  ■■■■■■■■□□ 84 % full     Right ■■■■■■■■■■ 98 % full                        │
+│ Left  ■■■■■■■■□□ 84 % full     Right ■■■■■■■■■■ 97 % full                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 ╭─ Page 2 of 3 ────────── github.com/honeyglass/oriko ─┬───────────────────────────╮

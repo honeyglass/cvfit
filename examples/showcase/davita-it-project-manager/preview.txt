@@ -8,36 +8,36 @@
 │   ╰────────╯                                         │ +49 (0) 40 111 222        │
 │                                                      │ lukas.berger@example.com  │
 │                                                      │                           │
-│ PROFESSIONAL EXPERIENCE ──────────────────────────── │                           │
-│                                                      │ SKILLS ────────────────── │
-│ ● IT Project Lead                    04/2020 – today │                           │
-│ │                                                    │ Technology                │
-│ │ Hanse Logistik IT GmbH · Hamburg (DE)              │   Azure             ●●●●○ │
-│ │ › Led the migration of 120 servers to Azure, by    │   VMware            ●●●●○ │
-│ │   rehost and replatform                            │   AWS               ●●●○○ │
-│ │ › Owned budget of 1.2 million euros and            │   Terraform         ●●●○○ │
-│ │   schedules for three infrastructure projects      │                           │
-│ │ › Made Terraform the standard for new              │ Methods                   │
-│ │   environments                                     │   PRINCE2           ●●●●○ │
-│ │ › Managed five external service providers          │   Scrum             ●●●●○ │
-│ │ › Role: Project lead, Vendor management,           │   Kanban            ●●●○○ │
-│ │   Reporting                                        │   ITIL              ●●●○○ │
+│ PROFESSIONAL EXPERIENCE ──────────────────────────── │ SKILLS ────────────────── │
 │                                                      │                           │
-│ ● IT Project Manager               01/2016 – 03/2020 │ Tools                     │
-│ │                                                    │   Jira, Confluence, MS    │
-│ │ Nordbank Services AG · Hamburg (DE)                │   Project, Power Automate │
-│ │ › Coordinated a data center move with 40           │                           │
-│ │   applications without downtime                    │ Strengths                 │
-│ │ › Supported Scrum teams in a workplace project     │   Communication,          │
-│ │   for 900 desks                                    │   Facilitation,           │
-│ │ › Role: Project lead, Risk management              │   Structure, Stakeholder  │
-│                                                      │   management              │
+│ ● IT Project Lead                    04/2020 – today │ Technology                │
+│ │                                                    │   Azure             ●●●●○ │
+│ │ Hanse Logistik IT GmbH · Hamburg (DE)              │   VMware            ●●●●○ │
+│ │ › Led the migration of 120 servers to Azure, by    │   AWS               ●●●○○ │
+│ │   rehost and replatform                            │   Terraform         ●●●○○ │
+│ │ › Owned budget of 1.2 million euros and            │                           │
+│ │   schedules for three infrastructure projects      │ Methods                   │
+│ │ › Made Terraform the standard for new              │   PRINCE2           ●●●●○ │
+│ │   environments                                     │   Scrum             ●●●●○ │
+│ │ › Managed five external service providers          │   Kanban            ●●●○○ │
+│ │ › Role: Project lead, Vendor management,           │   ITIL              ●●●○○ │
+│ │   Reporting                                        │                           │
+│                                                      │ Tools                     │
+│ ● IT Project Manager               01/2016 – 03/2020 │   Jira, Confluence, MS    │
+│ │                                                    │   Project, Power Automate │
+│ │ Nordbank Services AG · Hamburg (DE)                │                           │
+│ │ › Coordinated a data center move with 40           │ Strengths                 │
+│ │   applications without downtime                    │   Communication,          │
+│ │ › Supported Scrum teams in a workplace project     │   Facilitation,           │
+│ │   for 900 desks                                    │   Structure, Stakeholder  │
+│ │ › Role: Project lead, Risk management              │   management              │
+│                                                      │                           │
 │ ● System Administrator             08/2012 – 12/2015 │                           │
-│ │                                                    │                           │
-│ │ Elbe Medien GmbH · Hamburg (DE)                    │ LANGUAGES ─────────────── │
-│ │ › Ran VMware and Windows Server environments       │                           │
-│ │ › Put a backup and disaster recovery concept       │ German              ●●●●● │
-│ │   into practice                                    │ English             ●●●●○ │
+│ │                                                    │ LANGUAGES ─────────────── │
+│ │ Elbe Medien GmbH · Hamburg (DE)                    │                           │
+│ │ › Ran VMware and Windows Server environments       │ German              ●●●●● │
+│ │ › Put a backup and disaster recovery concept       │ English             ●●●●○ │
+│ │   into practice                                    │                           │
 │                                                      │                           │
 │ ● Apprenticeship IT Specialist for 08/2009 – 07/2012 │                           │
 │ │ System Integration                                 │                           │
@@ -45,7 +45,7 @@
 │ │ Elbe Medien GmbH · Hamburg (DE)                    │                           │
 │ │ › Final exam at the Hamburg Chamber of Commerce    │                           │
 ├──────────────────────────────────────────────────────┴───────────────────────────┤
-│ Left  ■■■■■■■■■■ 99 % full     Right ■■■■■■■■□□ 84 % full                        │
+│ Left  ■■■■■■■■■■ 99 % full     Right ■■■■■■■■■□ 86 % full                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 ╭─ Page 2 of 2 ────────── github.com/honeyglass/oriko ─┬───────────────────────────╮

@@ -11,43 +11,42 @@ Your CV version **galeria-cook** is ready, and it fits on one page. Here is the 
 │   ╰────────╯                                         │ +49 (0) 89 333 444        │
 │                                                      │ marco.weber@example.com   │
 │                                                      │                           │
-│ PROFESSIONAL EXPERIENCE ──────────────────────────── │                           │
-│                                                      │ SKILLS ────────────────── │
-│ ● Cook                               05/2021 – today │                           │
-│ │                                                    │ Strengths                 │
-│ │ Hotel Isarblick · Munich (DE)                      │   Reliability, Teamwork,  │
-│ │ › Prepared up to 250 dishes a day for the          │   Organisation, Guest     │
-│ │   breakfast and lunch buffet                       │   focus                   │
-│ │ › Responsible for receiving goods, storage and     │                           │
-│ │   the monthly stocktake                            │ Know-how                  │
-│ │ › Applied HACCP standards in daily work            │   HACCP, Allergen         │
-│ │ › Role: Cook, Training of apprentices              │   labelling, Stock        │
-│                                                      │   management, Costing     │
-│ ● Junior Cook                      08/2018 – 04/2021 │                           │
-│ │                                                    │ Kitchen                   │
-│ │ Gasthaus Zum Löwen · Augsburg (DE)                 │   Regional cuisine  ●●●●● │
-│ │ › À la carte kitchen with a regional focus         │   Buffet and        ●●●●○ │
-│ │ › Prepared and cleaned up the meat and side dish   │   banquet                 │
-│ │   station                                          │   Vegetarian        ●●●●○ │
-│ │ › Role: Junior cook                                │   cuisine                 │
-│                                                      │   Pastry            ●●○○○ │
-│ ● Apprenticeship as a Cook         09/2015 – 07/2018 │                           │
-│ │                                                    │                           │
-│ │ Gasthaus Zum Löwen · Augsburg (DE)                 │ LANGUAGES ─────────────── │
-│ │ › Final exam at the Swabia Chamber of Commerce     │                           │
-│                                                      │ German              ●●●●● │
-│ ● Service Assistant                06/2013 – 08/2015 │ English             ●●○○○ │
-│ │                                                    │                           │
-│ │ Café Lindner · Augsburg (DE)                       │                           │
-│ │ › Served guests and ran the till at weekends       │ TRAINING ──────────────── │
+│ PROFESSIONAL EXPERIENCE ──────────────────────────── │ SKILLS ────────────────── │
 │                                                      │                           │
+│ ● Cook                               05/2021 – today │ Strengths                 │
+│ │                                                    │   Reliability, Teamwork,  │
+│ │ Hotel Isarblick · Munich (DE)                      │   Organisation, Guest     │
+│ │ › Prepared up to 250 dishes a day for the          │   focus                   │
+│ │   breakfast and lunch buffet                       │                           │
+│ │ › Responsible for receiving goods, storage and     │ Know-how                  │
+│ │   the monthly stocktake                            │   HACCP, Allergen         │
+│ │ › Applied HACCP standards in daily work            │   labelling, Stock        │
+│ │ › Role: Cook, Training of apprentices              │   management, Costing     │
+│                                                      │                           │
+│ ● Junior Cook                      08/2018 – 04/2021 │ Kitchen                   │
+│ │                                                    │   Regional cuisine  ●●●●● │
+│ │ Gasthaus Zum Löwen · Augsburg (DE)                 │   Buffet and        ●●●●○ │
+│ │ › À la carte kitchen with a regional focus         │   banquet                 │
+│ │ › Prepared and cleaned up the meat and side dish   │   Vegetarian        ●●●●○ │
+│ │   station                                          │   cuisine                 │
+│ │ › Role: Junior cook                                │   Pastry            ●●○○○ │
+│                                                      │                           │
+│ ● Apprenticeship as a Cook         09/2015 – 07/2018 │                           │
+│ │                                                    │ LANGUAGES ─────────────── │
+│ │ Gasthaus Zum Löwen · Augsburg (DE)                 │                           │
+│ │ › Final exam at the Swabia Chamber of Commerce     │ German              ●●●●● │
+│                                                      │ English             ●●○○○ │
+│ ● Service Assistant                06/2013 – 08/2015 │                           │
+│ │                                                    │                           │
+│ │ Café Lindner · Augsburg (DE)                       │ TRAINING ──────────────── │
+│ │ › Served guests and ran the till at weekends       │                           │
 │                                                      │ Hygiene training under §  │
 │                                                      │ 43 IfSG                   │
 │                                                      │ 08/2015                   │
 │                                                      │ Pastry basics course      │
 │                                                      │ 02/2020                   │
 ├──────────────────────────────────────────────────────┴───────────────────────────┤
-│ Left  ■■■■■■■■■□ 90 % full     Right ■■■■■■■■■□ 92 % full                        │
+│ Left  ■■■■■■■■■□ 90 % full     Right ■■■■■■■■■□ 94 % full                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 ```
 
