@@ -5,7 +5,7 @@
  * sheets: the same sheets as lists of lines, padded with empty rows to a given height.
  *
  * It shows what stands on which page, in which order, and how full each column is. It does not
- * show fonts or exact distances, and a drawn face stands where the photo is; those exist only
+ * show fonts or exact distances, and Oriko stands where the photo is; those exist only
  * in the .docx.
  *
  * @example io.write(preview(cv, plan));
@@ -20,16 +20,16 @@ const DATE = 18;
 const DOTS = LIMITS.level + 1;
 /** The cells of a fill bar; one cell is a tenth of a column. */
 const BAR = 10;
-/** The placeholder for the photo: the terminal shows where it stands, never the picture. */
+/** Where the photo stands: Oriko, the oriko logo, since the terminal shows no picture. */
 const FACE = [
-  '  ╭─────────╮',
-  '  │         │',
-  '  │  ◠   ◠  │',
-  '  │    ◡    │',
-  '  │         │',
-  '  ╰─────────╯',
+  '  ╭───────┐ ',
+  '  │       └┐',
+  '  │ ●   ●  │',
+  '  │•  ◡   •│',
+  '  │ ── ─── │',
+  '  ╰────────╯',
 ];
-const FACE_WIDTH = 13;
+const FACE_WIDTH = 12;
 
 /**
  * @param cv - a checked CV

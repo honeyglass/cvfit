@@ -79,20 +79,20 @@ test('frames every page, so all of its lines are equally wide', () => {
   assert.equal(lines.filter(line => line.startsWith('╭─ Page')).length, 2);
 });
 
-// Six rows tall, so the place of the photo stands out on paper too.
+// Oriko, six rows tall, so the place of the photo stands out on paper too.
 test('shows a face where the photo stands, on the first page only', () => {
-  assert.equal(text.split('◠   ◠').length - 1, 1);
-  assert.ok(text.indexOf('◠   ◠') < text.indexOf('Page 2 of 2'));
-  const top = lines.findIndex(line => line.includes('╭─────────╮'));
-  assert.ok(lines[top + 5]?.includes('╰─────────╯'));
+  assert.equal(text.split('│ ●   ●  │').length - 1, 1);
+  assert.ok(text.indexOf('│ ●   ●  │') < text.indexOf('Page 2 of 2'));
+  const top = lines.findIndex(line => line.includes('╭───────┐'));
+  assert.ok(lines[top + 5]?.includes('╰────────╯'));
   assert.ok(lines.slice(top, top + 6).some(line => line.includes('Jane')));
 });
 
 // A blank row above the photo, two characters left of it: about the same room, as a row is
 // twice as high as a character is wide. Name and contact start on the photo's first row.
 test('leaves as much room above the photo as left of it, and lines the name up with it', () => {
-  const top = lines.findIndex(line => line.includes('╭─────────╮'));
-  assert.match(lines[top] ?? '', /^│   ╭─────────╮ +Jane │ CONTACT ─+ │$/);
+  const top = lines.findIndex(line => line.includes('╭───────┐'));
+  assert.match(lines[top] ?? '', /^│   ╭───────┐ +Jane │ CONTACT ─+ │$/);
   assert.match(lines[top - 1] ?? '', /^│ +│ +│$/);
   assert.equal(lines[top - 2]?.startsWith('╭─ Page 1'), true);
 });
