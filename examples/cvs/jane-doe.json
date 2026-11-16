@@ -1,0 +1,169 @@
+{
+  "language": "en",
+  "person": {
+    "firstName": "Jane",
+    "lastName": "Doe",
+    "role": "Senior Backend Engineer",
+    "photo": "cvs/jane-doe.png"
+  },
+  "contact": {
+    "title": "Contact",
+    "items": [
+      {
+        "icon": "pin",
+        "lines": [
+          "Germany, Berlin"
+        ]
+      },
+      {
+        "icon": "home",
+        "lines": [
+          "Example Street 1",
+          "10115 Berlin"
+        ]
+      },
+      {
+        "icon": "phone",
+        "lines": [
+          "+49 (0) 30 000 000"
+        ]
+      },
+      {
+        "icon": "mail",
+        "lines": [
+          "jane.doe@example.com"
+        ]
+      },
+      {
+        "icon": "globe",
+        "lines": [
+          "Profile »"
+        ],
+        "link": "https://example.com/jane"
+      }
+    ]
+  },
+  "pages": 2,
+  "blocks": [
+    {
+      "id": "northwind",
+      "kind": "job",
+      "section": "Professional Experience",
+      "from": "03/2021",
+      "to": "today",
+      "title": "Senior Backend Engineer",
+      "place": "Berlin (DE)",
+      "employer": "Northwind Logistics GmbH",
+      "bullets": [
+        "Rebuilt the shipment tracking service for ten times the load",
+        "Introduced contract tests between twelve services",
+        "Role: Engineer, Architect, Mentor"
+      ]
+    },
+    {
+      "id": "bluebird",
+      "kind": "job",
+      "section": "Professional Experience",
+      "from": "06/2017",
+      "to": "02/2021",
+      "title": "Backend Engineer",
+      "place": "Hamburg (DE)",
+      "employer": "Bluebird Payments AG",
+      "bullets": [
+        "Delivered the settlement engine for card payments",
+        "Role: Engineer, On-call lead"
+      ]
+    },
+    {
+      "id": "campus",
+      "kind": "job",
+      "section": "Professional Experience",
+      "page": 2,
+      "from": "10/2014",
+      "to": "05/2017",
+      "title": "Working Student",
+      "place": "Berlin (DE)",
+      "employer": "Campus Software Lab",
+      "bullets": [
+        "Maintained the booking system of the university library",
+        "Role: Engineer"
+      ]
+    },
+    {
+      "id": "languages",
+      "kind": "rated",
+      "section": "Skills",
+      "title": "Programming Languages",
+      "items": [
+        {
+          "name": "Go",
+          "level": 5
+        },
+        {
+          "name": "TypeScript",
+          "level": 4
+        },
+        {
+          "name": "SQL",
+          "level": 4
+        },
+        {
+          "name": "Rust",
+          "level": 2
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "kind": "list",
+      "section": "Skills",
+      "title": "Tools",
+      "items": [
+        "PostgreSQL",
+        "Kafka",
+        "Kubernetes",
+        "Terraform",
+        "Grafana",
+        "OpenTelemetry"
+      ]
+    },
+    {
+      "id": "strengths",
+      "kind": "list",
+      "section": "Skills",
+      "title": "Strengths",
+      "items": [
+        "Mentoring",
+        "Incident handling",
+        "Clear writing"
+      ]
+    },
+    {
+      "id": "spoken",
+      "kind": "rated",
+      "section": "Languages",
+      "page": 2,
+      "items": [
+        {
+          "name": "German",
+          "level": 5
+        },
+        {
+          "name": "English",
+          "level": 4
+        }
+      ]
+    },
+    {
+      "id": "awards",
+      "kind": "entries",
+      "section": "Awards",
+      "items": [
+        {
+          "title": "Certified Kubernetes Administrator",
+          "note": "09/2022"
+        }
+      ]
+    }
+  ]
+}

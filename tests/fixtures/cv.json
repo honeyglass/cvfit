@@ -1,0 +1,295 @@
+{
+  "language": "en",
+  "person": {
+    "firstName": "Jane",
+    "lastName": "Doe",
+    "role": "Senior Backend Engineer",
+    "photo": "photo.png"
+  },
+  "contact": {
+    "title": "Contact",
+    "items": [
+      {
+        "icon": "pin",
+        "lines": [
+          "Germany, Berlin"
+        ]
+      },
+      {
+        "icon": "home",
+        "lines": [
+          "Example Street 1",
+          "10115 Berlin"
+        ]
+      },
+      {
+        "icon": "phone",
+        "lines": [
+          "+49 (0) 30 000 000"
+        ]
+      },
+      {
+        "icon": "mail",
+        "lines": [
+          "jane.doe@example.com"
+        ]
+      },
+      {
+        "icon": "globe",
+        "lines": [
+          "Profile »"
+        ],
+        "link": "https://example.com/jane"
+      }
+    ]
+  },
+  "pages": 2,
+  "blocks": [
+    {
+      "id": "northwind",
+      "kind": "job",
+      "section": "Professional Experience",
+      "from": "03/2021",
+      "to": "today",
+      "title": "Senior Backend Engineer",
+      "place": "Berlin (DE)",
+      "employer": "Northwind Logistics GmbH",
+      "bullets": [
+        "Rebuilt the shipment tracking service",
+        "Introduced contract tests",
+        "Cut the deploy time to ten minutes",
+        "Mentored four junior engineers",
+        "Role: Engineer, Architect, Mentor"
+      ]
+    },
+    {
+      "id": "bluebird",
+      "kind": "job",
+      "section": "Professional Experience",
+      "from": "06/2017",
+      "to": "02/2021",
+      "title": "Backend Engineer",
+      "place": "Hamburg (DE)",
+      "employer": "Bluebird Payments AG",
+      "bullets": [
+        "Delivered the settlement engine",
+        "Led the on-call rotation",
+        "Role: Engineer, On-call lead"
+      ]
+    },
+    {
+      "id": "harbor",
+      "kind": "job",
+      "section": "Professional Experience",
+      "from": "01/2016",
+      "to": "05/2017",
+      "title": "Backend Engineer",
+      "place": "Hamburg (DE)",
+      "employer": "Harbor Analytics GmbH",
+      "bullets": [
+        "Built the reporting pipeline",
+        "Role: Engineer"
+      ]
+    },
+    {
+      "id": "lumen",
+      "kind": "job",
+      "section": "Professional Experience",
+      "from": "04/2014",
+      "to": "12/2015",
+      "title": "Software Engineer",
+      "place": "Bremen (DE)",
+      "employer": "Lumen Media GmbH",
+      "bullets": [
+        "Delivered the video upload service",
+        "Moved the monolith to services",
+        "Introduced code reviews",
+        "Role: Engineer, Planning"
+      ]
+    },
+    {
+      "id": "campus",
+      "kind": "job",
+      "section": "Professional Experience",
+      "page": 2,
+      "from": "10/2012",
+      "to": "03/2014",
+      "title": "Software Engineer",
+      "place": "Berlin (DE)",
+      "employer": "Campus Software Lab",
+      "bullets": [
+        "Maintained the library booking system",
+        "Role: Engineer"
+      ]
+    },
+    {
+      "id": "freelance",
+      "kind": "job",
+      "section": "Professional Experience",
+      "from": "05/2011",
+      "to": "09/2012",
+      "title": "Software Engineer",
+      "place": "Berlin (DE)",
+      "employer": "Self-employed",
+      "bullets": [
+        "Built small shops for local stores",
+        "Automated invoices for a bakery",
+        "Role: Engineer, Planning"
+      ]
+    },
+    {
+      "id": "cedar",
+      "kind": "job",
+      "section": "Professional Experience",
+      "from": "08/2008",
+      "to": "04/2011",
+      "title": "Junior Software Engineer",
+      "place": "Kiel (DE)",
+      "employer": "Cedar Systems GmbH",
+      "bullets": [
+        "Trainee in application development",
+        "Maintained the internal wiki",
+        "Fixed bugs in the order system",
+        "Role: Engineer"
+      ]
+    },
+    {
+      "id": "programming-languages",
+      "kind": "rated",
+      "section": "Skills",
+      "title": "Programming Languages",
+      "items": [
+        {
+          "name": "Go",
+          "level": 5
+        },
+        {
+          "name": "TypeScript",
+          "level": 4
+        },
+        {
+          "name": "SQL",
+          "level": 4
+        },
+        {
+          "name": "Python",
+          "level": 3
+        },
+        {
+          "name": "Rust",
+          "level": 2
+        }
+      ]
+    },
+    {
+      "id": "expertise",
+      "kind": "rated",
+      "section": "Skills",
+      "title": "Expertise",
+      "items": [
+        {
+          "name": "APIs",
+          "level": 5
+        },
+        {
+          "name": "Databases",
+          "level": 5
+        },
+        {
+          "name": "Testing",
+          "level": 4
+        },
+        {
+          "name": "Observability",
+          "level": 4
+        },
+        {
+          "name": "Security",
+          "level": 3
+        }
+      ]
+    },
+    {
+      "id": "libraries",
+      "kind": "list",
+      "section": "Skills",
+      "title": "Libraries",
+      "items": [
+        "Gin",
+        "gRPC",
+        "React",
+        "Kafka Streams",
+        "Playwright"
+      ]
+    },
+    {
+      "id": "strengths",
+      "kind": "list",
+      "section": "Skills",
+      "title": "Strengths",
+      "items": [
+        "Mentoring",
+        "Incident handling",
+        "Clear writing"
+      ]
+    },
+    {
+      "id": "additional-skills",
+      "kind": "list",
+      "section": "Skills",
+      "title": "Additional Skills",
+      "items": [
+        "PostgreSQL",
+        "Kubernetes",
+        "Terraform",
+        "Grafana"
+      ]
+    },
+    {
+      "id": "languages",
+      "kind": "rated",
+      "section": "Languages",
+      "page": 2,
+      "items": [
+        {
+          "name": "German",
+          "level": 5
+        },
+        {
+          "name": "English",
+          "level": 4
+        },
+        {
+          "name": "French",
+          "level": 2
+        }
+      ]
+    },
+    {
+      "id": "interests",
+      "kind": "list",
+      "section": "Interests",
+      "items": [
+        "Cycling",
+        "Chess",
+        "Open source",
+        "Baking"
+      ]
+    },
+    {
+      "id": "awards",
+      "kind": "entries",
+      "section": "Awards",
+      "items": [
+        {
+          "title": "Certified Kubernetes Administrator",
+          "note": "09/2022"
+        },
+        {
+          "title": "Team Award",
+          "note": "03/2019"
+        }
+      ]
+    }
+  ]
+}

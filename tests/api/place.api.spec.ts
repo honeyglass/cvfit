@@ -1,0 +1,74 @@
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import { place } from '../../layout/place.ts';
+import { codes, fixture, unwrap } from '../utils/fixture.ts';
+
+const ids = (blocks: { id: string }[]) => blocks.map(block => block.id);
+const near = (actual: number | undefined, expected: number) =>
+  assert.ok(actual !== undefined && Math.abs(actual - expected) <= 1, `${actual} is not within 1 pt of ${expected}`);
+
+test('places the reference CV as the reference PDF shows it', () => {
+  const { pages } = unwrap(place(fixture()));
+  assert.equal(pages.length, 2);
+  assert.deepEqual(ids(pages[0]?.left.blocks ?? []), ['northwind', 'bluebird', 'harbor', 'lumen']);
+  assert.deepEqual(ids(pages[1]?.left.blocks ?? []), ['campus', 'freelance', 'cedar']);
+  assert.deepEqual(ids(pages[0]?.right.blocks ?? []), ['programming-languages', 'expertise', 'libraries', 'strengths', 'additional-skills']);
+  assert.deepEqual(ids(pages[1]?.right.blocks ?? []), ['languages', 'interests', 'awards']);
+});
+
+// The expected heights are distances measured in the reference PDF, in pt: a job with three
+// and with two bullet lines, and a titled group of five rated items. The blocks here have that
+// shape, with texts short enough that each stays on one line.
+test('estimates a block as high as the reference PDF shows that shape', () => {
+  const { pages } = unwrap(place(fixture()));
+  const left = pages[0]?.left.blocks ?? [];
+  const right = pages[0]?.right.blocks ?? [];
+  near(left[1]?.height, 105.3);
+  near(left[2]?.height, 91.8);
+  near(pages[1]?.left.blocks[1]?.height, 105.3);
+  near(right[1]?.height, 111.3);
+});
+
+test('prints a section heading once per page', () => {
+  const { pages } = unwrap(place(fixture()));
+  const headings = (pages[0]?.right.blocks ?? []).map(block => block.heading?.text ?? null);
+  assert.deepEqual(headings, ['Skills', null, null, null, null]);
+  assert.equal(pages[1]?.left.blocks[0]?.heading?.text, 'Professional Experience');
+});
+
+test('moves a block that no longer fits to the next page as a whole', () => {
+  const cv = fixture();
+  const lumen = cv.blocks[3];
+  if (lumen?.kind === 'job') lumen.bullets.push(...Array.from({ length: 10 }, (_, n) => `Extra point ${n}`));
+  const campus = cv.blocks[4];
+  if (campus !== undefined) delete campus.page;
+  cv.pages = 3;
+  const { pages } = unwrap(place(cv));
+  assert.deepEqual(ids(pages[0]?.left.blocks ?? []), ['northwind', 'bluebird', 'harbor']);
+  assert.equal(pages[1]?.left.blocks[0]?.id, 'lumen');
+});
+
+test('starts a pinned block and all blocks after it on its page', () => {
+  const cv = fixture();
+  const harbor = cv.blocks[2];
+  if (harbor !== undefined) harbor.page = 2;
+  cv.pages = 3;
+  const { pages } = unwrap(place(cv));
+  assert.deepEqual(ids(pages[0]?.left.blocks ?? []), ['northwind', 'bluebird']);
+  assert.deepEqual(ids(pages[1]?.left.blocks ?? []).slice(0, 2), ['harbor', 'lumen']);
+});
+
+test('refuses a CV that needs more pages than it allows, and names the blocks', () => {
+  const cv = fixture();
+  cv.pages = 1;
+  const result = place(cv);
+  assert.deepEqual(codes(result), ['PAGE_OVERFLOW', 'PAGE_OVERFLOW']);
+  assert.match(result.error?.issues[0]?.message ?? '', /campus/);
+});
+
+test('refuses a block that is higher than a page', () => {
+  const cv = fixture();
+  const northwind = cv.blocks[0];
+  if (northwind?.kind === 'job') northwind.bullets = Array.from({ length: 12 }, () => 'word '.repeat(59) + 'end');
+  assert.ok(codes(place(cv)).includes('BLOCK_TOO_TALL'));
+});

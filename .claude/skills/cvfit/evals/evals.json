@@ -1,0 +1,29 @@
+{
+  "skill_name": "cvfit",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Leg mir bitte einen neuen Lebenslauf an. Meine Daten liegen in DATA_FOLDER. Hier mein Werdegang:\n\nIch heisse Max Beispiel und wohne in Leipzig, erreichbar unter max.beispiel@example.org. Seit 03/2021 arbeite ich als Data Engineer bei der Datenwerk GmbH in Leipzig. Dort habe ich unsere Datenpipelines von naechtlichen Batch-Jobs auf Streaming mit Kafka und Flink umgestellt und leite ein kleines Team von drei Leuten an. Davor war ich von 09/2017 bis 02/2021 Softwareentwickler bei der Kontor AG in Halle und habe vor allem Reporting mit Python und SQL gebaut. Python und SQL kann ich sehr gut, Scala nur ein bisschen. Ich spreche Deutsch als Muttersprache und gut Englisch.",
+      "expected_output": "A new CV in DATA_FOLDER/cvs (language de) with the two jobs newest first, the contact lines, rated skills that match the text, nothing invented; the existing CV unchanged; cvfit plan accepts the new CV.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Pass meinen Lebenslauf an diese Stelle an, meine Daten liegen in DATA_FOLDER:\n\nAcme Cloud GmbH sucht einen Senior Platform Engineer (m/w/d). Du betreibst unsere Kubernetes-Plattform, automatisierst Infrastruktur mit Terraform und schreibst Services in Go. Wichtig sind uns Observability (Grafana, OpenTelemetry) und dass du Kolleginnen und Kollegen anleitest.",
+      "expected_output": "A profile in DATA_FOLDER/profiles naming cv jane-doe, tools first, nothing invented, plan ok, .docx built in the working directory, preview and report.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Pass meinen Lebenslauf an diese Stelle an, meine Daten liegen in DATA_FOLDER:\n\nPayFlow GmbH sucht einen Senior Backend Engineer (m/w/d) fuer Zahlungsdienste: Go, PostgreSQL, Kafka, gerne Erfahrung mit Kartenzahlungen und On-Call.",
+      "expected_output": "The master allows one page; the agent hides or shortens blocks (and clears page pins in the profile) until cvfit plan accepts it on one page, or stops after three refusals and asks; nothing invented, master unchanged.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Pass meinen Lebenslauf an diese Stelle an, meine Daten liegen in DATA_FOLDER:\n\nAcme Cloud GmbH sucht einen Senior Platform Engineer (m/w/d). Du betreibst unsere Kubernetes-Plattform, automatisierst Infrastruktur mit Terraform und schreibst Services in Go. Wichtig sind uns Observability (Grafana, OpenTelemetry) und dass du Kolleginnen und Kollegen anleitest.",
+      "expected_output": "The data folder does not exist: the agent creates nothing (no init, no folder) and asks the user where the CV is.",
+      "files": []
+    }
+  ]
+}
