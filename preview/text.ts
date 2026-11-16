@@ -3,6 +3,7 @@
  *
  * preview: the pages of a plan as text, each page a framed sheet with its two columns.
  * sheets: the same sheets as lists of lines, padded with empty rows to a given height.
+ * REPOSITORY: where oriko lives, as the top edge of every sheet names it.
  *
  * It shows what stands on which page, in which order, and how full each column is. It does not
  * show fonts or exact distances, and Oriko stands where the photo is; those exist only
@@ -30,6 +31,8 @@ const FACE = [
   '  ╰────────╯',
 ];
 const FACE_WIDTH = 12;
+/** Where oriko lives, in the top edge of every sheet, so a reader of the file can find it. */
+export const REPOSITORY = 'github.com/honeyglass/oriko';
 
 /**
  * @param cv - a checked CV
@@ -71,7 +74,7 @@ function sheet(title: string, left: string[], right: string[], fill: string, hei
       `│ ${(leftRows[row] ?? '').padEnd(LEFT)} │ ${(rightRows[row] ?? '').padEnd(RIGHT)} │`,
   );
   return [
-    `${`╭─ ${title} `.padEnd(LEFT + 3, '─')}┬${'─'.repeat(RIGHT + 2)}╮`,
+    `${`╭─ ${title} `.padEnd(LEFT - REPOSITORY.length, '─')} ${REPOSITORY} ─┬${'─'.repeat(RIGHT + 2)}╮`,
     ...body,
     `├${'─'.repeat(LEFT + 2)}┴${'─'.repeat(RIGHT + 2)}┤`,
     `│ ${fill.padEnd(LEFT + RIGHT + 3)} │`,

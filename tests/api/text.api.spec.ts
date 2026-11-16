@@ -66,6 +66,13 @@ test('indents the items of a group below its title', () => {
   );
 });
 
+test('names the repository in the top edge of every sheet', () => {
+  const tops = lines.filter(line => line.startsWith('╭─ Page'));
+  assert.equal(tops.length, 2);
+  for (const top of tops)
+    assert.match(top, /^╭─ Page \d of 2 ─+ github\.com\/honeyglass\/oriko ─┬─+╮$/);
+});
+
 test('keeps every line within 84 characters, so the frame holds in a narrow terminal', () => {
   assert.deepEqual(
     lines.filter(line => [...line].length > 84),
