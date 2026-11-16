@@ -5,7 +5,7 @@
   <img src="brand/header.svg" alt="oriko" width="520">
 </picture>
 
-**One CV, tailored to every job posting, laid out so no job ever breaks across a page.**
+**One CV, made to fit every job posting, laid out so no job ever breaks across a page.**
 
 ![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
 ![License](https://img.shields.io/badge/license-AGPL--3.0-green.svg)
@@ -20,7 +20,7 @@
 
 oriko makes a fitting version of your CV for every job you apply to. You write your CV once,
 with your jobs, skills, languages and contact details. When you find a job you like, you give the
-posting to an AI assistant, in plain words and in any language. The assistant tailors your CV to
+posting to an AI assistant, in plain words and in any language. The assistant fits your CV to
 it: it moves the matching skills up, hides what does not help and shortens long lists, and it
 never invents anything. You see the result right away as a preview of every page in the
 terminal, and you get a Word file that you open in Google Docs and save as PDF.
@@ -74,7 +74,7 @@ Open [Claude Code](https://claude.com/claude-code) in this folder and say what y
 in [`.claude/skills/oriko/`](.claude/skills/oriko/SKILL.md) tells the agent how to use oriko.
 
 ```text
-Tailor my CV to this job: <paste the job posting>
+Fit my CV to this job: <paste the job posting>
 Create a new CV for me. Since 03/2021 I have worked as a data engineer at …
 ```
 
@@ -89,7 +89,7 @@ Create a new CV for me. Since 03/2021 I have worked as a data engineer at …
 
 No CV yet? Paste a job posting anyway. The agent asks you a few short questions (your name, where
 you live, where you have worked, what you can do), creates your CV from your answers, and then
-tailors it to the posting.
+fits it to the posting.
 
 ## 🧩 Built for agents
 
@@ -100,7 +100,7 @@ run when, what it may change, and when it stops and asks you.
 ### The skill: a fixed flow
 
 The skill is a fixed list of steps, and for each step the steps that may follow (a state machine).
-It has two paths. To tailor a CV, the agent reads the posting, inspects
+It has two paths. To fit a CV to a posting, the agent reads the posting, inspects
 your CV, drafts a version, checks it, builds it and reports. To write a CV, it sorts your facts,
 writes them, checks them and hands over; with no CV at all, it first asks you a few short
 questions. The agent moves only along the listed steps. When oriko refuses a draft, the agent goes back
