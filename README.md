@@ -183,7 +183,7 @@ column beside the right one, as in the finished document:
 <summary><b>The same preview as text</b></summary>
 
 ```text
-╭─ Page 1 of 3 ────────────────────────────────────────┬───────────────────────────╮
+╭─ Page 1 of 3 ────────── github.com/honeyglass/oriko ─┬───────────────────────────╮
 │                                                      │                           │
 │   ╭───────┐                                     Jane │ CONTACT ───────────────── │
 │   │       └┐                                     Doe │                           │

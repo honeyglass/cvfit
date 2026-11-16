@@ -2,7 +2,7 @@ Your CV version for the DaVita IT Project Manager posting is ready. It is two pa
 languages and certificates in it. Here is the preview:
 
 ```text
-╭─ Page 1 of 2 ────────────────────────────────────────┬───────────────────────────╮
+╭─ Page 1 of 2 ────────── github.com/honeyglass/oriko ─┬───────────────────────────╮
 │                                                      │                           │
 │   ╭───────┐                                    Lukas │ CONTACT ───────────────── │
 │   │       └┐                                  Berger │                           │
@@ -60,7 +60,7 @@ languages and certificates in it. Here is the preview:
 │ Left  ■■■■■■■■■□ 92 % full     Right ■■■■■■■■□□ 84 % full                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-╭─ Page 2 of 2 ────────────────────────────────────────┬───────────────────────────╮
+╭─ Page 2 of 2 ────────── github.com/honeyglass/oriko ─┬───────────────────────────╮
 │                                                      │ CERTIFICATES ──────────── │
 │                                                      │                           │
 │                                                      │ PRINCE2 Practitioner      │

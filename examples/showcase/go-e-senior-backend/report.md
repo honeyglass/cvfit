@@ -4,7 +4,7 @@ work and education are still in, on three pages. Nothing was added, and no date,
 or skill level changed.
 
 ```text
-╭─ Page 1 of 3 ────────────────────────────────────────┬───────────────────────────╮
+╭─ Page 1 of 3 ────────── github.com/honeyglass/oriko ─┬───────────────────────────╮
 │                                                      │                           │
 │   ╭───────┐                                     Jane │ CONTACT ───────────────── │
 │   │       └┐                                     Doe │                           │
@@ -58,7 +58,7 @@ or skill level changed.
 │ Left  ■■■■■■■■□□ 80 % full     Right ■■■■■■■■■■ 98 % full                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-╭─ Page 2 of 3 ────────────────────────────────────────┬───────────────────────────╮
+╭─ Page 2 of 3 ────────── github.com/honeyglass/oriko ─┬───────────────────────────╮
 │ PROFESSIONAL EXPERIENCE ──────────────────────────── │ LANGUAGES ─────────────── │
 │                                                      │                           │
 │ 01/2015 – 05/2017 ● Software Engineer                │ German              ●●●●● │
@@ -119,7 +119,7 @@ or skill level changed.
 │ Left  ■■■■■■■■■□ 91 % full     Right ■■■■□□□□□□ 41 % full                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-╭─ Page 3 of 3 ────────────────────────────────────────┬───────────────────────────╮
+╭─ Page 3 of 3 ────────── github.com/honeyglass/oriko ─┬───────────────────────────╮
 │ EDUCATION ────────────────────────────────────────── │                           │
 │                                                      │                           │
 │ 10/2010 – 09/2012 ● M.Sc. Computer Science           │                           │

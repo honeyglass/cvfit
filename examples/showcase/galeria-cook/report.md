@@ -1,7 +1,7 @@
 Your CV version **galeria-cook** is ready, and it fits on one page. Here is the preview:
 
 ```text
-╭─ Page 1 of 1 ────────────────────────────────────────┬───────────────────────────╮
+╭─ Page 1 of 1 ────────── github.com/honeyglass/oriko ─┬───────────────────────────╮
 │                                                      │                           │
 │   ╭───────┐                                    Marco │ CONTACT ───────────────── │
 │   │       └┐                                   Weber │                           │
