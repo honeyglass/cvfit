@@ -46,6 +46,20 @@ test('prints a section heading once per page', () => {
   assert.equal(pages[1]?.left.blocks[0]?.heading?.text, 'Professional Experience');
 });
 
+// The left heading of page 1 stands 210.2 pt down its column; the right one stands as far down,
+// below a contact block of 163.7 pt here, and the first group sits as far below it as a job.
+test('lines the first right heading and group up with the left ones on page 1', () => {
+  const cv = fixture();
+  const first = () => unwrap(place(cv)).pages[0]?.right.blocks[0]?.heading;
+  assert.deepEqual(first(), { text: 'Skills', before: 929, after: 188 });
+  cv.contact.items.pop();
+  assert.equal(first()?.before, 929 + 392, 'one contact row of 19.6 pt less');
+  cv.contact.items.push(
+    ...Array.from({ length: 3 }, () => ({ icon: 'pin' as const, lines: ['x'] })),
+  );
+  assert.equal(first()?.before, 748, 'a long contact block keeps the gap between two sections');
+});
+
 test('moves a block that no longer fits to the next page as a whole', () => {
   const cv = fixture();
   const lumen = cv.blocks[3];

@@ -23,7 +23,6 @@ export const SPACE = {
   rightTop: 320,
   afterContactHeading: 378,
   afterContactRow: 120,
-  afterContact: 1188,
   headingToRated: 318,
   headingToText: 20,
   beforeTitle: 366,

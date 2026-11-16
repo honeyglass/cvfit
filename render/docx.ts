@@ -400,21 +400,27 @@ function contactBlock(contact: Master['contact'], icons: Images['icons']): Cell[
 function rightBlock(cv: Master, placed: Placed): Cell[] {
   const block = blockOf(cv, placed);
   if (block === undefined || block.kind === 'job') return [];
-  const heading = placed.heading === null ? [] : [sectionHeading(placed.heading)];
-  const title = block.title === undefined ? [] : [blockTitle(block.title)];
+  // Google Docs shows only the larger of two spacings that meet, so the gap below a heading
+  // moves onto the group title right below it.
+  const below = placed.heading?.after ?? 0;
+  const titled = block.title !== undefined;
+  const heading =
+    placed.heading === null ? [] : [sectionHeading(placed.heading, titled ? 0 : below)];
+  const title =
+    block.title === undefined ? [] : [blockTitle(block.title, SPACE.beforeTitle + below)];
   return [...heading, ...title, ...content(block)];
 }
 
-const sectionHeading = (heading: Heading) =>
+const sectionHeading = (heading: Heading, after: number) =>
   para([headingText(heading.text)], {
     indent: { left: WIDTH.indent },
-    spacing: { before: heading.before, after: heading.after },
+    spacing: { before: heading.before, after },
   });
 
-const blockTitle = (title: string) =>
+const blockTitle = (title: string, before: number) =>
   para([run(title, { bold: true })], {
     indent: { left: WIDTH.indent },
-    spacing: { before: SPACE.beforeTitle, after: SPACE.afterTitle },
+    spacing: { before, after: SPACE.afterTitle },
   });
 
 function content(block: Exclude<Block, Job>): Cell[] {

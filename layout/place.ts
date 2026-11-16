@@ -62,9 +62,9 @@ function fillColumn(cv: Master, side: Side) {
     if (pinned > page) [page, y, previous] = [pinned, columnStart(cv, side, pinned), null];
     const fitsHere =
       previous === null ||
-      y + heightWith(headingOf(block, previous, side, page), block) <= COLUMN_HEIGHT;
+      y + heightWith(headingOf(cv, block, previous, side, page), block) <= COLUMN_HEIGHT;
     if (fitsHere === false) [page, y, previous] = [page + 1, columnStart(cv, side, page + 1), null];
-    const heading = headingOf(block, previous, side, page);
+    const heading = headingOf(cv, block, previous, side, page);
     const height = heightWith(heading, block);
     y += height;
     spots.push({ id: block.id, height: round(height), heading, page, bottom: y });
@@ -81,20 +81,42 @@ function columnStart(cv: Master, side: Side, page: number) {
 }
 
 // A heading stands above the first block of a section on a page, so it repeats on the next page.
-function headingOf(block: Block, previous: Block | null, side: Side, page: number): Heading | null {
+function headingOf(
+  cv: Master,
+  block: Block,
+  previous: Block | null,
+  side: Side,
+  page: number,
+): Heading | null {
   if (previous?.section === block.section) return null;
-  const before = previous === null ? topGap(side, page) : SPACE.sectionGap;
+  const before = previous === null ? topGap(cv, side, page) : SPACE.sectionGap;
   return { text: block.section, before, after: gapBelowHeading(block) };
 }
 
-function topGap(side: Side, page: number) {
+function topGap(cv: Master, side: Side, page: number) {
   if (side === 'left') return page === 0 ? SPACE.leftTopFirst : SPACE.leftTop;
-  return page === 0 ? SPACE.afterContact : SPACE.rightTop;
+  return page === 0 ? belowContact(cv) : SPACE.rightTop;
 }
 
-// A title brings its own spacing; without one the heading keeps the distance to the content.
+/**
+ * The right heading of page 1 stands level with the left one, however long the contact block is.
+ *
+ * @param cv - a checked CV
+ * @returns the space above that heading in DXA, at least the space between two sections
+ */
+function belowContact(cv: Master) {
+  const leftHeading = LEFT_START.first + pt(SPACE.leftTopFirst);
+  const gap = Math.round((leftHeading - contactHeight(cv.contact)) * DXA_PER_PT);
+  return Math.max(SPACE.sectionGap, gap);
+}
+
+const DXA_PER_PT = 20;
+
+// A titled group sits as far below its heading as a job below its own, so the two first lines
+// of a page stand level. An untitled block keeps the distance to its content.
 function gapBelowHeading(block: Block) {
-  if (block.kind === 'job' || block.title !== undefined) return 0;
+  if (block.kind === 'job') return 0;
+  if (block.title !== undefined) return SPACE.jobGap - SPACE.beforeTitle;
   return block.kind === 'rated' ? SPACE.headingToRated : SPACE.headingToText;
 }
 
