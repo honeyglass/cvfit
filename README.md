@@ -315,9 +315,11 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
 
 ## ⌨️ Commands
 
-Every command answers one JSON object, exit 0 for success and 1 for a refusal with its issues and a
-hint each. `oriko schema` lists every command and option, `oriko schema <command>` the input one
-accepts.
+Every command answers one JSON object: on one line when another program reads it, indented in a
+terminal, where `preview` shows its sheets and a refusal shows as readable lines. oriko ends with
+exit code 0 when all went well, 1 when the input needs a fix (each issue with a hint), and 2 when
+something broke. `oriko schema` lists every command and option, `oriko schema <command>` the input
+one accepts.
 
 | Command | What it does |
 | :--- | :--- |
