@@ -195,15 +195,15 @@ column beside the right one, as in the finished document:
 │                                                      │ Profile »                 │
 │ PROFESSIONAL EXPERIENCE ──────────────────────────── │                           │
 │                                                      │                           │
-│ 03/2021 – today   ● Senior Backend Engineer          │ SKILLS ────────────────── │
-│                   │ Northwind Logistics GmbH ·       │                           │
-│                   │   Berlin (DE)                    │ Programming Languages     │
-│                   │ › Rebuilt the shipment           │   Go                ●●●●● │
-│                   │   tracking service in Go for ten │   TypeScript        ●●●●○ │
-│                   │   times the load, at 40,000      │   SQL               ●●●●○ │
-│                   │   events per second              │   Java              ●●●○○ │
+│ ● Senior Backend Engineer            03/2021 – today │ SKILLS ────────────────── │
+│ │                                                    │                           │
+│ │ Northwind Logistics GmbH · Berlin (DE)             │ Programming Languages     │
+│ │ › Rebuilt the shipment tracking service in Go      │   Go                ●●●●● │
+│ │   for ten times the load, at 40,000 events per     │   TypeScript        ●●●●○ │
+│ │   second                                           │   SQL               ●●●●○ │
+│ │ › Moved the event history from PostgreSQL to       │   Java              ●●●○○ │
 ├──────────────────────────────────────────────────────┴───────────────────────────┤
-│ Left  ■■■■■■■■□□ 80 % full     Right ■■■■■■■■■■ 98 % full                        │
+│ Left  ■■■■■■■■□□ 84 % full     Right ■■■■■■■■■■ 98 % full                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 ```
 
@@ -229,7 +229,7 @@ oriko build --profile go-e-senior-backend --style terminal --out go-e-terminal.d
 | :--- | :--- |
 | `╭───────┐` with `●   ●` | where your photo goes; the terminal shows Oriko, the oriko logo, the classic file shows the photo |
 | `UPPER CASE` | a section heading, such as Professional Experience |
-| `●` and `│` | a job: its dates, its marker and its timeline |
+| `●` and `│` | a job: its marker and its timeline; the dates stand right of the title |
 | `›` | a bullet point of a job |
 | `●●●●○` | a skill level, from 0 to 5 dots |
 | `■■■□□` | how full the column is; at 100 % the next block moves to the next page |
