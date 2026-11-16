@@ -1,6 +1,9 @@
 <div align="center">
 
-<h1>◈ &nbsp; C V F I T &nbsp; ◈</h1>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="brand/header-dark.svg">
+  <img src="brand/header.svg" alt="oriko" width="520">
+</picture>
 
 **One CV, tailored to every job posting, laid out so no job ever breaks across a page.**
 
