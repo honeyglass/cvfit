@@ -3,12 +3,12 @@ Your CV version **galeria-cook** is ready, and it fits on one page. Here is the 
 ```text
 ╭─ Page 1 of 1 ────────────────────────────────────────┬───────────────────────────╮
 │                                                      │                           │
-│   ╭─────────╮                                  Marco │ CONTACT ───────────────── │
-│   │         │                                  Weber │                           │
-│   │  ◠   ◠  │                                   Cook │ Germany, Munich           │
-│   │    ◡    │                                        │ Sample Street 3           │
-│   │         │                                        │ 80331 Munich              │
-│   ╰─────────╯                                        │ +49 (0) 89 333 444        │
+│   ╭───────┐                                    Marco │ CONTACT ───────────────── │
+│   │       └┐                                   Weber │                           │
+│   │ ●   ●  │                                    Cook │ Germany, Munich           │
+│   │•  ◡   •│                                         │ Sample Street 3           │
+│   │ ── ─── │                                         │ 80331 Munich              │
+│   ╰────────╯                                         │ +49 (0) 89 333 444        │
 │                                                      │ marco.weber@example.com   │
 │                                                      │                           │
 │ PROFESSIONAL EXPERIENCE ──────────────────────────── │                           │

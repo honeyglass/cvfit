@@ -180,12 +180,12 @@ column beside the right one, as in the finished document:
 ```text
 ╭─ Page 1 of 3 ────────────────────────────────────────┬───────────────────────────╮
 │                                                      │                           │
-│   ╭─────────╮                                   Jane │ CONTACT ───────────────── │
-│   │         │                                    Doe │                           │
-│   │  ◠   ◠  │                Senior Backend Engineer │ Germany, Berlin           │
-│   │    ◡    │                                        │ Example Street 1          │
-│   │         │                                        │ 10115 Berlin              │
-│   ╰─────────╯                                        │ +49 (0) 30 000 000        │
+│   ╭───────┐                                     Jane │ CONTACT ───────────────── │
+│   │       └┐                                     Doe │                           │
+│   │ ●   ●  │                 Senior Backend Engineer │ Germany, Berlin           │
+│   │•  ◡   •│                                         │ Example Street 1          │
+│   │ ── ─── │                                         │ 10115 Berlin              │
+│   ╰────────╯                                         │ +49 (0) 30 000 000        │
 │                                                      │ jane.doe@example.com      │
 │                                                      │ Profile »                 │
 │ PROFESSIONAL EXPERIENCE ──────────────────────────── │                           │
@@ -220,7 +220,7 @@ oriko build --profile go-e-senior-backend --style terminal --out go-e-terminal.d
 
 | Mark | Meaning |
 | :--- | :--- |
-| `╭─────────╮` with `◠   ◠` | where your photo goes; the terminal shows a face, the file shows the photo |
+| `╭───────┐` with `●   ●` | where your photo goes; the terminal shows Oriko, the oriko logo, the classic file shows the photo |
 | `UPPER CASE` | a section heading, such as Professional Experience |
 | `●` and `│` | a job: its dates, its marker and its timeline |
 | `›` | a bullet point of a job |

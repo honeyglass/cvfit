@@ -4,12 +4,12 @@ languages and certificates in it. Here is the preview:
 ```text
 ╭─ Page 1 of 2 ────────────────────────────────────────┬───────────────────────────╮
 │                                                      │                           │
-│   ╭─────────╮                                  Lukas │ CONTACT ───────────────── │
-│   │         │                                 Berger │                           │
-│   │  ◠   ◠  │                     IT Project Manager │ Germany, Hamburg          │
-│   │    ◡    │                                        │ Sample Lane 7             │
-│   │         │                                        │ 20095 Hamburg             │
-│   ╰─────────╯                                        │ +49 (0) 40 111 222        │
+│   ╭───────┐                                    Lukas │ CONTACT ───────────────── │
+│   │       └┐                                  Berger │                           │
+│   │ ●   ●  │                      IT Project Manager │ Germany, Hamburg          │
+│   │•  ◡   •│                                         │ Sample Lane 7             │
+│   │ ── ─── │                                         │ 20095 Hamburg             │
+│   ╰────────╯                                         │ +49 (0) 40 111 222        │
 │                                                      │ lukas.berger@example.com  │
 │                                                      │                           │
 │ PROFESSIONAL EXPERIENCE ──────────────────────────── │                           │
