@@ -10,50 +10,42 @@
 │                                                      │                           │
 │ PROFESSIONAL EXPERIENCE ──────────────────────────── │                           │
 │                                                      │ SKILLS ────────────────── │
-│ 04/2020 – today   ● IT Project Lead                  │                           │
-│                   │ Hanse Logistik IT GmbH ·         │ Technology                │
-│                   │   Hamburg (DE)                   │   Azure             ●●●●○ │
-│                   │ › Led the migration of 120       │   VMware            ●●●●○ │
-│                   │   servers to Azure, by rehost    │   AWS               ●●●○○ │
-│                   │   and replatform                 │   Terraform         ●●●○○ │
-│                   │ › Owned budget of 1.2 million    │                           │
-│                   │   euros and schedules for three  │ Methods                   │
-│                   │   infrastructure projects        │   PRINCE2           ●●●●○ │
-│                   │ › Made Terraform the standard    │   Scrum             ●●●●○ │
-│                   │   for new environments           │   Kanban            ●●●○○ │
-│                   │ › Managed five external          │   ITIL              ●●●○○ │
-│                   │   service providers              │                           │
-│                   │ › Role: Project lead, Vendor     │ Tools                     │
-│                   │   management, Reporting          │   Jira, Confluence, MS    │
-│                                                      │   Project, Power Automate │
-│ 01/2016 – 03/2020 ● IT Project Manager               │                           │
-│                   │ Nordbank Services AG · Hamburg   │ Strengths                 │
-│                   │   (DE)                           │   Communication,          │
-│                   │ › Coordinated a data center      │   Facilitation,           │
-│                   │   move with 40 applications      │   Structure, Stakeholder  │
-│                   │   without downtime               │   management              │
-│                   │ › Supported Scrum teams in a     │                           │
-│                   │   workplace project for 900      │                           │
-│                   │   desks                          │ LANGUAGES ─────────────── │
-│                   │ › Role: Project lead, Risk       │                           │
-│                   │   management                     │ German              ●●●●● │
-│                                                      │ English             ●●●●○ │
-│ 08/2012 – 12/2015 ● System Administrator             │                           │
-│                   │ Elbe Medien GmbH · Hamburg       │                           │
-│                   │   (DE)                           │                           │
-│                   │ › Ran VMware and Windows         │                           │
-│                   │   Server environments            │                           │
-│                   │ › Put a backup and disaster      │                           │
-│                   │   recovery concept into practice │                           │
+│ ● IT Project Lead                    04/2020 – today │                           │
+│ │                                                    │ Technology                │
+│ │ Hanse Logistik IT GmbH · Hamburg (DE)              │   Azure             ●●●●○ │
+│ │ › Led the migration of 120 servers to Azure, by    │   VMware            ●●●●○ │
+│ │   rehost and replatform                            │   AWS               ●●●○○ │
+│ │ › Owned budget of 1.2 million euros and            │   Terraform         ●●●○○ │
+│ │   schedules for three infrastructure projects      │                           │
+│ │ › Made Terraform the standard for new              │ Methods                   │
+│ │   environments                                     │   PRINCE2           ●●●●○ │
+│ │ › Managed five external service providers          │   Scrum             ●●●●○ │
+│ │ › Role: Project lead, Vendor management,           │   Kanban            ●●●○○ │
+│ │   Reporting                                        │   ITIL              ●●●○○ │
 │                                                      │                           │
-│ 08/2009 – 07/2012 ● Apprenticeship IT Specialist for │                           │
-│                   │ System Integration               │                           │
-│                   │ Elbe Medien GmbH · Hamburg       │                           │
-│                   │   (DE)                           │                           │
-│                   │ › Final exam at the Hamburg      │                           │
-│                   │   Chamber of Commerce            │                           │
+│ ● IT Project Manager               01/2016 – 03/2020 │ Tools                     │
+│ │                                                    │   Jira, Confluence, MS    │
+│ │ Nordbank Services AG · Hamburg (DE)                │   Project, Power Automate │
+│ │ › Coordinated a data center move with 40           │                           │
+│ │   applications without downtime                    │ Strengths                 │
+│ │ › Supported Scrum teams in a workplace project     │   Communication,          │
+│ │   for 900 desks                                    │   Facilitation,           │
+│ │ › Role: Project lead, Risk management              │   Structure, Stakeholder  │
+│                                                      │   management              │
+│ ● System Administrator             08/2012 – 12/2015 │                           │
+│ │                                                    │                           │
+│ │ Elbe Medien GmbH · Hamburg (DE)                    │ LANGUAGES ─────────────── │
+│ │ › Ran VMware and Windows Server environments       │                           │
+│ │ › Put a backup and disaster recovery concept       │ German              ●●●●● │
+│ │   into practice                                    │ English             ●●●●○ │
+│                                                      │                           │
+│ ● Apprenticeship IT Specialist for 08/2009 – 07/2012 │                           │
+│ │ System Integration                                 │                           │
+│ │                                                    │                           │
+│ │ Elbe Medien GmbH · Hamburg (DE)                    │                           │
+│ │ › Final exam at the Hamburg Chamber of Commerce    │                           │
 ├──────────────────────────────────────────────────────┴───────────────────────────┤
-│ Left  ■■■■■■■■■□ 92 % full     Right ■■■■■■■■□□ 84 % full                        │
+│ Left  ■■■■■■■■■■ 99 % full     Right ■■■■■■■■□□ 84 % full                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 ╭─ Page 2 of 2 ────────── github.com/honeyglass/oriko ─┬───────────────────────────╮

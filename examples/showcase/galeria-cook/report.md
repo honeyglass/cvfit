@@ -13,41 +13,41 @@ Your CV version **galeria-cook** is ready, and it fits on one page. Here is the 
 │                                                      │                           │
 │ PROFESSIONAL EXPERIENCE ──────────────────────────── │                           │
 │                                                      │ SKILLS ────────────────── │
-│ 05/2021 – today   ● Cook                             │                           │
-│                   │ Hotel Isarblick · Munich (DE)    │ Strengths                 │
-│                   │ › Prepared up to 250 dishes a    │   Reliability, Teamwork,  │
-│                   │   day for the breakfast and      │   Organisation, Guest     │
-│                   │   lunch buffet                   │   focus                   │
-│                   │ › Responsible for receiving      │                           │
-│                   │   goods, storage and the monthly │ Know-how                  │
-│                   │   stocktake                      │   HACCP, Allergen         │
-│                   │ › Applied HACCP standards in     │   labelling, Stock        │
-│                   │   daily work                     │   management, Costing     │
-│                   │ › Role: Cook, Training of        │                           │
-│                   │   apprentices                    │ Kitchen                   │
-│                                                      │   Regional cuisine  ●●●●● │
-│ 08/2018 – 04/2021 ● Junior Cook                      │   Buffet and        ●●●●○ │
-│                   │ Gasthaus Zum Löwen · Augsburg    │   banquet                 │
-│                   │   (DE)                           │   Vegetarian        ●●●●○ │
-│                   │ › À la carte kitchen with a      │   cuisine                 │
-│                   │   regional focus                 │   Pastry            ●●○○○ │
-│                   │ › Prepared and cleaned up the    │                           │
-│                   │   meat and side dish station     │                           │
-│                   │ › Role: Junior cook              │ LANGUAGES ─────────────── │
+│ ● Cook                               05/2021 – today │                           │
+│ │                                                    │ Strengths                 │
+│ │ Hotel Isarblick · Munich (DE)                      │   Reliability, Teamwork,  │
+│ │ › Prepared up to 250 dishes a day for the          │   Organisation, Guest     │
+│ │   breakfast and lunch buffet                       │   focus                   │
+│ │ › Responsible for receiving goods, storage and     │                           │
+│ │   the monthly stocktake                            │ Know-how                  │
+│ │ › Applied HACCP standards in daily work            │   HACCP, Allergen         │
+│ │ › Role: Cook, Training of apprentices              │   labelling, Stock        │
+│                                                      │   management, Costing     │
+│ ● Junior Cook                      08/2018 – 04/2021 │                           │
+│ │                                                    │ Kitchen                   │
+│ │ Gasthaus Zum Löwen · Augsburg (DE)                 │   Regional cuisine  ●●●●● │
+│ │ › À la carte kitchen with a regional focus         │   Buffet and        ●●●●○ │
+│ │ › Prepared and cleaned up the meat and side dish   │   banquet                 │
+│ │   station                                          │   Vegetarian        ●●●●○ │
+│ │ › Role: Junior cook                                │   cuisine                 │
+│                                                      │   Pastry            ●●○○○ │
+│ ● Apprenticeship as a Cook         09/2015 – 07/2018 │                           │
+│ │                                                    │                           │
+│ │ Gasthaus Zum Löwen · Augsburg (DE)                 │ LANGUAGES ─────────────── │
+│ │ › Final exam at the Swabia Chamber of Commerce     │                           │
+│                                                      │ German              ●●●●● │
+│ ● Service Assistant                06/2013 – 08/2015 │ English             ●●○○○ │
+│ │                                                    │                           │
+│ │ Café Lindner · Augsburg (DE)                       │                           │
+│ │ › Served guests and ran the till at weekends       │ TRAINING ──────────────── │
 │                                                      │                           │
-│ 09/2015 – 07/2018 ● Apprenticeship as a Cook         │ German              ●●●●● │
-│                   │ Gasthaus Zum Löwen · Augsburg    │ English             ●●○○○ │
-│                   │   (DE)                           │                           │
-│                   │ › Final exam at the Swabia       │                           │
-│                   │   Chamber of Commerce            │ TRAINING ──────────────── │
-│                                                      │                           │
-│ 06/2013 – 08/2015 ● Service Assistant                │ Hygiene training under §  │
-│                   │ Café Lindner · Augsburg (DE)     │ 43 IfSG                   │
-│                   │ › Served guests and ran the      │ 08/2015                   │
-│                   │   till at weekends               │ Pastry basics course      │
+│                                                      │ Hygiene training under §  │
+│                                                      │ 43 IfSG                   │
+│                                                      │ 08/2015                   │
+│                                                      │ Pastry basics course      │
 │                                                      │ 02/2020                   │
 ├──────────────────────────────────────────────────────┴───────────────────────────┤
-│ Left  ■■■■■■■■□□ 83 % full     Right ■■■■■■■■■□ 92 % full                        │
+│ Left  ■■■■■■■■■□ 90 % full     Right ■■■■■■■■■□ 92 % full                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 ```
 
