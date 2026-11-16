@@ -16,7 +16,8 @@ export const SPACE = {
   afterJobTitle: 80,
   afterEmployer: 80,
   leftTopFirst: 583,
-  leftTop: 1580,
+  // On a later page the left heading stands level with the right one, as a Google Docs PDF shows.
+  leftTop: 260,
   sectionGap: 748,
   rightTop: 320,
   afterContactHeading: 378,
