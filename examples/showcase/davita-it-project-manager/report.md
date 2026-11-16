@@ -3,63 +3,66 @@ languages and certificates in it. Here is the preview:
 
 ```text
 ╭─ Page 1 of 2 ────────────────────────────────────────┬───────────────────────────╮
-│    ╭─────────╮                                       │ CONTACT                   │
-│    │         │                                 Lukas │ Germany, Hamburg          │
-│    │  ◠   ◠  │                                Berger │ Sample Lane 7             │
-│    │    ◡    │                    IT Project Manager │ 20095 Hamburg             │
-│    │         │                                       │ +49 (0) 40 111 222        │
-│    ╰─────────╯                                       │ lukas.berger@example.com  │
 │                                                      │                           │
-│ PROFESSIONAL EXPERIENCE                              │ SKILLS                    │
-│                                                      │ Technology                │
-│ 04/2020 – today   ● IT Project Lead                  │ Azure               ●●●●○ │
-│                   │ Hanse Logistik IT GmbH ·         │ VMware              ●●●●○ │
-│                   │   Hamburg (DE)                   │ AWS                 ●●●○○ │
-│                   │ ✓ Led the migration of 120       │ Terraform           ●●●○○ │
-│                   │   servers to Azure, by rehost    │                           │
-│                   │   and replatform                 │ Methods                   │
-│                   │ ✓ Owned budget of 1.2 million    │ PRINCE2             ●●●●○ │
-│                   │   euros and schedules for three  │ Scrum               ●●●●○ │
-│                   │   infrastructure projects        │ Kanban              ●●●○○ │
-│                   │ ✓ Made Terraform the standard    │ ITIL                ●●●○○ │
-│                   │   for new environments           │                           │
-│                   │ ✓ Managed five external          │ Tools                     │
-│                   │   service providers              │ Jira, Confluence, MS      │
-│                   │ ✓ Role: Project lead, Vendor     │ Project, Power Automate   │
-│                   │   management, Reporting          │                           │
-│                                                      │ Strengths                 │
-│ 01/2016 – 03/2020 ● IT Project Manager               │ Communication,            │
-│                   │ Nordbank Services AG · Hamburg   │ Facilitation, Structure,  │
-│                   │   (DE)                           │ Stakeholder management    │
-│                   │ ✓ Coordinated a data center      │                           │
-│                   │   move with 40 applications      │ LANGUAGES                 │
-│                   │   without downtime               │ German              ●●●●● │
-│                   │ ✓ Supported Scrum teams in a     │ English             ●●●●○ │
+│   ╭─────────╮                                  Lukas │ CONTACT ───────────────── │
+│   │         │                                 Berger │                           │
+│   │  ◠   ◠  │                     IT Project Manager │ Germany, Hamburg          │
+│   │    ◡    │                                        │ Sample Lane 7             │
+│   │         │                                        │ 20095 Hamburg             │
+│   ╰─────────╯                                        │ +49 (0) 40 111 222        │
+│                                                      │ lukas.berger@example.com  │
+│                                                      │                           │
+│ PROFESSIONAL EXPERIENCE ──────────────────────────── │                           │
+│                                                      │ SKILLS ────────────────── │
+│ 04/2020 – today   ● IT Project Lead                  │                           │
+│                   │ Hanse Logistik IT GmbH ·         │ Technology                │
+│                   │   Hamburg (DE)                   │   Azure             ●●●●○ │
+│                   │ › Led the migration of 120       │   VMware            ●●●●○ │
+│                   │   servers to Azure, by rehost    │   AWS               ●●●○○ │
+│                   │   and replatform                 │   Terraform         ●●●○○ │
+│                   │ › Owned budget of 1.2 million    │                           │
+│                   │   euros and schedules for three  │ Methods                   │
+│                   │   infrastructure projects        │   PRINCE2           ●●●●○ │
+│                   │ › Made Terraform the standard    │   Scrum             ●●●●○ │
+│                   │   for new environments           │   Kanban            ●●●○○ │
+│                   │ › Managed five external          │   ITIL              ●●●○○ │
+│                   │   service providers              │                           │
+│                   │ › Role: Project lead, Vendor     │ Tools                     │
+│                   │   management, Reporting          │   Jira, Confluence, MS    │
+│                                                      │   Project, Power Automate │
+│ 01/2016 – 03/2020 ● IT Project Manager               │                           │
+│                   │ Nordbank Services AG · Hamburg   │ Strengths                 │
+│                   │   (DE)                           │   Communication,          │
+│                   │ › Coordinated a data center      │   Facilitation,           │
+│                   │   move with 40 applications      │   Structure, Stakeholder  │
+│                   │   without downtime               │   management              │
+│                   │ › Supported Scrum teams in a     │                           │
 │                   │   workplace project for 900      │                           │
-│                   │   desks                          │                           │
-│                   │ ✓ Role: Project lead, Risk       │                           │
-│                   │   management                     │                           │
-│                                                      │                           │
+│                   │   desks                          │ LANGUAGES ─────────────── │
+│                   │ › Role: Project lead, Risk       │                           │
+│                   │   management                     │ German              ●●●●● │
+│                                                      │ English             ●●●●○ │
 │ 08/2012 – 12/2015 ● System Administrator             │                           │
 │                   │ Elbe Medien GmbH · Hamburg       │                           │
 │                   │   (DE)                           │                           │
-│                   │ ✓ Ran VMware and Windows         │                           │
+│                   │ › Ran VMware and Windows         │                           │
 │                   │   Server environments            │                           │
-│                   │ ✓ Put a backup and disaster      │                           │
+│                   │ › Put a backup and disaster      │                           │
 │                   │   recovery concept into practice │                           │
 │                                                      │                           │
 │ 08/2009 – 07/2012 ● Apprenticeship IT Specialist for │                           │
 │                   │ System Integration               │                           │
 │                   │ Elbe Medien GmbH · Hamburg       │                           │
 │                   │   (DE)                           │                           │
-│                   │ ✓ Final exam at the Hamburg      │                           │
+│                   │ › Final exam at the Hamburg      │                           │
 │                   │   Chamber of Commerce            │                           │
 ├──────────────────────────────────────────────────────┴───────────────────────────┤
 │ Left  ■■■■■■■■■□ 92 % full     Right ■■■■■■■■□□ 84 % full                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 ╭─ Page 2 of 2 ────────────────────────────────────────┬───────────────────────────╮
-│                                                      │ CERTIFICATES              │
+│                                                      │ CERTIFICATES ──────────── │
+│                                                      │                           │
 │                                                      │ PRINCE2 Practitioner      │
 │                                                      │ 06/2018                   │
 │                                                      │ Professional Scrum Master │
