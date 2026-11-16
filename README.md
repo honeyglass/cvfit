@@ -118,17 +118,17 @@ tools for agents.
 
 | Rule | What oriko does | Why it helps the agent | Source |
 | :--- | :--- | :--- | :--- |
-| Raw JSON input | Every command takes its whole input as one JSON object, after `--json` or on standard input (text another program sends in). | The agent passes the data as it is, without turning it into many separate flags. | 📄 Poehnelt |
-| Schema at runtime | `oriko schema` lists every command, and `oriko schema <command>` shows the exact input one accepts. | The agent looks the format up in the tool itself, so it never relies on an outdated manual. | 📄 Poehnelt |
-| JSON when piped | In a terminal, oriko prints text for people. When another program reads the output through a pipe, oriko prints one JSON object. `--output` picks one by hand. | People get text they can read, programs get data they can parse. | 📄 Poehnelt |
-| Input hardening | The path of the Word file and of every photo must stay inside its folder. | An agent can make a mistake, or follow a text it read. oriko then refuses instead of writing elsewhere on your computer. | 📄 Poehnelt |
-| Dry runs | `--dry-run` answers what a command would do, and writes nothing. | The agent can try a command safely before it runs it for real. | 📄 Poehnelt |
-| Agent skill | The agent's manual lies in the repository, next to the code. | The agent learns what no command can tell it, such as when to stop and ask you. | 📄 Poehnelt |
-| Checks in layers | oriko checks in order: the shape of the data, then the version file, then whether it fits on the pages. Each step lists all of its errors at once. | The agent sees only real errors, never follow-up errors of an earlier one, and fixes them in one go. | ➕ oriko |
-| Errors with a hint | Each error names a code, where the wrong value is, and what to change. | The agent can fix the input on its own, without asking you what the error means. | ➕ oriko |
-| All or nothing | A refused command writes nothing, and every write passes the same checks. | No file is ever left half changed. | ➕ oriko |
-| Exit codes 0, 1, 2 | When it ends, oriko returns a number: 0 when all went well, 1 when the input needs a fix, 2 when something broke. | The agent knows what to do next from one number, without reading the text. | ➕ oriko |
-| Plan before the file | `plan` says which block lands on which page before any file exists. | The agent fixes a page that runs over first, instead of building the file and looking at it. | ➕ oriko |
+| Raw JSON input | takes its whole input as one JSON object | passes the data as it is, without many flags | article |
+| Schema at runtime | `oriko schema` shows every command and its input | looks the format up in the tool itself | article |
+| JSON when piped | text for people, JSON for programs | each reader gets what it can read | article |
+| Input hardening | the Word file and photos stay inside their folder | a mistake never writes elsewhere | article |
+| Dry runs | `--dry-run` says what would happen | tries a command safely first | article |
+| Agent skill | the agent's manual ships with the code | knows when to stop and ask you | article |
+| Checks in layers | shape, then version, then pages; all errors at once | fixes real errors in one go | ➕ oriko |
+| Errors with a hint | each error says where and what to change | fixes the input on its own | ➕ oriko |
+| All or nothing | a refused command writes nothing | no file is left half changed | ➕ oriko |
+| Exit codes 0, 1, 2 | 0 ok, 1 fix the input, 2 something broke | knows the next step from one number | ➕ oriko |
+| Plan before the file | `plan` shows which block lands on which page | fixes an overflow before building | ➕ oriko |
 
 <details>
 <summary><b>⌨️ CLI commands</b></summary>
@@ -171,21 +171,6 @@ A refusal the agent reads and acts on:
 `"ok": false` means oriko refused. `"kind": "fix"` says the agent can fix the input itself. Each
 issue has a `code` the agent can check, a `path` to the wrong value, a `message` for people and a
 `hint` on what to change.
-
-<details>
-<summary><b>❓ Why a CLI and not an MCP server?</b></summary>
-
-- A CLI works with every agent that can run a command, such as Claude Code, Codex or Gemini CLI,
-  and with people at a terminal. An MCP server needs a running process and an entry in the
-  settings of each client.
-- The agent asks `oriko schema` only for the command it needs. Most MCP clients put the
-  description of every tool into the agent's context up front, whether it is used or not.
-- oriko reads and writes plain files on your computer, so you can check, script and test every
-  step yourself.
-- An MCP server could wrap the CLI later without changing it. Poehnelt's article calls this
-  serving several surfaces from one tool.
-
-</details>
 
 ## 🖥️ Terminal preview
 
@@ -417,6 +402,21 @@ Upload `acme.docx` to Google Docs and save it there with File, Download, PDF.
 - It never adds a skill, a level, a date or a fact you did not state. It never changes your CV for
   a single job, and never overwrites a version you already have. When it needs any of that, it
   stops and asks you.
+
+<details>
+<summary><b>❓ Why a CLI and not an MCP server?</b></summary>
+
+- A CLI works with every agent that can run a command, such as Claude Code, Codex or Gemini CLI,
+  and with people at a terminal. An MCP server needs a running process and an entry in the
+  settings of each client.
+- The agent asks `oriko schema` only for the command it needs. Most MCP clients put the
+  description of every tool into the agent's context up front, whether it is used or not.
+- oriko reads and writes plain files on your computer, so you can check, script and test every
+  step yourself.
+- An MCP server could wrap the CLI later without changing it. Poehnelt's article calls this
+  serving several surfaces from one tool.
+
+</details>
 
 ## 🛠️ Development
 
