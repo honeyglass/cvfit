@@ -121,7 +121,7 @@ function document(cv: Master, plan: Plan, images: Images) {
         },
       },
     },
-    numbering: { config: [checkmarks()] },
+    numbering: { config: [bulletMarks()] },
     sections: [
       {
         properties: {
@@ -138,13 +138,13 @@ function document(cv: Master, plan: Plan, images: Images) {
   });
 }
 
-const checkmarks = () => ({
-  reference: 'checks',
+const bulletMarks = () => ({
+  reference: 'bullets',
   levels: [
     {
       level: 0,
       format: LevelFormat.BULLET,
-      text: '✓',
+      text: '›',
       alignment: AlignmentType.LEFT,
       style: {
         paragraph: { indent: { left: WIDTH.bulletIndent, hanging: WIDTH.bulletHanging } },
@@ -334,7 +334,7 @@ function jobRows(job: Job, pin: Uint8Array) {
       spacing: { after: SPACE.afterEmployer },
     }),
     ...job.bullets.map(bullet =>
-      para([run(bullet)], { numbering: { reference: 'checks', level: 0 } }),
+      para([run(bullet)], { numbering: { reference: 'bullets', level: 0 } }),
     ),
   ];
   return [

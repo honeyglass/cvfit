@@ -39,8 +39,31 @@ test('wraps a long rated name instead of cutting it off', () => {
   const rated = cv.blocks.find(block => block.kind === 'rated');
   if (rated?.kind === 'rated') rated.items[0] = { name: 'Event-driven systems at scale', level: 5 };
   const sheet = preview(cv, unwrap(place(cv))).split('\n');
-  const first = sheet.findIndex(line => /│ Event-driven\s+●●●●● │$/.test(line));
-  assert.match(sheet[first + 1] ?? '', /│ systems at scale {10}│$/);
+  const first = sheet.findIndex(line => /│   Event-driven\s+●●●●● │$/.test(line));
+  assert.match(sheet[first + 1] ?? '', /│   systems at scale {8}│$/);
+});
+
+// The right column of a row: the 25 characters between its two frame lines.
+const rightCell = (line: string) => line.slice(-27, -2).trim();
+
+test('rules each section heading off, with more room above it than between groups', () => {
+  const heading = lines.findIndex(line => rightCell(line).startsWith('SKILLS ─'));
+  assert.deepEqual(lines.slice(heading - 2, heading + 2).map(rightCell), [
+    '',
+    '',
+    rightCell(lines[heading] ?? ''),
+    '',
+  ]);
+  assert.ok(lines.some(line => line.includes('│ PROFESSIONAL EXPERIENCE ──')));
+  assert.ok(lines.some(line => rightCell(line).startsWith('CONTACT ─')));
+});
+
+test('indents the items of a group below its title', () => {
+  assert.ok(lines.some(line => /│   Go\s+●●●●● │$/.test(line)));
+  assert.equal(
+    lines.some(line => /│ Go\s+●●●●● │$/.test(line)),
+    false,
+  );
 });
 
 test('keeps every line within 84 characters, so the frame holds in a narrow terminal', () => {
@@ -63,6 +86,19 @@ test('shows a face where the photo stands, on the first page only', () => {
   const top = lines.findIndex(line => line.includes('╭─────────╮'));
   assert.ok(lines[top + 5]?.includes('╰─────────╯'));
   assert.ok(lines.slice(top, top + 6).some(line => line.includes('Jane')));
+});
+
+// A blank row above the photo, two characters left of it: about the same room, as a row is
+// twice as high as a character is wide. Name and contact start on the photo's first row.
+test('leaves as much room above the photo as left of it, and lines the name up with it', () => {
+  const top = lines.findIndex(line => line.includes('╭─────────╮'));
+  assert.match(lines[top] ?? '', /^│   ╭─────────╮ +Jane │ CONTACT ─+ │$/);
+  assert.match(lines[top - 1] ?? '', /^│ +│ +│$/);
+  assert.equal(lines[top - 2]?.startsWith('╭─ Page 1'), true);
+});
+
+test('marks each bullet of a job with an angle that every font sets', () => {
+  assert.ok(lines.some(line => line.includes('│ › Rebuilt the shipment')));
 });
 
 test('shows how full each column of a page is', () => {

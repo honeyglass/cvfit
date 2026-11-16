@@ -22,14 +22,14 @@ const DOTS = LIMITS.level + 1;
 const BAR = 10;
 /** The placeholder for the photo: the terminal shows where it stands, never the picture. */
 const FACE = [
-  '   ╭─────────╮',
-  '   │         │',
-  '   │  ◠   ◠  │',
-  '   │    ◡    │',
-  '   │         │',
-  '   ╰─────────╯',
+  '  ╭─────────╮',
+  '  │         │',
+  '  │  ◠   ◠  │',
+  '  │    ◡    │',
+  '  │         │',
+  '  ╰─────────╯',
 ];
-const FACE_WIDTH = 14;
+const FACE_WIDTH = 13;
 
 /**
  * @param cv - a checked CV
@@ -109,14 +109,40 @@ const cut = (word: string, width: number) => word.match(new RegExp(`.{1,${width}
 const blockOf = (cv: Master, placed: Placed) => cv.blocks.find(block => block.id === placed.id);
 
 function leftLines(cv: Master, column: Column, page: number) {
-  const top = page === 0 ? [...nameBlock(cv.person), ''] : [];
-  return [...top, ...column.blocks.flatMap(placed => jobLines(cv, placed))];
+  const top = page === 0 ? ['', ...nameBlock(cv.person), ''] : [];
+  return stacked(top, column.blocks, placed => jobLines(cv, placed));
 }
 
-// The face on the left, name and role right-aligned beside it, as the document sets them.
+/**
+ * A blank row already ends every block; a section heading below one gets a second blank row, so
+ * sections stand further apart than the groups inside them.
+ *
+ * @param top - the lines above the blocks, such as the name or the contact
+ * @param blocks - the blocks of one column of one page
+ * @param linesOf - the lines of one block, ending in a blank row
+ * @returns the lines of the column
+ */
+function stacked(top: string[], blocks: Placed[], linesOf: (placed: Placed) => string[]) {
+  const lines = [...top];
+  for (const placed of blocks) {
+    if (placed.heading !== null && lines.length > 0) lines.push('');
+    lines.push(...linesOf(placed));
+  }
+  return lines;
+}
+
+// The heading in capitals, a rule to the end of the column, and a blank row below.
+function ruled(text: string, width: number) {
+  const lines = wrap(text.toUpperCase(), width);
+  const last = lines.pop() ?? '';
+  const rule = '─'.repeat(Math.max(0, width - last.length - 1));
+  return [...lines, rule === '' ? last : `${last} ${rule}`, ''];
+}
+
+// The face on the left, name and role right-aligned beside it from its first row on.
 function nameBlock(person: Master['person']) {
   const room = LEFT - FACE_WIDTH;
-  const beside = ['', person.firstName, person.lastName, person.role];
+  const beside = [person.firstName, person.lastName, person.role];
   return FACE.map((line, row) => `${line}${shortened(beside[row] ?? '', room).padStart(room)}`);
 }
 
@@ -127,12 +153,11 @@ function jobLines(cv: Master, placed: Placed) {
   const job = blockOf(cv, placed);
   if (job?.kind !== 'job') return [];
   const body = LEFT - DATE;
-  const heading =
-    placed.heading === null ? [] : [...wrap(placed.heading.text.toUpperCase(), LEFT), ''];
+  const heading = placed.heading === null ? [] : ruled(placed.heading.text, LEFT);
   const head = wrap(job.title, body - 2).map((line, index) => `${index === 0 ? '●' : '│'} ${line}`);
   const date = wrap(`${job.from} – ${job.to}`, DATE - 1);
   const employer = `${job.employer} · ${job.place}`;
-  const details = [employer, ...job.bullets.map(bullet => `✓ ${bullet}`)].flatMap(line =>
+  const details = [employer, ...job.bullets.map(bullet => `› ${bullet}`)].flatMap(line =>
     hanging(line, body - 2),
   );
   const rows = [...head, ...details.map(line => `│ ${line}`)];
@@ -145,29 +170,33 @@ const hanging = (text: string, width: number) =>
 
 function rightLines(cv: Master, column: Column, page: number) {
   const contact = cv.contact.items.flatMap(item => item.lines.flatMap(line => wrap(line, RIGHT)));
-  const top = page === 0 ? [cv.contact.title.toUpperCase(), ...contact, ''] : [];
-  return [...top, ...column.blocks.flatMap(placed => blockLines(cv, placed))];
+  const top = page === 0 ? ['', ...ruled(cv.contact.title, RIGHT), ...contact, ''] : [];
+  return stacked(top, column.blocks, placed => blockLines(cv, placed));
 }
 
 function blockLines(cv: Master, placed: Placed) {
   const block = blockOf(cv, placed);
   if (block === undefined || block.kind === 'job') return [];
-  const heading = placed.heading === null ? [] : wrap(placed.heading.text.toUpperCase(), RIGHT);
-  const title = block.title === undefined ? [] : wrap(block.title, RIGHT);
-  return [...heading, ...title, ...content(block), ''];
+  const heading = placed.heading === null ? [] : ruled(placed.heading.text, RIGHT);
+  if (block.title === undefined) return [...heading, ...content(block, RIGHT), ''];
+  const items = content(block, RIGHT - INDENT.length).map(line => `${INDENT}${line}`);
+  return [...heading, ...wrap(block.title, RIGHT), ...items, ''];
 }
 
-function content(block: Exclude<Block, { kind: 'job' }>) {
+/** The items of a group with a title stand this far in, below the title. */
+const INDENT = '  ';
+
+function content(block: Exclude<Block, { kind: 'job' }>, width: number) {
   switch (block.kind) {
     case 'rated':
       return block.items.flatMap(item => {
-        const [first = '', ...rest] = wrap(item.name, RIGHT - DOTS);
-        return [`${first.padEnd(RIGHT - DOTS)} ${dots(item.level)}`, ...rest];
+        const [first = '', ...rest] = wrap(item.name, width - DOTS);
+        return [`${first.padEnd(width - DOTS)} ${dots(item.level)}`, ...rest];
       });
     case 'list':
-      return wrap(block.items.join(', '), RIGHT);
+      return wrap(block.items.join(', '), width);
     case 'entries':
-      return block.items.flatMap(item => [...wrap(item.title, RIGHT), ...wrap(item.note, RIGHT)]);
+      return block.items.flatMap(item => [...wrap(item.title, width), ...wrap(item.note, width)]);
   }
 }
 
