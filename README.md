@@ -247,21 +247,20 @@ sheets in its field `preview`. Add `--output text` to get the plain sheets there
 
 ## 📚 Examples
 
-Three made-up people, three real job postings, one agent run each. Every example holds the
-summary of the posting, the agent's report, the terminal preview, and the Word file and the PDF
-that Google Docs made from it, in the classic and in the terminal style.
+Three made-up people, three real job postings, one agent run each.
 
-| | Developer | Project manager | Cook |
-| :--- | :--- | :--- | :--- |
-| **Person** | Jane Doe, Berlin | Lukas Berger, Hamburg | Marco Weber, Munich |
-| **Pages** | 3, the right column on 2 | 2, the right column on 2 | 1 |
-| **Job posting** | [Senior Backend Engineer at go-e Labs](examples/showcase/go-e-senior-backend/posting.md) | [IT Project Manager at DaVita](examples/showcase/davita-it-project-manager/posting.md) | [Cook at GALERIA Restaurant](examples/showcase/galeria-cook/posting.md) |
-| **What the agent did** | [report](examples/showcase/go-e-senior-backend/report.md) | [report](examples/showcase/davita-it-project-manager/report.md) | [report](examples/showcase/galeria-cook/report.md) |
-| **Result** | [preview](examples/showcase/go-e-senior-backend/preview.txt) · [Word](examples/showcase/go-e-senior-backend/go-e-senior-backend.docx) · [PDF](examples/showcase/go-e-senior-backend/go-e-senior-backend.pdf) | [preview](examples/showcase/davita-it-project-manager/preview.txt) · [Word](examples/showcase/davita-it-project-manager/davita-it-project-manager.docx) · [PDF](examples/showcase/davita-it-project-manager/davita-it-project-manager.pdf) | [preview](examples/showcase/galeria-cook/preview.txt) · [Word](examples/showcase/galeria-cook/galeria-cook.docx) · [PDF](examples/showcase/galeria-cook/galeria-cook.pdf) |
-| **Terminal style** | [Word](examples/showcase/go-e-senior-backend/go-e-senior-backend-terminal.docx) · [PDF](examples/showcase/go-e-senior-backend/go-e-senior-backend-terminal.pdf) | [Word](examples/showcase/davita-it-project-manager/davita-it-project-manager-terminal.docx) · [PDF](examples/showcase/davita-it-project-manager/davita-it-project-manager-terminal.pdf) | [Word](examples/showcase/galeria-cook/galeria-cook-terminal.docx) · [PDF](examples/showcase/galeria-cook/galeria-cook-terminal.pdf) |
+| 👩‍💻 Jane Doe · go-e Labs | 📋 Lukas Berger · DaVita | 🍳 Marco Weber · GALERIA |
+| :---: | :---: | :---: |
+| <img src="examples/showcase/go-e-senior-backend/page-1.png" width="200" alt="Jane Doe's CV for go-e Labs, page 1"> | <img src="examples/showcase/davita-it-project-manager/page-1.png" width="200" alt="Lukas Berger's CV for DaVita, page 1"> | <img src="examples/showcase/galeria-cook/page-1.png" width="200" alt="Marco Weber's CV for GALERIA, page 1"> |
+| Senior Backend Engineer · 3 pages | IT Project Manager · 2 pages | Cook · 1 page |
+| [posting](examples/showcase/go-e-senior-backend/posting.md) · [report](examples/showcase/go-e-senior-backend/report.md) · [preview](examples/showcase/go-e-senior-backend/preview.txt) | [posting](examples/showcase/davita-it-project-manager/posting.md) · [report](examples/showcase/davita-it-project-manager/report.md) · [preview](examples/showcase/davita-it-project-manager/preview.txt) | [posting](examples/showcase/galeria-cook/posting.md) · [report](examples/showcase/galeria-cook/report.md) · [preview](examples/showcase/galeria-cook/preview.txt) |
+| classic: [Word](examples/showcase/go-e-senior-backend/go-e-senior-backend.docx) · [PDF](examples/showcase/go-e-senior-backend/go-e-senior-backend.pdf) | classic: [Word](examples/showcase/davita-it-project-manager/davita-it-project-manager.docx) · [PDF](examples/showcase/davita-it-project-manager/davita-it-project-manager.pdf) | classic: [Word](examples/showcase/galeria-cook/galeria-cook.docx) · [PDF](examples/showcase/galeria-cook/galeria-cook.pdf) |
+| terminal: [Word](examples/showcase/go-e-senior-backend/go-e-senior-backend-terminal.docx) · [PDF](examples/showcase/go-e-senior-backend/go-e-senior-backend-terminal.pdf) | terminal: [Word](examples/showcase/davita-it-project-manager/davita-it-project-manager-terminal.docx) · [PDF](examples/showcase/davita-it-project-manager/davita-it-project-manager-terminal.pdf) | terminal: [Word](examples/showcase/galeria-cook/galeria-cook-terminal.docx) · [PDF](examples/showcase/galeria-cook/galeria-cook-terminal.pdf) |
 
 <details>
-<summary><b>Jane Doe for go-e Labs, 3 pages</b></summary>
+<summary><b>👩‍💻 Jane Doe · Senior Backend Engineer at go-e Labs · all 3 pages</b></summary>
+
+**Classic**
 
 <p align="center">
   <img src="examples/showcase/go-e-senior-backend/page-1.png" width="32%" alt="Jane Doe's CV for go-e Labs, page 1 of 3">
@@ -269,10 +268,7 @@ that Google Docs made from it, in the classic and in the terminal style.
   <img src="examples/showcase/go-e-senior-backend/page-3.png" width="32%" alt="Jane Doe's CV for go-e Labs, page 3 of 3">
 </p>
 
-</details>
-
-<details>
-<summary><b>Jane Doe for go-e Labs, 3 pages, terminal style</b></summary>
+**Terminal style**
 
 <p align="center">
   <img src="examples/showcase/go-e-senior-backend/terminal-page-1.png" width="32%" alt="Jane Doe's CV for go-e Labs in the terminal style, page 1 of 3">
@@ -283,17 +279,16 @@ that Google Docs made from it, in the classic and in the terminal style.
 </details>
 
 <details>
-<summary><b>Lukas Berger for DaVita, 2 pages</b></summary>
+<summary><b>📋 Lukas Berger · IT Project Manager at DaVita · all 2 pages</b></summary>
+
+**Classic**
 
 <p align="center">
   <img src="examples/showcase/davita-it-project-manager/page-1.png" width="32%" alt="Lukas Berger's CV for DaVita, page 1 of 2">
   <img src="examples/showcase/davita-it-project-manager/page-2.png" width="32%" alt="Lukas Berger's CV for DaVita, page 2 of 2">
 </p>
 
-</details>
-
-<details>
-<summary><b>Lukas Berger for DaVita, 2 pages, terminal style</b></summary>
+**Terminal style**
 
 <p align="center">
   <img src="examples/showcase/davita-it-project-manager/terminal-page-1.png" width="32%" alt="Lukas Berger's CV for DaVita in the terminal style, page 1 of 2">
@@ -303,19 +298,18 @@ that Google Docs made from it, in the classic and in the terminal style.
 </details>
 
 <details>
-<summary><b>Marco Weber for GALERIA Restaurant, 1 page</b></summary>
+<summary><b>🍳 Marco Weber · Cook at GALERIA · 1 page</b></summary>
+
+**Classic**
 
 <p align="center">
-  <img src="examples/showcase/galeria-cook/page-1.png" width="32%" alt="Marco Weber's CV for GALERIA Restaurant, page 1 of 1">
+  <img src="examples/showcase/galeria-cook/page-1.png" width="32%" alt="Marco Weber's CV for GALERIA, page 1 of 1">
 </p>
 
-</details>
-
-<details>
-<summary><b>Marco Weber for GALERIA Restaurant, 1 page, terminal style</b></summary>
+**Terminal style**
 
 <p align="center">
-  <img src="examples/showcase/galeria-cook/terminal-page-1.png" width="32%" alt="Marco Weber's CV for GALERIA Restaurant in the terminal style, page 1 of 1">
+  <img src="examples/showcase/galeria-cook/terminal-page-1.png" width="32%" alt="Marco Weber's CV for GALERIA in the terminal style, page 1 of 1">
 </p>
 
 </details>
