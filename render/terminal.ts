@@ -10,13 +10,13 @@
  *
  * @example const docx = await renderTerminal(cv, plan);
  */
-import { Document, Packer, Paragraph, TextRun } from 'docx';
+import { Document, ExternalHyperlink, Packer, Paragraph, TextRun } from 'docx';
 import { done } from '../core/errors.ts';
 import type { Result } from '../core/errors.ts';
 import type { Master } from '../data/cv.schema.ts';
 import type { Plan } from '../layout/place.ts';
 import { HEIGHT, WIDTH } from '../layout/metrics.ts';
-import { sheets } from '../preview/text.ts';
+import { REPOSITORY, sheets } from '../preview/text.ts';
 import { stable } from './zip.ts';
 
 const FONT = 'Fira Code';
@@ -53,8 +53,21 @@ const line = (text: string, spacing: number, isPageStart: boolean) =>
   new Paragraph({
     pageBreakBefore: isPageStart,
     spacing: { before: 0, after: 0, line: spacing },
-    children: [new TextRun({ text, font: FONT, size: SIZE })],
+    children: linked(text),
   });
+
+const run = (text: string) => new TextRun({ text, font: FONT, size: SIZE });
+
+// The repository in a top edge becomes a link a reader of the PDF can click.
+function linked(text: string) {
+  const [before, after] = text.split(REPOSITORY);
+  if (after === undefined) return [run(text)];
+  const link = new ExternalHyperlink({
+    link: `https://${REPOSITORY}`,
+    children: [run(REPOSITORY)],
+  });
+  return [run(before ?? ''), link, run(after)];
+}
 
 function document(paragraphs: Paragraph[]) {
   return new Document({

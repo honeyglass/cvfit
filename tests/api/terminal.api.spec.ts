@@ -49,3 +49,11 @@ test('gives every page as many lines as the tallest page can hold', async () => 
   const empty = /^│ +│ +│$/;
   assert.ok(empty.test(second.at(-4) ?? ''));
 });
+
+test('links the repository in the top edge of every page', async () => {
+  const zip = await JSZip.loadAsync(await build());
+  const xml = (await zip.file('word/document.xml')?.async('string')) ?? '';
+  const rels = (await zip.file('word/_rels/document.xml.rels')?.async('string')) ?? '';
+  assert.equal(xml.split('<w:hyperlink').length - 1, 2);
+  assert.ok(rels.includes('Target="https://github.com/honeyglass/oriko"'));
+});
