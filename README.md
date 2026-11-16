@@ -34,8 +34,10 @@ terminal, and you get a Word file that you open in Google Docs and save as PDF.
   need your yes.
 - 👀 **Preview before you build**: see every page in the terminal, and how full it is.
 - 🌍 **Several CVs**: one per language or per person, side by side.
-- 🛡️ **Safe dependencies**: new package versions wait three days, no install scripts run, every
-  version is pinned.
+- 🛡️ **Safe dependencies**: oriko takes in a new version of a package (code from other people)
+  only once it is three days old, so a bad release is usually caught first. Packages may not run
+  their own programs while they install, and every version is fixed, so every install gets the
+  same code.
 
 ### oriko vs editing a document by hand
 
@@ -60,8 +62,8 @@ node bin/oriko.ts schema
 ```
 
 > [!NOTE]
-> There is no build step: Node runs the TypeScript sources directly. The examples below write
-> `oriko` for `node bin/oriko.ts`.
+> You do not compile anything first: Node 24 runs the TypeScript files of oriko as they are. The
+> examples below write `oriko` for `node bin/oriko.ts`.
 
 ## 🤖 Working with an agent
 
@@ -94,32 +96,35 @@ run when, what it may change, and when it stops and asks you.
 
 ### The skill: a fixed flow
 
-The skill is a state machine with two paths. To tailor a CV, the agent reads the posting, inspects
+The skill is a fixed list of steps, and for each step the steps that may follow (a state machine).
+It has two paths. To tailor a CV, the agent reads the posting, inspects
 your CV, drafts a version, checks it, builds it and reports. To write a CV, it sorts your facts,
 writes them, checks them and hands over; with no CV at all, it first asks you a few short
-questions. The agent moves only along the listed steps. A refused check sends it back one step, at
-most three times; then it stops and asks you.
+questions. The agent moves only along the listed steps. When oriko refuses a draft, the agent goes back
+one step and fixes it, at most three times; then it stops and asks you.
 
 ### The CLI: Agent DX rules
 
-The rules start from Justin Poehnelt's article
+DX stands for developer experience: how easy a tool is to use. Agent DX asks the same question for
+an AI agent, which cannot click through a menu or guess what a vague error means. The rules start
+from Justin Poehnelt's article
 [Rewrite your CLI for AI agents](https://justin.poehnelt.com/posts/rewrite-your-cli-for-ai-agents/)
 (2026), with the [Google Workspace CLI](https://github.com/googleworkspace/cli) as its reference
 implementation. oriko adds its own rules on top.
 
-| Rule | From | In oriko |
-| :--- | :--- | :--- |
-| Raw JSON input | article | every command takes its input as `--json` or stdin |
-| Schema at runtime | article | `oriko schema` lists the commands, `oriko schema <command>` the exact input |
-| JSON when piped | article | text in a terminal, one JSON object in a pipe; `--output` overrides it |
-| Input hardening | article | the `.docx` and every photo path must stay inside their folder |
-| Dry runs | article | `--dry-run` answers what would happen and writes no file |
-| Agent skill | article | the skill ships in the repository, next to the code |
-| Checks in layers | added | the shape first, then the profile, then the page rules |
-| Errors with a hint | added | each issue names a code, the path of the wrong value and what to change |
-| All or nothing | added | a refused command writes nothing, and every write passes the same checks |
-| Exit codes 0, 1, 2 | added | ok, a refusal the agent can fix, a fatal error |
-| Plan before the file | added | `plan` says which block lands on which page, before a file exists |
+| Rule | What oriko does | Why it helps the agent | From |
+| :--- | :--- | :--- | :--- |
+| Raw JSON input | Every command takes its whole input as one JSON object, after `--json` or on standard input (text another program sends in). | The agent passes the data as it is, without turning it into many separate flags. | article |
+| Schema at runtime | `oriko schema` lists every command, and `oriko schema <command>` shows the exact input one accepts. | The agent looks the format up in the tool itself, so it never relies on an outdated manual. | article |
+| JSON when piped | In a terminal, oriko prints text for people. When another program reads the output through a pipe, oriko prints one JSON object. `--output` picks one by hand. | People get text they can read, programs get data they can parse. | article |
+| Input hardening | The path of the Word file and of every photo must stay inside its folder. | An agent can make a mistake, or follow a text it read. oriko then refuses instead of writing elsewhere on your computer. | article |
+| Dry runs | `--dry-run` answers what a command would do, and writes nothing. | The agent can try a command safely before it runs it for real. | article |
+| Agent skill | The agent's manual lies in the repository, next to the code. | The agent learns what no command can tell it, such as when to stop and ask you. | article |
+| Checks in layers | oriko checks in order: the shape of the data, then the version file, then whether it fits on the pages. Each step lists all of its errors at once. | The agent sees only real errors, never follow-up errors of an earlier one, and fixes them in one go. | added |
+| Errors with a hint | Each error names a code, where the wrong value is, and what to change. | The agent can fix the input on its own, without asking you what the error means. | added |
+| All or nothing | A refused command writes nothing, and every write passes the same checks. | No file is ever left half changed. | added |
+| Exit codes 0, 1, 2 | When it ends, oriko returns a number: 0 when all went well, 1 when the input needs a fix, 2 when something broke. | The agent knows what to do next from one number, without reading the text. | added |
+| Plan before the file | `plan` says which block lands on which page before any file exists. | The agent fixes a page that runs over first, instead of building the file and looking at it. | added |
 
 A refusal the agent reads and acts on:
 
@@ -137,6 +142,10 @@ A refusal the agent reads and acts on:
   ]
 }
 ```
+
+`"ok": false` means oriko refused. `"kind": "fix"` says the agent can fix the input itself. Each
+issue has a `code` the agent can check, a `path` to the wrong value, a `message` for people and a
+`hint` on what to change.
 
 ## 🖥️ Terminal preview
 
@@ -203,8 +212,11 @@ Nothing was written.
 - PAGE_OVERFLOW at pages: "These blocks of the left column land after page 1: campus". Hide or shorten blocks of the left column, remove a page pin, or raise "pages".
 ```
 
-In a pipe, `preview` answers JSON with the sheets in the field `preview`; `--output text` prints
-the sheets there too.
+The first line says that oriko refused, that the input can be fixed (`fix`), and at which step
+(`place`, the page planning). Each line that starts with `-` names one problem and what to change.
+
+When another program reads the output instead of a terminal, `preview` answers JSON with the
+sheets in its field `preview`. Add `--output text` to get the plain sheets there too.
 
 ## 📚 Examples
 
@@ -368,8 +380,9 @@ Upload `acme.docx` to Google Docs and save it there with File, Download, PDF.
   language.
 - ℹ️ **Note:** your CVs never go into the repository. They stay in `~/.oriko` on your computer. An
   AI assistant you work with reads the parts of them it needs, as with any file you show it.
-- 💡 **Tip:** a page that looks too empty usually has a block pinned to the next page in your CV
-  (`"page": 2`). A version can clear the pin with `"page": null`.
+- 💡 **Tip:** a page that looks too empty usually has a block pinned to the next page in your CV:
+  `"page": 2` on a block makes it start on page 2, however much room is left before it. A version
+  can remove the pin with `"page": null`.
 
 ## 🛠️ Development
 
