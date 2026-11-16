@@ -15,7 +15,12 @@ export const INPUT = {
   'block add': z.strictObject({ block: Block, before: Id.optional(), after: Id.optional() }),
   'block update': z.strictObject({ id: Id, set: z.record(z.string(), z.unknown()) }),
   'block remove': z.strictObject({ id: Id }),
-  'block move': z.strictObject({ id: Id, before: Id.optional(), after: Id.optional(), page: Page.nullable().optional() }),
+  'block move': z.strictObject({
+    id: Id,
+    before: Id.optional(),
+    after: Id.optional(),
+    page: Page.nullable().optional(),
+  }),
   'item add': z.strictObject({ block: Id, value: z.unknown(), index: index.optional() }),
   'item update': z.strictObject({ block: Id, index, value: z.unknown() }),
   'item remove': z.strictObject({ block: Id, index }),

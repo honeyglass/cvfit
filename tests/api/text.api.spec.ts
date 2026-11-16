@@ -16,13 +16,20 @@ test('shows every page with the blocks the plan puts on it', () => {
 });
 
 test('shows a job with its date and a rated item with its dots', () => {
-  assert.ok(lines.some(line => line.includes('03/2021 – today') && line.includes('● Senior Backend Engineer')));
+  assert.ok(
+    lines.some(
+      line => line.includes('03/2021 – today') && line.includes('● Senior Backend Engineer'),
+    ),
+  );
   assert.ok(lines.some(line => /Go\s+●●●●● │$/.test(line)));
   assert.ok(lines.some(line => /Python\s+●●●○○ │$/.test(line)));
 });
 
 test('keeps every line within 84 characters, so the frame holds in a narrow terminal', () => {
-  assert.deepEqual(lines.filter(line => [...line].length > 84), []);
+  assert.deepEqual(
+    lines.filter(line => [...line].length > 84),
+    [],
+  );
 });
 
 test('frames every page, so all of its lines are equally wide', () => {

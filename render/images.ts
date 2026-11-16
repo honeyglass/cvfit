@@ -66,7 +66,8 @@ function average(source: Pixels, area: Area) {
   for (let y = area.top; y < area.bottom; y++) {
     for (let x = area.left; x < area.right; x++) {
       const at = (y * source.width + x) * 4;
-      for (const channel of [0, 1, 2, 3]) sum[channel] = (sum[channel] ?? 0) + (source.data[at + channel] ?? 0);
+      for (const channel of [0, 1, 2, 3])
+        sum[channel] = (sum[channel] ?? 0) + (source.data[at + channel] ?? 0);
     }
   }
   const count = (area.bottom - area.top) * (area.right - area.left);
@@ -82,7 +83,8 @@ export function circlePhoto(photo: Uint8Array) {
   const { width, height, data } = decoded(photo);
   const round = Uint8Array.from(data);
   for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) round[(y * width + x) * 4 + 3] = Math.round(255 * coverage(x, y, width, height));
+    for (let x = 0; x < width; x++)
+      round[(y * width + x) * 4 + 3] = Math.round(255 * coverage(x, y, width, height));
   }
   return encoded({ width, height, data: round });
 }

@@ -5,14 +5,23 @@ import { codes, fixture, unwrap } from '../utils/fixture.ts';
 
 const ids = (blocks: { id: string }[]) => blocks.map(block => block.id);
 const near = (actual: number | undefined, expected: number) =>
-  assert.ok(actual !== undefined && Math.abs(actual - expected) <= 1, `${actual} is not within 1 pt of ${expected}`);
+  assert.ok(
+    actual !== undefined && Math.abs(actual - expected) <= 1,
+    `${actual} is not within 1 pt of ${expected}`,
+  );
 
 test('places the reference CV as the reference PDF shows it', () => {
   const { pages } = unwrap(place(fixture()));
   assert.equal(pages.length, 2);
   assert.deepEqual(ids(pages[0]?.left.blocks ?? []), ['northwind', 'bluebird', 'harbor', 'lumen']);
   assert.deepEqual(ids(pages[1]?.left.blocks ?? []), ['campus', 'freelance', 'cedar']);
-  assert.deepEqual(ids(pages[0]?.right.blocks ?? []), ['programming-languages', 'expertise', 'libraries', 'strengths', 'additional-skills']);
+  assert.deepEqual(ids(pages[0]?.right.blocks ?? []), [
+    'programming-languages',
+    'expertise',
+    'libraries',
+    'strengths',
+    'additional-skills',
+  ]);
   assert.deepEqual(ids(pages[1]?.right.blocks ?? []), ['languages', 'interests', 'awards']);
 });
 
@@ -39,7 +48,8 @@ test('prints a section heading once per page', () => {
 test('moves a block that no longer fits to the next page as a whole', () => {
   const cv = fixture();
   const lumen = cv.blocks[3];
-  if (lumen?.kind === 'job') lumen.bullets.push(...Array.from({ length: 10 }, (_, n) => `Extra point ${n}`));
+  if (lumen?.kind === 'job')
+    lumen.bullets.push(...Array.from({ length: 10 }, (_, n) => `Extra point ${n}`));
   const campus = cv.blocks[4];
   if (campus !== undefined) delete campus.page;
   cv.pages = 3;
@@ -69,6 +79,7 @@ test('refuses a CV that needs more pages than it allows, and names the blocks', 
 test('refuses a block that is higher than a page', () => {
   const cv = fixture();
   const northwind = cv.blocks[0];
-  if (northwind?.kind === 'job') northwind.bullets = Array.from({ length: 12 }, () => 'word '.repeat(59) + 'end');
+  if (northwind?.kind === 'job')
+    northwind.bullets = Array.from({ length: 12 }, () => 'word '.repeat(59) + 'end');
   assert.ok(codes(place(cv)).includes('BLOCK_TOO_TALL'));
 });

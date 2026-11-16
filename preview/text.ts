@@ -33,7 +33,12 @@ export function preview(cv: Master, plan: Plan) {
   const sheets = plan.pages.map((page, index) => {
     const title = `Page ${index + 1} of ${count}`;
     const fill = `Left  ${bar(page.left)}     Right ${bar(page.right)}`;
-    return sheet(title, leftLines(cv, page.left, index), rightLines(cv, page.right, index), fill).join('\n');
+    return sheet(
+      title,
+      leftLines(cv, page.left, index),
+      rightLines(cv, page.right, index),
+      fill,
+    ).join('\n');
   });
   return `${sheets.join('\n\n')}\n`;
 }
@@ -42,7 +47,11 @@ export function preview(cv: Master, plan: Plan) {
 function sheet(title: string, left: string[], right: string[], fill: string) {
   const [leftRows, rightRows] = [withoutBlankEnd(left), withoutBlankEnd(right)];
   const rows = Math.max(leftRows.length, rightRows.length);
-  const body = Array.from({ length: rows }, (_, row) => `│ ${(leftRows[row] ?? '').padEnd(LEFT)} │ ${(rightRows[row] ?? '').padEnd(RIGHT)} │`);
+  const body = Array.from(
+    { length: rows },
+    (_, row) =>
+      `│ ${(leftRows[row] ?? '').padEnd(LEFT)} │ ${(rightRows[row] ?? '').padEnd(RIGHT)} │`,
+  );
   return [
     `${`╭─ ${title} `.padEnd(LEFT + 3, '─')}┬${'─'.repeat(RIGHT + 2)}╮`,
     ...body,
@@ -52,7 +61,8 @@ function sheet(title: string, left: string[], right: string[], fill: string) {
   ];
 }
 
-const withoutBlankEnd = (lines: string[]) => lines.slice(0, lines.findLastIndex(line => line !== '') + 1);
+const withoutBlankEnd = (lines: string[]) =>
+  lines.slice(0, lines.findLastIndex(line => line !== '') + 1);
 
 function bar(column: Column) {
   const share = column.used / (column.used + column.free);
@@ -92,23 +102,28 @@ function nameBlock(person: Master['person']) {
   return FACE.map((line, row) => `${line}${shortened(beside[row] ?? '', room).padStart(room)}`);
 }
 
-const shortened = (text: string, width: number) => (text.length <= width ? text : `${text.slice(0, width - 1)}…`);
+const shortened = (text: string, width: number) =>
+  text.length <= width ? text : `${text.slice(0, width - 1)}…`;
 
 function jobLines(cv: Master, placed: Placed) {
   const job = blockOf(cv, placed);
   if (job?.kind !== 'job') return [];
   const body = LEFT - DATE;
-  const heading = placed.heading === null ? [] : [...wrap(placed.heading.text.toUpperCase(), LEFT), ''];
+  const heading =
+    placed.heading === null ? [] : [...wrap(placed.heading.text.toUpperCase(), LEFT), ''];
   const head = wrap(`● ${job.title}`, body);
   const date = wrap(`${job.from} – ${job.to}`, DATE - 1);
   const employer = `${job.employer} · ${job.place}`;
-  const details = [employer, ...job.bullets.map(bullet => `✓ ${bullet}`)].flatMap(line => hanging(line, body - 2));
+  const details = [employer, ...job.bullets.map(bullet => `✓ ${bullet}`)].flatMap(line =>
+    hanging(line, body - 2),
+  );
   const rows = [...head, ...details.map(line => `│ ${line}`)];
   return [...heading, ...rows.map((row, index) => `${(date[index] ?? '').padEnd(DATE)}${row}`), ''];
 }
 
 // The lines after the first stand two characters in, below the text of a bullet.
-const hanging = (text: string, width: number) => wrap(text, width - 2).map((line, index) => (index === 0 ? line : `  ${line}`));
+const hanging = (text: string, width: number) =>
+  wrap(text, width - 2).map((line, index) => (index === 0 ? line : `  ${line}`));
 
 function rightLines(cv: Master, column: Column, page: number) {
   const contact = cv.contact.items.flatMap(item => item.lines.flatMap(line => wrap(line, RIGHT)));
@@ -127,7 +142,9 @@ function blockLines(cv: Master, placed: Placed) {
 function content(block: Exclude<Block, { kind: 'job' }>) {
   switch (block.kind) {
     case 'rated':
-      return block.items.map(item => `${item.name.slice(0, RIGHT - DOTS).padEnd(RIGHT - DOTS)} ${dots(item.level)}`);
+      return block.items.map(
+        item => `${item.name.slice(0, RIGHT - DOTS).padEnd(RIGHT - DOTS)} ${dots(item.level)}`,
+      );
     case 'list':
       return wrap(block.items.join(', '), RIGHT);
     case 'entries':

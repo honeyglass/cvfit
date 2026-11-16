@@ -50,7 +50,17 @@ type Fields = Record<string, unknown>;
 type Call = { io: Io; home: string; values: ReturnType<typeof parsed>['values']; words: string[] };
 
 const SCHEMAS = { master: Master, profile: Profile, block: Block, init: NewCv, ...INPUT };
-const OTHER_COMMANDS = ['schema', 'cvs', 'init', 'show', 'profiles', 'plan', 'preview', 'build', 'photo set'];
+const OTHER_COMMANDS = [
+  'schema',
+  'cvs',
+  'init',
+  'show',
+  'profiles',
+  'plan',
+  'preview',
+  'build',
+  'photo set',
+];
 const OPTIONS = {
   home: 'the data folder with cvs/NAME.json and profiles/NAME.json; ~/.cvfit when left out',
   cv: 'the name of one CV; needed only when the data folder holds several and no profile names one',
@@ -240,7 +250,8 @@ const outline = (block: Block) => ({
 
 // The checked CV of this call, with the profile applied when the call names one.
 async function checked(call: Call, profileName = call.values.profile) {
-  const profile = profileName === undefined ? done(undefined) : await profileOf(call.home, profileName);
+  const profile =
+    profileName === undefined ? done(undefined) : await profileOf(call.home, profileName);
   if (profile.error !== null) return profile;
   const cv = await chosenCv(call.home, call.values.cv, cvOf(profile.data));
   if (cv.error !== null) return cv;
@@ -270,11 +281,21 @@ async function cvs(call: Call): Promise<Result<Fields>> {
     const cv = await checked({ ...call, values: { ...call.values, cv: name } }, undefined);
     const placed = cv.error === null ? place(cv.data) : cv;
     if (cv.error !== null || placed.error !== null) {
-      listed.push({ name, fits: false, issues: (placed.error ?? cv.error)?.issues.map(issue => issue.code) });
+      listed.push({
+        name,
+        fits: false,
+        issues: (placed.error ?? cv.error)?.issues.map(issue => issue.code),
+      });
       continue;
     }
     const { language, person } = cv.data;
-    listed.push({ name, language, person: `${person.firstName} ${person.lastName}`, fits: true, pages: placed.data.pages.length });
+    listed.push({
+      name,
+      language,
+      person: `${person.firstName} ${person.lastName}`,
+      fits: true,
+      pages: placed.data.pages.length,
+    });
   }
   return done({ cvs: listed });
 }
@@ -297,7 +318,11 @@ async function profiles(call: Call): Promise<Result<Fields>> {
     const built = await checked(call, name);
     const placed = built.error === null ? place(built.data) : built;
     const issues = placed.error?.issues.map(issue => issue.code);
-    listed.push(placed.error === null ? { name, cv, fits: true, pages: placed.data.pages.length } : { name, cv, fits: false, issues });
+    listed.push(
+      placed.error === null
+        ? { name, cv, fits: true, pages: placed.data.pages.length }
+        : { name, cv, fits: false, issues },
+    );
   }
   return done({ profiles: listed });
 }
@@ -361,7 +386,8 @@ async function edit(call: Call, command: string): Promise<Result<Fields>> {
   const edited = apply(master.data, command, input.data);
   if (edited.error !== null) return edited;
   const isDryRun = call.values['dry-run'] === true;
-  if (isDryRun === false) await writeAtomic(cv.data.path, `${JSON.stringify(edited.data, null, 2)}\n`);
+  if (isDryRun === false)
+    await writeAtomic(cv.data.path, `${JSON.stringify(edited.data, null, 2)}\n`);
   return done({ command, written: isDryRun === false, ...fit(edited.data) });
 }
 

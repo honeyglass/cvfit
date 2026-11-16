@@ -22,6 +22,7 @@ export const unwrap = <Data>(result: Result<Data>) => {
   return result.data;
 };
 
-export const codes = (result: Result<unknown>) => result.error?.issues.map(issue => issue.code) ?? [];
+export const codes = (result: Result<unknown>) =>
+  result.error?.issues.map(issue => issue.code) ?? [];
 
 export const photo = () => PNG.sync.write(new PNG({ width: 8, height: 8 }));

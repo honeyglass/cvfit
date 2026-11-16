@@ -66,7 +66,8 @@ const unknownCommand = (command: string): Issue => ({
 
 function addBlock(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['block add'].safeParse(input);
-  if (parsed.success === false) return rejected('block add', schemaIssues(parsed.error, [], 'block add'));
+  if (parsed.success === false)
+    return rejected('block add', schemaIssues(parsed.error, [], 'block add'));
   const { block, before, after } = parsed.data;
   const issues = anchorIssues(master, block, before, after);
   if (issues.length > 0) return rejected('block add', issues);
@@ -75,9 +76,11 @@ function addBlock(master: Master, input: unknown): Result<Master> {
 
 function updateBlock(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['block update'].safeParse(input);
-  if (parsed.success === false) return rejected('block update', schemaIssues(parsed.error, [], 'block update'));
+  if (parsed.success === false)
+    return rejected('block update', schemaIssues(parsed.error, [], 'block update'));
   const block = master.blocks.find(candidate => candidate.id === parsed.data.id);
-  if (block === undefined) return rejected('block update', [unknownBlock(parsed.data.id, 'id', master.blocks)]);
+  if (block === undefined)
+    return rejected('block update', [unknownBlock(parsed.data.id, 'id', master.blocks)]);
   const issues: Issue[] = [];
   const changed = patched(block, parsed.data.set, issues);
   if (issues.length > 0) return rejected('block update', issues);
@@ -86,7 +89,8 @@ function updateBlock(master: Master, input: unknown): Result<Master> {
 
 function removeBlock(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['block remove'].safeParse(input);
-  if (parsed.success === false) return rejected('block remove', schemaIssues(parsed.error, [], 'block remove'));
+  if (parsed.success === false)
+    return rejected('block remove', schemaIssues(parsed.error, [], 'block remove'));
   const { id } = parsed.data;
   const exists = master.blocks.some(block => block.id === id);
   if (exists === false) return rejected('block remove', [unknownBlock(id, 'id', master.blocks)]);
@@ -95,7 +99,8 @@ function removeBlock(master: Master, input: unknown): Result<Master> {
 
 function moveBlock(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['block move'].safeParse(input);
-  if (parsed.success === false) return rejected('block move', schemaIssues(parsed.error, [], 'block move'));
+  if (parsed.success === false)
+    return rejected('block move', schemaIssues(parsed.error, [], 'block move'));
   const { id, before, after, page } = parsed.data;
   const block = master.blocks.find(candidate => candidate.id === id);
   if (block === undefined) return rejected('block move', [unknownBlock(id, 'id', master.blocks)]);
@@ -106,7 +111,11 @@ function moveBlock(master: Master, input: unknown): Result<Master> {
   if (issues.length > 0) return rejected('block move', issues);
   const others = master.blocks.filter(candidate => candidate.id !== id);
   const stays = before === undefined && after === undefined;
-  return done(stays ? replaced(master, pinned) : { ...master, blocks: inserted(others, pinned, before, after) });
+  return done(
+    stays
+      ? replaced(master, pinned)
+      : { ...master, blocks: inserted(others, pinned, before, after) },
+  );
 }
 
 const nothingToDo = (): Issue => ({
@@ -122,9 +131,21 @@ const replaced = (master: Master, block: Block): Master => ({
 });
 
 // An anchor is a block of the same column, since the order of a column is all a move can change.
-function anchorIssues(master: Master, block: Block, before: string | undefined, after: string | undefined): Issue[] {
+function anchorIssues(
+  master: Master,
+  block: Block,
+  before: string | undefined,
+  after: string | undefined,
+): Issue[] {
   if (before !== undefined && after !== undefined) {
-    return [{ code: 'BOTH_ANCHORS', path: 'after', message: 'The input names two anchors', hint: 'Send "before" or "after", not both' }];
+    return [
+      {
+        code: 'BOTH_ANCHORS',
+        path: 'after',
+        message: 'The input names two anchors',
+        hint: 'Send "before" or "after", not both',
+      },
+    ];
   }
   const id = before ?? after;
   if (id === undefined) return [];
@@ -133,7 +154,9 @@ function anchorIssues(master: Master, block: Block, before: string | undefined, 
   if (anchor === undefined) return [unknownBlock(id, path, master.blocks)];
   const column = COLUMN[block.kind];
   if (COLUMN[anchor.kind] === column) return [];
-  const sameColumn = master.blocks.filter(candidate => COLUMN[candidate.kind] === column && candidate.id !== block.id);
+  const sameColumn = master.blocks.filter(
+    candidate => COLUMN[candidate.kind] === column && candidate.id !== block.id,
+  );
   return [
     {
       code: 'OTHER_COLUMN',
@@ -145,7 +168,12 @@ function anchorIssues(master: Master, block: Block, before: string | undefined, 
 }
 
 // Without an anchor a block goes to the end, which is the end of its own column too.
-function inserted(blocks: Block[], block: Block, before: string | undefined, after: string | undefined) {
+function inserted(
+  blocks: Block[],
+  block: Block,
+  before: string | undefined,
+  after: string | undefined,
+) {
   const id = before ?? after;
   if (id === undefined) return [...blocks, block];
   const at = blocks.findIndex(candidate => candidate.id === id) + (before === undefined ? 1 : 0);
@@ -154,11 +182,14 @@ function inserted(blocks: Block[], block: Block, before: string | undefined, aft
 
 function addItem(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['item add'].safeParse(input);
-  if (parsed.success === false) return rejected('item add', schemaIssues(parsed.error, [], 'item add'));
+  if (parsed.success === false)
+    return rejected('item add', schemaIssues(parsed.error, [], 'item add'));
   const block = master.blocks.find(candidate => candidate.id === parsed.data.block);
-  if (block === undefined) return rejected('item add', [unknownBlock(parsed.data.block, 'block', master.blocks)]);
+  if (block === undefined)
+    return rejected('item add', [unknownBlock(parsed.data.block, 'block', master.blocks)]);
   const value = ITEM[block.kind].safeParse(parsed.data.value);
-  if (value.success === false) return rejected('item add', schemaIssues(value.error, ['value'], 'item'));
+  if (value.success === false)
+    return rejected('item add', schemaIssues(value.error, ['value'], 'item'));
   const items = added(itemsOf(block), value.data, parsed.data.index, 'item add');
   if (items.error !== null) return items;
   return withItems(master, block, items.data, 'item add');
@@ -166,11 +197,14 @@ function addItem(master: Master, input: unknown): Result<Master> {
 
 function updateItem(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['item update'].safeParse(input);
-  if (parsed.success === false) return rejected('item update', schemaIssues(parsed.error, [], 'item update'));
+  if (parsed.success === false)
+    return rejected('item update', schemaIssues(parsed.error, [], 'item update'));
   const block = master.blocks.find(candidate => candidate.id === parsed.data.block);
-  if (block === undefined) return rejected('item update', [unknownBlock(parsed.data.block, 'block', master.blocks)]);
+  if (block === undefined)
+    return rejected('item update', [unknownBlock(parsed.data.block, 'block', master.blocks)]);
   const value = ITEM_PATCH[block.kind].safeParse(parsed.data.value);
-  if (value.success === false) return rejected('item update', schemaIssues(value.error, ['value'], 'item'));
+  if (value.success === false)
+    return rejected('item update', schemaIssues(value.error, ['value'], 'item'));
   const items = updated(itemsOf(block), parsed.data.index, value.data, 'item update');
   if (items.error !== null) return items;
   return withItems(master, block, items.data, 'item update');
@@ -178,9 +212,11 @@ function updateItem(master: Master, input: unknown): Result<Master> {
 
 function removeItem(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['item remove'].safeParse(input);
-  if (parsed.success === false) return rejected('item remove', schemaIssues(parsed.error, [], 'item remove'));
+  if (parsed.success === false)
+    return rejected('item remove', schemaIssues(parsed.error, [], 'item remove'));
   const block = master.blocks.find(candidate => candidate.id === parsed.data.block);
-  if (block === undefined) return rejected('item remove', [unknownBlock(parsed.data.block, 'block', master.blocks)]);
+  if (block === undefined)
+    return rejected('item remove', [unknownBlock(parsed.data.block, 'block', master.blocks)]);
   const items = removed(itemsOf(block), parsed.data.index, 'item remove');
   if (items.error !== null) return items;
   return withItems(master, block, items.data, 'item remove');
@@ -188,9 +224,11 @@ function removeItem(master: Master, input: unknown): Result<Master> {
 
 function moveItem(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['item move'].safeParse(input);
-  if (parsed.success === false) return rejected('item move', schemaIssues(parsed.error, [], 'item move'));
+  if (parsed.success === false)
+    return rejected('item move', schemaIssues(parsed.error, [], 'item move'));
   const block = master.blocks.find(candidate => candidate.id === parsed.data.block);
-  if (block === undefined) return rejected('item move', [unknownBlock(parsed.data.block, 'block', master.blocks)]);
+  if (block === undefined)
+    return rejected('item move', [unknownBlock(parsed.data.block, 'block', master.blocks)]);
   const items = moved(itemsOf(block), parsed.data.index, parsed.data.to, 'item move');
   if (items.error !== null) return items;
   return withItems(master, block, items.data, 'item move');
@@ -202,14 +240,16 @@ const itemsOf = (block: Block): unknown[] => (block.kind === 'job' ? block.bulle
 function withItems(master: Master, block: Block, items: unknown[], step: string): Result<Master> {
   const candidate = block.kind === 'job' ? { ...block, bullets: items } : { ...block, items };
   const parsed = Block.safeParse(candidate);
-  if (parsed.success === false) return rejected(step, schemaIssues(parsed.error, ['blocks', block.id], 'block'));
+  if (parsed.success === false)
+    return rejected(step, schemaIssues(parsed.error, ['blocks', block.id], 'block'));
   return done(replaced(master, parsed.data));
 }
 
 // The photo stays out of reach here: 'cvfit photo set' writes the picture and its path together.
 function updateCv(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['cv update'].safeParse(input);
-  if (parsed.success === false) return rejected('cv update', schemaIssues(parsed.error, [], 'cv update'));
+  if (parsed.success === false)
+    return rejected('cv update', schemaIssues(parsed.error, [], 'cv update'));
   const { person, contact, ...rest } = parsed.data;
   return done({
     ...master,
@@ -221,9 +261,11 @@ function updateCv(master: Master, input: unknown): Result<Master> {
 
 function addContact(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['contact add'].safeParse(input);
-  if (parsed.success === false) return rejected('contact add', schemaIssues(parsed.error, [], 'contact add'));
+  if (parsed.success === false)
+    return rejected('contact add', schemaIssues(parsed.error, [], 'contact add'));
   const value = ContactItem.safeParse(parsed.data.value);
-  if (value.success === false) return rejected('contact add', schemaIssues(value.error, ['value'], 'contact'));
+  if (value.success === false)
+    return rejected('contact add', schemaIssues(value.error, ['value'], 'contact'));
   const items = added(master.contact.items, value.data, parsed.data.index, 'contact add');
   if (items.error !== null) return items;
   return withContact(master, items.data, 'contact add');
@@ -231,9 +273,11 @@ function addContact(master: Master, input: unknown): Result<Master> {
 
 function updateContact(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['contact update'].safeParse(input);
-  if (parsed.success === false) return rejected('contact update', schemaIssues(parsed.error, [], 'contact update'));
+  if (parsed.success === false)
+    return rejected('contact update', schemaIssues(parsed.error, [], 'contact update'));
   const value = ContactItem.partial().safeParse(parsed.data.value);
-  if (value.success === false) return rejected('contact update', schemaIssues(value.error, ['value'], 'contact'));
+  if (value.success === false)
+    return rejected('contact update', schemaIssues(value.error, ['value'], 'contact'));
   const items = updated(master.contact.items, parsed.data.index, value.data, 'contact update');
   if (items.error !== null) return items;
   return withContact(master, items.data, 'contact update');
@@ -241,7 +285,8 @@ function updateContact(master: Master, input: unknown): Result<Master> {
 
 function removeContact(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['contact remove'].safeParse(input);
-  if (parsed.success === false) return rejected('contact remove', schemaIssues(parsed.error, [], 'contact remove'));
+  if (parsed.success === false)
+    return rejected('contact remove', schemaIssues(parsed.error, [], 'contact remove'));
   const items = removed(master.contact.items, parsed.data.index, 'contact remove');
   if (items.error !== null) return items;
   return withContact(master, items.data, 'contact remove');
@@ -249,7 +294,8 @@ function removeContact(master: Master, input: unknown): Result<Master> {
 
 function moveContact(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['contact move'].safeParse(input);
-  if (parsed.success === false) return rejected('contact move', schemaIssues(parsed.error, [], 'contact move'));
+  if (parsed.success === false)
+    return rejected('contact move', schemaIssues(parsed.error, [], 'contact move'));
   const items = moved(master.contact.items, parsed.data.index, parsed.data.to, 'contact move');
   if (items.error !== null) return items;
   return withContact(master, items.data, 'contact move');
@@ -264,20 +310,31 @@ function withContact(master: Master, items: unknown[], step: string): Result<Mas
 
 // ---------- one place for every edit of a list by position ----------
 
-function added(items: unknown[], value: unknown, at: number | undefined, step: string): Result<unknown[]> {
+function added(
+  items: unknown[],
+  value: unknown,
+  at: number | undefined,
+  step: string,
+): Result<unknown[]> {
   const index = at ?? items.length;
   if (index > items.length) return rejected(step, [outOfRange('index', index, items.length)]);
   return done([...items.slice(0, index), value, ...items.slice(index)]);
 }
 
-function updated(items: unknown[], index: number, change: unknown, step: string): Result<unknown[]> {
+function updated(
+  items: unknown[],
+  index: number,
+  change: unknown,
+  step: string,
+): Result<unknown[]> {
   if (index >= items.length) return rejected(step, [outOfRange('index', index, items.length - 1)]);
   return done(items.map((item, at) => (at === index ? merged(item, change) : item)));
 }
 
 // A text item is replaced; an item with fields keeps the fields the input leaves out.
 function merged(item: unknown, change: unknown) {
-  const haveFields = typeof item === 'object' && item !== null && typeof change === 'object' && change !== null;
+  const haveFields =
+    typeof item === 'object' && item !== null && typeof change === 'object' && change !== null;
   return haveFields ? { ...item, ...change } : change;
 }
 

@@ -15,12 +15,21 @@ test('renders every page of the plan and the text of its blocks', async () => {
   const zip = await JSZip.loadAsync(await build());
   const xml = (await zip.file('word/document.xml')?.async('string')) ?? '';
   assert.equal(xml.split('<w:pageBreakBefore/>').length - 1, 1);
-  for (const text of ['Jane', 'Programming Languages', 'Campus Software Lab', 'Team Award', 'Gin, gRPC, React']) {
+  for (const text of [
+    'Jane',
+    'Programming Languages',
+    'Campus Software Lab',
+    'Team Award',
+    'Gin, gRPC, React',
+  ]) {
     assert.ok(xml.includes(text), text);
   }
 });
 
 test('refuses a photo that is no PNG', async () => {
   const result = await render(fixture(), unwrap(place(fixture())), Buffer.from('not a png'));
-  assert.deepEqual(result.error?.issues.map(issue => issue.code), ['PHOTO_UNREADABLE']);
+  assert.deepEqual(
+    result.error?.issues.map(issue => issue.code),
+    ['PHOTO_UNREADABLE'],
+  );
 });

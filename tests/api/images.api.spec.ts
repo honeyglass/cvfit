@@ -10,7 +10,8 @@ const BLUE = [0, 0, 255, 255];
 // A picture whose left half is red and whose right half is blue.
 const halves = (width: number, height: number) => {
   const data = new Uint8Array(width * height * 4);
-  for (let pixel = 0; pixel < width * height; pixel++) data.set(pixel % width < width / 2 ? RED : BLUE, pixel * 4);
+  for (let pixel = 0; pixel < width * height; pixel++)
+    data.set(pixel % width < width / 2 ? RED : BLUE, pixel * 4);
   return { width, height, data };
 };
 
@@ -20,7 +21,9 @@ const png = ({ width, height, data }: ReturnType<typeof halves>) => {
   return PNG.sync.write(image);
 };
 
-const pixel = (image: PNG, x: number, y: number) => [...image.data.subarray((y * image.width + x) * 4, (y * image.width + x) * 4 + 4)];
+const pixel = (image: PNG, x: number, y: number) => [
+  ...image.data.subarray((y * image.width + x) * 4, (y * image.width + x) * 4 + 4),
+];
 
 test('cuts the middle square out of a wide photo', () => {
   const square = PNG.sync.read(Buffer.from(squarePhoto(png(halves(40, 20)))));

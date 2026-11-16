@@ -36,7 +36,11 @@ export const done = <Data>(data: Data): Result<Data> => ({ data, error: null });
  * @param cause - the original error, when another one led to the refusal
  * @returns the refused result
  */
-export const rejected = (step: string, issues: Issue[], cause?: unknown): { data: null; error: Rejection } => {
+export const rejected = (
+  step: string,
+  issues: Issue[],
+  cause?: unknown,
+): { data: null; error: Rejection } => {
   const refusal: Refusal = {
     kind: 'fix',
     step,
