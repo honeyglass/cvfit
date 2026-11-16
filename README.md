@@ -13,7 +13,7 @@
 
 ---
 
-## What is oriko?
+## 📄 What is oriko?
 
 oriko makes a fitting version of your CV for every job you apply to. You write your CV once,
 with your jobs, skills, languages and contact details. When you find a job you like, you give the
@@ -48,7 +48,7 @@ terminal, and you get a Word file that you open in Google Docs and save as PDF.
 | **Work with an AI assistant** | ❌ copy and paste | ✅ the assistant runs oriko itself |
 | **Stay truthful** | ⚠️ up to you | ✅ nothing is added that you did not say |
 
-## Installation
+## 📦 Installation
 
 oriko needs Node 24 or newer and pnpm.
 
@@ -63,7 +63,7 @@ node bin/oriko.ts schema
 > There is no build step: Node runs the TypeScript sources directly. The examples below write
 > `oriko` for `node bin/oriko.ts`.
 
-## Working with an agent
+## 🤖 Working with an agent
 
 Open [Claude Code](https://claude.com/claude-code) in this folder and say what you want. The skill
 in [`.claude/skills/oriko/`](.claude/skills/oriko/SKILL.md) tells the agent how to use oriko.
@@ -72,9 +72,6 @@ in [`.claude/skills/oriko/`](.claude/skills/oriko/SKILL.md) tells the agent how 
 Tailor my CV to this job: <paste the job posting>
 Create a new CV for me. Since 03/2021 I have worked as a data engineer at …
 ```
-
-> [!TIP]
-> You can write to the agent in any language. It keeps your CV in the CV's own language.
 
 **What the agent does for a job posting:**
 
@@ -85,12 +82,11 @@ Create a new CV for me. Since 03/2021 I have worked as a data engineer at …
 5. Builds the Word file and shows you the preview, every change, and why it made it.
 6. Tells you what the posting asks for that your CV does not show yet.
 
-> [!TIP]
-> No CV yet? Paste a job posting anyway. The agent asks you a few short questions (your name,
-> where you live, where you have worked, what you can do), creates your CV from your answers, and
-> then tailors it to the posting.
+No CV yet? Paste a job posting anyway. The agent asks you a few short questions (your name, where
+you live, where you have worked, what you can do), creates your CV from your answers, and then
+tailors it to the posting.
 
-## Built for agents
+## 🧩 Built for agents
 
 oriko has two parts. The **CLI** does the work and checks every input. The **skill** in
 [`.claude/skills/oriko/`](.claude/skills/oriko/SKILL.md) is the agent's manual: which command to
@@ -142,29 +138,31 @@ A refusal the agent reads and acts on:
 }
 ```
 
-## Terminal preview
+## 🖥️ Terminal preview
 
 **See your CV before the file exists.** `oriko preview` draws every page in the terminal, the left
 column beside the right one, as in the finished document:
 
 ```text
 ╭─ Page 1 of 3 ────────────────────────────────────────┬───────────────────────────╮
-│    ╭───────╮                                    Jane │ CONTACT                   │
-│    │  ◠ ◠  │                                     Doe │ Germany, Berlin           │
-│    │   ‿   │                 Senior Backend Engineer │ Example Street 1          │
-│    ╰───────╯                                         │ 10115 Berlin              │
-│                                                      │ +49 (0) 30 000 000        │
-│ PROFESSIONAL EXPERIENCE                              │ jane.doe@example.com      │
+│    ╭─────────╮                                       │ CONTACT                   │
+│    │         │                                  Jane │ Germany, Berlin           │
+│    │  ◠   ◠  │                                   Doe │ Example Street 1          │
+│    │    ◡    │               Senior Backend Engineer │ 10115 Berlin              │
+│    │         │                                       │ +49 (0) 30 000 000        │
+│    ╰─────────╯                                       │ jane.doe@example.com      │
 │                                                      │ Profile »                 │
-│ 03/2021 – today   ● Senior Backend Engineer          │                           │
-│                   │ Northwind Logistics GmbH ·       │ SKILLS                    │
-│                   │   Berlin (DE)                    │ Programming Languages     │
-│                   │ ✓ Rebuilt the shipment           │ Go                  ●●●●● │
-│                   │   tracking service in Go for ten │ TypeScript          ●●●●○ │
-│                   │   times the load, at 40,000      │ SQL                 ●●●●○ │
-│                   │   events per second              │ Java                ●●●○○ │
+│ PROFESSIONAL EXPERIENCE                              │                           │
+│                                                      │ SKILLS                    │
+│ 03/2021 – today   ● Senior Backend Engineer          │ Programming Languages     │
+│                   │ Northwind Logistics GmbH ·       │ Go                  ●●●●● │
+│                   │   Berlin (DE)                    │ TypeScript          ●●●●○ │
+│                   │ ✓ Rebuilt the shipment           │ SQL                 ●●●●○ │
+│                   │   tracking service in Go for ten │ Java                ●●●○○ │
+│                   │   times the load, at 40,000      │ Rust                ●●○○○ │
+│                   │   events per second              │                           │
 ├──────────────────────────────────────────────────────┴───────────────────────────┤
-│ Left  ▰▰▰▰▰▰▰▰▱▱ 80 % full     Right ▰▰▰▰▰▰▰▰▰▰ 98 % full                        │
+│ Left  ■■■■■■■■□□ 80 % full     Right ■■■■■■■■■■ 98 % full                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 ```
 
@@ -173,17 +171,25 @@ oriko preview --profile go-e-senior-backend   # the version for one job posting
 oriko preview --cv jane-doe                   # your CV as it stands
 ```
 
+**Send the preview as a CV.** `build --style terminal` writes the sheets as a Word file, one A4
+page each, set in Fira Code so Google Docs keeps every character in its column. Send the classic
+file to managers and the terminal file to developers:
+
+```sh
+oriko build --profile go-e-senior-backend --style terminal --out go-e-terminal.docx
+```
+
 <details>
 <summary><b>What the marks mean</b></summary>
 
 | Mark | Meaning |
 | :--- | :--- |
-| `╭───────╮` with `◠ ◠` | where your photo goes; the terminal shows a face, the file shows the photo |
+| `╭─────────╮` with `◠   ◠` | where your photo goes; the terminal shows a face, the file shows the photo |
 | `UPPER CASE` | a section heading, such as Professional Experience |
 | `●` and `│` | a job: its dates, its marker and its timeline |
 | `✓` | a bullet point of a job |
 | `●●●●○` | a skill level, from 0 to 5 dots |
-| `▰▰▰▱▱` | how full the column is; at 100 % the next block moves to the next page |
+| `■■■□□` | how full the column is; at 100 % the next block moves to the next page |
 
 </details>
 
@@ -200,11 +206,11 @@ Nothing was written.
 In a pipe, `preview` answers JSON with the sheets in the field `preview`; `--output text` prints
 the sheets there too.
 
-## Examples
+## 📚 Examples
 
 Three made-up people, three real job postings, one agent run each. Every example holds the
-summary of the posting, the agent's report, the terminal preview, the Word file and the PDF that
-Google Docs made from it.
+summary of the posting, the agent's report, the terminal preview, and the Word file and the PDF
+that Google Docs made from it, in the classic and in the terminal style.
 
 | | Developer | Project manager | Cook |
 | :--- | :--- | :--- | :--- |
@@ -213,6 +219,7 @@ Google Docs made from it.
 | **Job posting** | [Senior Backend Engineer at go-e Labs](examples/showcase/go-e-senior-backend/posting.md) | [IT Project Manager at DaVita](examples/showcase/davita-it-project-manager/posting.md) | [Cook at GALERIA Restaurant](examples/showcase/galeria-cook/posting.md) |
 | **What the agent did** | [report](examples/showcase/go-e-senior-backend/report.md) | [report](examples/showcase/davita-it-project-manager/report.md) | [report](examples/showcase/galeria-cook/report.md) |
 | **Result** | [preview](examples/showcase/go-e-senior-backend/preview.txt) · [Word](examples/showcase/go-e-senior-backend/go-e-senior-backend.docx) · [PDF](examples/showcase/go-e-senior-backend/go-e-senior-backend.pdf) | [preview](examples/showcase/davita-it-project-manager/preview.txt) · [Word](examples/showcase/davita-it-project-manager/davita-it-project-manager.docx) · [PDF](examples/showcase/davita-it-project-manager/davita-it-project-manager.pdf) | [preview](examples/showcase/galeria-cook/preview.txt) · [Word](examples/showcase/galeria-cook/galeria-cook.docx) · [PDF](examples/showcase/galeria-cook/galeria-cook.pdf) |
+| **Terminal style** | [Word](examples/showcase/go-e-senior-backend/go-e-senior-backend-terminal.docx) · [PDF](examples/showcase/go-e-senior-backend/go-e-senior-backend-terminal.pdf) | [Word](examples/showcase/davita-it-project-manager/davita-it-project-manager-terminal.docx) · [PDF](examples/showcase/davita-it-project-manager/davita-it-project-manager-terminal.pdf) | [Word](examples/showcase/galeria-cook/galeria-cook-terminal.docx) · [PDF](examples/showcase/galeria-cook/galeria-cook-terminal.pdf) |
 
 <details>
 <summary><b>Jane Doe for go-e Labs, 3 pages</b></summary>
@@ -221,6 +228,17 @@ Google Docs made from it.
   <img src="examples/showcase/go-e-senior-backend/page-1.png" width="32%" alt="Jane Doe's CV for go-e Labs, page 1 of 3">
   <img src="examples/showcase/go-e-senior-backend/page-2.png" width="32%" alt="Jane Doe's CV for go-e Labs, page 2 of 3">
   <img src="examples/showcase/go-e-senior-backend/page-3.png" width="32%" alt="Jane Doe's CV for go-e Labs, page 3 of 3">
+</p>
+
+</details>
+
+<details>
+<summary><b>Jane Doe for go-e Labs, 3 pages, terminal style</b></summary>
+
+<p align="center">
+  <img src="examples/showcase/go-e-senior-backend/terminal-page-1.png" width="32%" alt="Jane Doe's CV for go-e Labs in the terminal style, page 1 of 3">
+  <img src="examples/showcase/go-e-senior-backend/terminal-page-2.png" width="32%" alt="Jane Doe's CV for go-e Labs in the terminal style, page 2 of 3">
+  <img src="examples/showcase/go-e-senior-backend/terminal-page-3.png" width="32%" alt="Jane Doe's CV for go-e Labs in the terminal style, page 3 of 3">
 </p>
 
 </details>
@@ -236,10 +254,29 @@ Google Docs made from it.
 </details>
 
 <details>
+<summary><b>Lukas Berger for DaVita, 2 pages, terminal style</b></summary>
+
+<p align="center">
+  <img src="examples/showcase/davita-it-project-manager/terminal-page-1.png" width="32%" alt="Lukas Berger's CV for DaVita in the terminal style, page 1 of 2">
+  <img src="examples/showcase/davita-it-project-manager/terminal-page-2.png" width="32%" alt="Lukas Berger's CV for DaVita in the terminal style, page 2 of 2">
+</p>
+
+</details>
+
+<details>
 <summary><b>Marco Weber for GALERIA Restaurant, 1 page</b></summary>
 
 <p align="center">
   <img src="examples/showcase/galeria-cook/page-1.png" width="32%" alt="Marco Weber's CV for GALERIA Restaurant, page 1 of 1">
+</p>
+
+</details>
+
+<details>
+<summary><b>Marco Weber for GALERIA Restaurant, 1 page, terminal style</b></summary>
+
+<p align="center">
+  <img src="examples/showcase/galeria-cook/terminal-page-1.png" width="32%" alt="Marco Weber's CV for GALERIA Restaurant in the terminal style, page 1 of 1">
 </p>
 
 </details>
@@ -249,7 +286,7 @@ Google Docs made from it.
 > source, and may be gone by now. The portraits are drawn avatars from
 > [DiceBear](https://www.dicebear.com/styles/lorelei/) (Lorelei, CC0 1.0).
 
-## Your data
+## 🗂️ Your data
 
 Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points oriko at another one.
 
@@ -260,15 +297,11 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
   profiles/acme.json       one version per job posting, naming its CV in "cv"
 ```
 
-> [!NOTE]
-> Your CVs never go into the repository. They stay in `~/.oriko` on your computer. An AI
-> assistant you work with reads the parts of them it needs, as with any file you show it.
-
 > [!TIP]
 > Try oriko without your own data: [`examples/`](examples/) holds a complete data folder. Add
 > `--home examples` to any command.
 
-## Commands
+## ⌨️ Commands
 
 Every command answers one JSON object, exit 0 for success and 1 for a refusal with its issues and a
 hint each. `oriko schema` lists every command and option, `oriko schema <command>` the input one
@@ -279,12 +312,12 @@ accepts.
 | `cvs`, `profiles` | list your CVs and versions, and whether each one fits its pages |
 | `show` | outline of a CV; `--block <id>` shows one block in full |
 | `plan`, `preview` | the page plan as JSON, or as the sheets above |
-| `build --out <file>.docx` | writes the Word file; `--dry-run` writes nothing |
+| `build --out <file>.docx` | writes the Word file; `--style terminal` in the look of the preview, `--dry-run` writes nothing |
 | `init`, `cv update` | create a CV, change its language, pages, person or contact title |
 | `block …`, `item …`, `contact …` | add, update, remove and move blocks, their items and contact lines |
 | `photo set <file>` | stores a PNG or JPEG as the square photo of a CV, or of one version |
 
-## First steps by hand
+## ✍️ First steps by hand
 
 The agent runs these commands for you. By hand, they look like this.
 
@@ -319,7 +352,7 @@ Upload `acme.docx` to Google Docs and save it there with File, Download, PDF.
 > LibreOffice set the same file with other line breaks, and a block that fits in Google Docs may
 > spill over elsewhere.
 
-## Good to know
+## 📌 Good to know
 
 - ❗ **Important:** the agent never adds a skill, a level, a date or a fact you did not state. It
   never changes your CV for a single job, and never overwrites a version you already have. When
@@ -329,10 +362,16 @@ Upload `acme.docx` to Google Docs and save it there with File, Download, PDF.
 - ⚠️ **Warning:** the preview shows what stands on which page, in which order, and how full each
   column is. It does not show fonts, exact distances or the photo. The page plan behind it is the
   one `build` uses.
+- ⚠️ **Warning:** send the terminal style by mail to people, not through an upload portal. A portal
+  reads the text of the file, and the two columns of a sheet run together line by line.
+- 💡 **Tip:** you can write to the agent in any language. It keeps your CV in the CV's own
+  language.
+- ℹ️ **Note:** your CVs never go into the repository. They stay in `~/.oriko` on your computer. An
+  AI assistant you work with reads the parts of them it needs, as with any file you show it.
 - 💡 **Tip:** a page that looks too empty usually has a block pinned to the next page in your CV
   (`"page": 2`). A version can clear the pin with `"page": null`.
 
-## Development
+## 🛠️ Development
 
 ```sh
 pnpm test             # api and internals tests
@@ -340,6 +379,6 @@ pnpm run typecheck
 pnpm run format:check
 ```
 
-## License
+## ⚖️ License
 
 GNU Affero General Public License v3.0, see [LICENSE](LICENSE).
