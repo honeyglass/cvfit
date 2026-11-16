@@ -15,12 +15,14 @@ test('shows every page with the blocks the plan puts on it', () => {
   assert.ok(text.indexOf('Team Award') > secondPage);
 });
 
+// The date stands right of the title, so a reader of the text finds it with its job.
 test('shows a job with its date and a rated item with its dots', () => {
-  assert.ok(
-    lines.some(
-      line => line.includes('03/2021 – today') && line.includes('● Senior Backend Engineer'),
-    ),
+  const title = lines.findIndex(line =>
+    /^│ ● Senior Backend Engineer +03\/2021 – today │/.test(line),
   );
+  assert.ok(title > 0);
+  assert.match(lines[title + 1] ?? '', /^│ │ +│/);
+  assert.match(lines[title + 2] ?? '', /^│ │ Northwind Logistics GmbH · Berlin \(DE\) +│/);
   assert.ok(lines.some(line => /Go\s+●●●●● │$/.test(line)));
   assert.ok(lines.some(line => /Python\s+●●●○○ │$/.test(line)));
 });
@@ -31,7 +33,7 @@ test('continues a long job title on the timeline, below the title text', () => {
   if (job?.kind === 'job') job.title = 'Apprenticeship IT Specialist for System Integration';
   const sheet = preview(cv, unwrap(place(cv))).split('\n');
   const first = sheet.findIndex(line => line.includes('● Apprenticeship IT Specialist for'));
-  assert.match(sheet[first + 1] ?? '', /^│ {19}│ System Integration +│/);
+  assert.match(sheet[first + 1] ?? '', /^│ │ System Integration +│/);
 });
 
 test('wraps a long rated name instead of cutting it off', () => {

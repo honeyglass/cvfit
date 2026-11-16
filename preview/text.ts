@@ -17,7 +17,6 @@ import type { Column, Placed, Plan } from '../layout/place.ts';
 
 const LEFT = 52;
 const RIGHT = 25;
-const DATE = 18;
 const DOTS = LIMITS.level + 1;
 /** The cells of a fill bar; one cell is a tenth of a column. */
 const BAR = 10;
@@ -152,19 +151,18 @@ function nameBlock(person: Master['person']) {
 const shortened = (text: string, width: number) =>
   text.length <= width ? text : `${text.slice(0, width - 1)}…`;
 
+// The date stands right of the title and the place beside the employer, as the document sets them.
 function jobLines(cv: Master, placed: Placed) {
   const job = blockOf(cv, placed);
   if (job?.kind !== 'job') return [];
-  const body = LEFT - DATE;
   const heading = placed.heading === null ? [] : ruled(placed.heading.text, LEFT);
-  const head = wrap(job.title, body - 2).map((line, index) => `${index === 0 ? '●' : '│'} ${line}`);
-  const date = wrap(`${job.from} – ${job.to}`, DATE - 1);
-  const employer = `${job.employer} · ${job.place}`;
-  const details = [employer, ...job.bullets.map(bullet => `› ${bullet}`)].flatMap(line =>
-    hanging(line, body - 2),
-  );
-  const rows = [...head, ...details.map(line => `│ ${line}`)];
-  return [...heading, ...rows.map((row, index) => `${(date[index] ?? '').padEnd(DATE)}${row}`), ''];
+  const date = `${job.from} – ${job.to}`;
+  const titleWidth = LEFT - 3 - date.length;
+  const [first = '', ...rest] = wrap(job.title, titleWidth);
+  const head = [`● ${first.padEnd(titleWidth)} ${date}`, ...rest.map(line => `│ ${line}`)];
+  const details = [`${job.employer} · ${job.place}`, ...job.bullets.map(bullet => `› ${bullet}`)];
+  const body = details.flatMap(line => hanging(line, LEFT - 2)).map(line => `│ ${line}`);
+  return [...heading, ...head, '│', ...body, ''];
 }
 
 // The lines after the first stand two characters in, below the text of a bullet.
