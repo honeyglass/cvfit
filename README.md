@@ -177,6 +177,11 @@ issue has a `code` the agent can check, a `path` to the wrong value, a `message`
 **See your CV before the file exists.** `oriko preview` draws every page in the terminal, the left
 column beside the right one, as in the finished document:
 
+<img src="examples/showcase/go-e-senior-backend/terminal-excerpt.png" width="100%" alt="The top of page 1 of Jane Doe's CV as the terminal preview draws it">
+
+<details>
+<summary><b>The same preview as text</b></summary>
+
 ```text
 ╭─ Page 1 of 3 ────────────────────────────────────────┬───────────────────────────╮
 │                                                      │                           │
@@ -201,6 +206,8 @@ column beside the right one, as in the finished document:
 │ Left  ■■■■■■■■□□ 80 % full     Right ■■■■■■■■■■ 98 % full                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 ```
+
+</details>
 
 ```sh
 oriko preview --profile go-e-senior-backend   # the version for one job posting
@@ -251,7 +258,7 @@ Three made-up people, three real job postings, one agent run each.
 
 | 👩‍💻 Jane Doe · go-e Labs | 📋 Lukas Berger · DaVita | 🍳 Marco Weber · GALERIA |
 | :---: | :---: | :---: |
-| <img src="examples/showcase/go-e-senior-backend/page-1.png" width="200" alt="Jane Doe's CV for go-e Labs, page 1"> | <img src="examples/showcase/davita-it-project-manager/page-1.png" width="200" alt="Lukas Berger's CV for DaVita, page 1"> | <img src="examples/showcase/galeria-cook/page-1.png" width="200" alt="Marco Weber's CV for GALERIA, page 1"> |
+| <img src="examples/showcase/go-e-senior-backend/page-1.png" width="200" alt="Jane Doe's CV for go-e Labs, page 1"> | <img src="examples/showcase/davita-it-project-manager/page-1.png" width="200" alt="Lukas Berger's CV for DaVita, page 1"> | <img src="examples/showcase/galeria-cook/terminal-page-1.png" width="200" alt="Marco Weber's CV for GALERIA in the terminal style, page 1"> |
 | Senior Backend Engineer · 3 pages | IT Project Manager · 2 pages | Cook · 1 page |
 | [posting](examples/showcase/go-e-senior-backend/posting.md) · [report](examples/showcase/go-e-senior-backend/report.md) · [preview](examples/showcase/go-e-senior-backend/preview.txt) | [posting](examples/showcase/davita-it-project-manager/posting.md) · [report](examples/showcase/davita-it-project-manager/report.md) · [preview](examples/showcase/davita-it-project-manager/preview.txt) | [posting](examples/showcase/galeria-cook/posting.md) · [report](examples/showcase/galeria-cook/report.md) · [preview](examples/showcase/galeria-cook/preview.txt) |
 | classic: [Word](examples/showcase/go-e-senior-backend/go-e-senior-backend.docx) · [PDF](examples/showcase/go-e-senior-backend/go-e-senior-backend.pdf) | classic: [Word](examples/showcase/davita-it-project-manager/davita-it-project-manager.docx) · [PDF](examples/showcase/davita-it-project-manager/davita-it-project-manager.pdf) | classic: [Word](examples/showcase/galeria-cook/galeria-cook.docx) · [PDF](examples/showcase/galeria-cook/galeria-cook.pdf) |
