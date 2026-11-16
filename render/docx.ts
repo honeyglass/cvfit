@@ -56,7 +56,7 @@ const FONT = { sans: 'Open Sans', light: 'Open Sans Light', head: 'Calibri', sym
 /** The edge length of each contact icon, in pt. */
 const ICON_SIZE = { pin: 9.64, home: 9.64, phone: 7.94, mail: 8.79, globe: 7.94 } as const;
 const ASSETS = join(import.meta.dirname, '..', 'assets');
-const JOB_COLUMNS = [WIDTH.date, WIDTH.rail, WIDTH.rail, WIDTH.jobTitle, WIDTH.place];
+const JOB_COLUMNS = [WIDTH.gutter, WIDTH.rail, WIDTH.rail, WIDTH.jobTitle, WIDTH.jobDate];
 const NAME_COLUMNS = [754, 1190, 1190, WIDTH.name];
 const GUTTER = WIDTH.page - WIDTH.left - WIDTH.right;
 
@@ -296,26 +296,23 @@ function sectionRow(heading: Heading, barImage: Uint8Array) {
     children: [
       cell(
         [para([image(barImage, 85, 11.4)], { spacing, indent: { left: -48 } })],
-        WIDTH.date,
+        WIDTH.gutter,
         center,
       ),
       cell(
         [para([headingText(heading.text)], { indent: { left: 160 }, spacing })],
-        WIDTH.leftText - WIDTH.date,
+        WIDTH.leftText - WIDTH.gutter,
         { columnSpan: 4, ...center },
       ),
     ],
   });
 }
 
-// A job is two rows. First: date, dot, title, place. Second: timeline, employer, bullets.
+// A job is two rows. First: dot, title, date. Second: timeline, employer with place, bullets.
+// A text reader takes the date with its title and the place with its employer.
 // Neither row may split, so a job stays whole even where the estimate is off.
 function jobRows(job: Job, pin: Uint8Array) {
   const wide = { line: 276, lineRule: LineRuleType.AUTO };
-  const date = para([run(`${job.from} – ${job.to}`, { font: FONT.light })], {
-    indent: { left: WIDTH.dateIndent },
-    spacing: { before: SPACE.jobGap, ...wide },
-  });
   const marker = para([dot()], {
     alignment: AlignmentType.CENTER,
     spacing: { before: SPACE.jobGap + 40 },
@@ -324,15 +321,18 @@ function jobRows(job: Job, pin: Uint8Array) {
     indent: { left: WIDTH.jobIndent },
     spacing: { before: SPACE.jobGap, after: SPACE.afterJobTitle, ...wide },
   });
-  const place = para([image(pin, 8.75, 8.75), run(` ${job.place}`, { font: FONT.light })], {
+  const date = para([run(`${job.from} – ${job.to}`, { font: FONT.light })], {
     alignment: AlignmentType.RIGHT,
     spacing: { before: SPACE.jobGap, ...wide },
   });
+  const employer = [
+    run(job.employer),
+    run('   '),
+    image(pin, 8.75, 8.75),
+    run(` ${job.place}`, { font: FONT.light }),
+  ];
   const details = [
-    para([run(job.employer)], {
-      indent: { left: WIDTH.jobIndent },
-      spacing: { after: SPACE.afterEmployer },
-    }),
+    para(employer, { indent: { left: WIDTH.jobIndent }, spacing: { after: SPACE.afterEmployer } }),
     ...job.bullets.map(bullet =>
       para([run(bullet)], { numbering: { reference: 'bullets', level: 0 } }),
     ),
@@ -341,19 +341,19 @@ function jobRows(job: Job, pin: Uint8Array) {
     new TableRow({
       cantSplit: true,
       children: [
-        cell([date], WIDTH.date, { verticalMerge: 'restart' }),
+        cell([gap()], WIDTH.gutter, { verticalMerge: 'restart' }),
         cell([marker], WIDTH.rail * 2, { columnSpan: 2 }),
         cell([title], WIDTH.jobTitle),
-        cell([place], WIDTH.place),
+        cell([date], WIDTH.jobDate),
       ],
     }),
     new TableRow({
       cantSplit: true,
       children: [
-        cell([gap()], WIDTH.date, { verticalMerge: 'continue' }),
+        cell([gap()], WIDTH.gutter, { verticalMerge: 'continue' }),
         cell([gap()], WIDTH.rail, { borders: TIMELINE }),
         cell([gap()], WIDTH.rail),
-        cell(details, WIDTH.jobTitle + WIDTH.place, { columnSpan: 2 }),
+        cell(details, WIDTH.jobTitle + WIDTH.jobDate, { columnSpan: 2 }),
       ],
     }),
   ];

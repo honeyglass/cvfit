@@ -26,15 +26,16 @@ test('places the reference CV as the reference PDF shows it', () => {
 });
 
 // The expected heights are distances measured in the reference PDF, in pt: a job with three
-// and with two bullet lines, and a titled group of five rated items. The blocks here have that
-// shape, with texts short enough that each stays on one line.
+// and with two bullet lines, and a titled group of five rated items. A job adds 13.6 pt for the
+// blank line below its title, as a Google Docs PDF of the examples shows. The blocks here have
+// that shape, with texts short enough that each stays on one line.
 test('estimates a block as high as the reference PDF shows that shape', () => {
   const { pages } = unwrap(place(fixture()));
   const left = pages[0]?.left.blocks ?? [];
   const right = pages[0]?.right.blocks ?? [];
-  near(left[1]?.height, 105.3);
-  near(left[2]?.height, 91.8);
-  near(pages[1]?.left.blocks[1]?.height, 105.3);
+  near(left[1]?.height, 118.9);
+  near(left[2]?.height, 105.4);
+  near(pages[1]?.left.blocks[1]?.height, 118.9);
   near(right[1]?.height, 111.3);
 });
 

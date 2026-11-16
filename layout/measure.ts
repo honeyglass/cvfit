@@ -97,7 +97,7 @@ const FONT_SIZE = 10;
 
 const TEXT_WIDTH = pt(WIDTH.right - WIDTH.indent - WIDTH.textRight);
 const RATED_NAME_WIDTH = pt(WIDTH.ratedName - WIDTH.indent);
-const DETAIL_WIDTH = pt(WIDTH.jobTitle + WIDTH.place);
+const DETAIL_WIDTH = pt(WIDTH.jobTitle + WIDTH.jobDate);
 
 function textWidth(text: string, weight: keyof typeof WEIGHT) {
   let units = 0;
@@ -147,10 +147,13 @@ export function blockHeight(block: Block) {
   }
 }
 
-// The date spans both rows of a job and is lower than them, so it never sets the height.
+// The date shares the title's line and the place the employer's line, so neither adds a line.
 function jobHeight(job: Extract<Block, { kind: 'job' }>) {
   const titleLines = lineCount(job.title, pt(WIDTH.jobTitle - WIDTH.jobIndent), 'bold');
-  const employerLines = lineCount(job.employer, DETAIL_WIDTH - pt(WIDTH.jobIndent));
+  const employerLines = lineCount(
+    `${job.employer} · ${job.place}`,
+    DETAIL_WIDTH - pt(WIDTH.jobIndent),
+  );
   let bulletLines = 0;
   for (const bullet of job.bullets)
     bulletLines += lineCount(bullet, DETAIL_WIDTH - pt(WIDTH.bulletIndent));

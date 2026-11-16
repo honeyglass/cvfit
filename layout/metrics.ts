@@ -13,7 +13,8 @@
  */
 export const SPACE = {
   jobGap: 554,
-  afterJobTitle: 80,
+  // A blank line between a job's title and its employer, so title and date read as its heading.
+  afterJobTitle: 352,
   afterEmployer: 80,
   leftTopFirst: 583,
   // On a later page the left heading stands level with the right one, as a Google Docs PDF shows.
@@ -37,15 +38,16 @@ export const WIDTH = {
   left: 8500,
   right: 3300,
   leftText: 7766,
-  date: 1760,
+  // Left of a job's timeline, below the gray bar of its section heading.
+  gutter: 1760,
   rail: 184,
-  jobTitle: 3992,
-  place: 1646,
+  jobTitle: 3592,
+  // Right of a job's title; wide enough for '06/2017 – 02/2021' on one line.
+  jobDate: 2046,
   contactIcon: 564,
   ratedName: 1730,
   indent: 120,
   textRight: 40,
-  dateIndent: 680,
   jobIndent: 292,
   bulletIndent: 632,
   bulletHanging: 340,
