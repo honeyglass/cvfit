@@ -2,39 +2,41 @@ Your CV version **galeria-cook** is ready, and it fits on one page. Here is the 
 
 ```text
 ╭─ Page 1 of 1 ────────────────────────────────────────┬───────────────────────────╮
-│    ╭───────╮                                   Marco │ CONTACT                   │
-│    │  ◠ ◠  │                                   Weber │ Germany, Munich           │
-│    │   ‿   │                                    Cook │ Sample Street 3           │
-│    ╰───────╯                                         │ 80331 Munich              │
-│                                                      │ +49 (0) 89 333 444        │
-│ PROFESSIONAL EXPERIENCE                              │ marco.weber@example.com   │
+│    ╭─────────╮                                       │ CONTACT                   │
+│    │         │                                 Marco │ Germany, Munich           │
+│    │  ◠   ◠  │                                 Weber │ Sample Street 3           │
+│    │    ◡    │                                  Cook │ 80331 Munich              │
+│    │         │                                       │ +49 (0) 89 333 444        │
+│    ╰─────────╯                                       │ marco.weber@example.com   │
 │                                                      │                           │
-│ 05/2021 – today   ● Cook                             │ SKILLS                    │
-│                   │ Hotel Isarblick · Munich (DE)    │ Strengths                 │
-│                   │ ✓ Prepared up to 250 dishes a    │ Reliability, Teamwork,    │
-│                   │   day for the breakfast and      │ Organisation, Guest focus │
-│                   │   lunch buffet                   │                           │
-│                   │ ✓ Responsible for receiving      │ Know-how                  │
-│                   │   goods, storage and the monthly │ HACCP, Allergen           │
-│                   │   stocktake                      │ labelling, Stock          │
-│                   │ ✓ Applied HACCP standards in     │ management, Costing       │
-│                   │   daily work                     │                           │
-│                   │ ✓ Role: Cook, Training of        │ Kitchen                   │
-│                   │   apprentices                    │ Regional cuisine    ●●●●● │
-│                                                      │ Buffet and banquet  ●●●●○ │
-│ 08/2018 – 04/2021 ● Junior Cook                      │ Vegetarian cuisine  ●●●●○ │
-│                   │ Gasthaus Zum Löwen · Augsburg    │ Pastry              ●●○○○ │
+│ PROFESSIONAL EXPERIENCE                              │ SKILLS                    │
+│                                                      │ Strengths                 │
+│ 05/2021 – today   ● Cook                             │ Reliability, Teamwork,    │
+│                   │ Hotel Isarblick · Munich (DE)    │ Organisation, Guest focus │
+│                   │ ✓ Prepared up to 250 dishes a    │                           │
+│                   │   day for the breakfast and      │ Know-how                  │
+│                   │   lunch buffet                   │ HACCP, Allergen           │
+│                   │ ✓ Responsible for receiving      │ labelling, Stock          │
+│                   │   goods, storage and the monthly │ management, Costing       │
+│                   │   stocktake                      │                           │
+│                   │ ✓ Applied HACCP standards in     │ Kitchen                   │
+│                   │   daily work                     │ Regional cuisine    ●●●●● │
+│                   │ ✓ Role: Cook, Training of        │ Buffet and banquet  ●●●●○ │
+│                   │   apprentices                    │ Vegetarian cuisine  ●●●●○ │
+│                                                      │ Pastry              ●●○○○ │
+│ 08/2018 – 04/2021 ● Junior Cook                      │                           │
+│                   │ Gasthaus Zum Löwen · Augsburg    │ LANGUAGES                 │
+│                   │   (DE)                           │ German              ●●●●● │
+│                   │ ✓ À la carte kitchen with a      │ English             ●●○○○ │
+│                   │   regional focus                 │                           │
+│                   │ ✓ Prepared and cleaned up the    │ TRAINING                  │
+│                   │   meat and side dish station     │ Hygiene training under §  │
+│                   │ ✓ Role: Junior cook              │ 43 IfSG                   │
+│                                                      │ 08/2015                   │
+│ 09/2015 – 07/2018 ● Apprenticeship as a Cook         │ Pastry basics course      │
+│                   │ Gasthaus Zum Löwen · Augsburg    │ 02/2020                   │
 │                   │   (DE)                           │                           │
-│                   │ ✓ À la carte kitchen with a      │ LANGUAGES                 │
-│                   │   regional focus                 │ German              ●●●●● │
-│                   │ ✓ Prepared and cleaned up the    │ English             ●●○○○ │
-│                   │   meat and side dish station     │                           │
-│                   │ ✓ Role: Junior cook              │ TRAINING                  │
-│                                                      │ Hygiene training under §  │
-│ 09/2015 – 07/2018 ● Apprenticeship as a Cook         │ 43 IfSG                   │
-│                   │ Gasthaus Zum Löwen · Augsburg    │ 08/2015                   │
-│                   │   (DE)                           │ Pastry basics course      │
-│                   │ ✓ Final exam at the Swabia       │ 02/2020                   │
+│                   │ ✓ Final exam at the Swabia       │                           │
 │                   │   Chamber of Commerce            │                           │
 │                                                      │                           │
 │ 06/2013 – 08/2015 ● Service Assistant                │                           │
@@ -42,7 +44,7 @@ Your CV version **galeria-cook** is ready, and it fits on one page. Here is the 
 │                   │ ✓ Served guests and ran the      │                           │
 │                   │   till at weekends               │                           │
 ├──────────────────────────────────────────────────────┴───────────────────────────┤
-│ Left  ▰▰▰▰▰▰▰▰▱▱ 83 % full     Right ▰▰▰▰▰▰▰▰▰▱ 92 % full                        │
+│ Left  ■■■■■■■■□□ 83 % full     Right ■■■■■■■■■□ 92 % full                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 ```
 

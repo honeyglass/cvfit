@@ -1,43 +1,45 @@
 ╭─ Page 1 of 3 ────────────────────────────────────────┬───────────────────────────╮
-│    ╭───────╮                                    Jane │ CONTACT                   │
-│    │  ◠ ◠  │                                     Doe │ Germany, Berlin           │
-│    │   ‿   │                 Senior Backend Engineer │ Example Street 1          │
-│    ╰───────╯                                         │ 10115 Berlin              │
-│                                                      │ +49 (0) 30 000 000        │
-│ PROFESSIONAL EXPERIENCE                              │ jane.doe@example.com      │
+│    ╭─────────╮                                       │ CONTACT                   │
+│    │         │                                  Jane │ Germany, Berlin           │
+│    │  ◠   ◠  │                                   Doe │ Example Street 1          │
+│    │    ◡    │               Senior Backend Engineer │ 10115 Berlin              │
+│    │         │                                       │ +49 (0) 30 000 000        │
+│    ╰─────────╯                                       │ jane.doe@example.com      │
 │                                                      │ Profile »                 │
-│ 03/2021 – today   ● Senior Backend Engineer          │                           │
-│                   │ Northwind Logistics GmbH ·       │ SKILLS                    │
-│                   │   Berlin (DE)                    │ Programming Languages     │
-│                   │ ✓ Rebuilt the shipment           │ Go                  ●●●●● │
-│                   │   tracking service in Go for ten │ TypeScript          ●●●●○ │
-│                   │   times the load, at 40,000      │ SQL                 ●●●●○ │
-│                   │   events per second              │ Java                ●●●○○ │
-│                   │ ✓ Moved the event history from   │ Rust                ●●○○○ │
-│                   │   PostgreSQL to ClickHouse, so   │                           │
-│                   │   reports run in seconds         │ Backend                   │
-│                   │ ✓ Introduced contract tests      │ API design          ●●●●● │
-│                   │   between twelve services and    │ Event-driven        ●●●●● │
-│                   │   cut failed releases by half    │ systems                   │
-│                   │ ✓ Designed OAuth2 and OIDC       │ Multi-tenancy       ●●●●○ │
-│                   │   sign-in for the partner API    │ OAuth2 and OIDC     ●●●●○ │
-│                   │   with per-tenant scopes         │                           │
-│                   │ ✓ Led the architecture group     │ Tools                     │
-│                   │   of four teams and wrote its    │ PostgreSQL, ClickHouse,   │
-│                   │   decision records               │ Kafka, gRPC, Kubernetes,  │
-│                   │ ✓ Role: Engineer, Architect,     │ Terraform, Grafana,       │
-│                   │   Mentor                         │ OpenTelemetry             │
-│                                                      │                           │
-│ 06/2017 – 02/2021 ● Backend Engineer                 │ Strengths                 │
-│                   │ Bluebird Payments AG · Hamburg   │ Mentoring, Incident       │
-│                   │   (DE)                           │ handling, Clear writing   │
-│                   │ ✓ Delivered the settlement       │                           │
-│                   │   engine for card payments in Go │ TALKS                     │
-│                   │   and PostgreSQL                 │ Contract tests for twelve │
-│                   │ ✓ Split the payment monolith     │ services                  │
-│                   │   into six services behind a     │ GopherCon EU, 2023        │
-│                   │   gRPC gateway                   │ Exactly once is a lie     │
-│                   │ ✓ Built idempotent Kafka         │ Kafka Summit, 2020        │
+│ PROFESSIONAL EXPERIENCE                              │                           │
+│                                                      │ SKILLS                    │
+│ 03/2021 – today   ● Senior Backend Engineer          │ Programming Languages     │
+│                   │ Northwind Logistics GmbH ·       │ Go                  ●●●●● │
+│                   │   Berlin (DE)                    │ TypeScript          ●●●●○ │
+│                   │ ✓ Rebuilt the shipment           │ SQL                 ●●●●○ │
+│                   │   tracking service in Go for ten │ Java                ●●●○○ │
+│                   │   times the load, at 40,000      │ Rust                ●●○○○ │
+│                   │   events per second              │                           │
+│                   │ ✓ Moved the event history from   │ Backend                   │
+│                   │   PostgreSQL to ClickHouse, so   │ API design          ●●●●● │
+│                   │   reports run in seconds         │ Event-driven        ●●●●● │
+│                   │ ✓ Introduced contract tests      │ systems                   │
+│                   │   between twelve services and    │ Multi-tenancy       ●●●●○ │
+│                   │   cut failed releases by half    │ OAuth2 and OIDC     ●●●●○ │
+│                   │ ✓ Designed OAuth2 and OIDC       │                           │
+│                   │   sign-in for the partner API    │ Tools                     │
+│                   │   with per-tenant scopes         │ PostgreSQL, ClickHouse,   │
+│                   │ ✓ Led the architecture group     │ Kafka, gRPC, Kubernetes,  │
+│                   │   of four teams and wrote its    │ Terraform, Grafana,       │
+│                   │   decision records               │ OpenTelemetry             │
+│                   │ ✓ Role: Engineer, Architect,     │                           │
+│                   │   Mentor                         │ Strengths                 │
+│                                                      │ Mentoring, Incident       │
+│ 06/2017 – 02/2021 ● Backend Engineer                 │ handling, Clear writing   │
+│                   │ Bluebird Payments AG · Hamburg   │                           │
+│                   │   (DE)                           │ TALKS                     │
+│                   │ ✓ Delivered the settlement       │ Contract tests for twelve │
+│                   │   engine for card payments in Go │ services                  │
+│                   │   and PostgreSQL                 │ GopherCon EU, 2023        │
+│                   │ ✓ Split the payment monolith     │ Exactly once is a lie     │
+│                   │   into six services behind a     │ Kafka Summit, 2020        │
+│                   │   gRPC gateway                   │                           │
+│                   │ ✓ Built idempotent Kafka         │                           │
 │                   │   consumers, so no payment was   │                           │
 │                   │   booked twice after a failover  │                           │
 │                   │ ✓ Ran the on-call rotation of    │                           │
@@ -45,7 +47,7 @@
 │                   │   incident playbooks             │                           │
 │                   │ ✓ Role: Engineer, On-call lead   │                           │
 ├──────────────────────────────────────────────────────┴───────────────────────────┤
-│ Left  ▰▰▰▰▰▰▰▰▱▱ 80 % full     Right ▰▰▰▰▰▰▰▰▰▰ 98 % full                        │
+│ Left  ■■■■■■■■□□ 80 % full     Right ■■■■■■■■■■ 98 % full                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 ╭─ Page 2 of 3 ────────────────────────────────────────┬───────────────────────────╮
@@ -105,7 +107,7 @@
 │                   │ ✓ Fixed context loss in batch    │                           │
 │                   │   exporters                      │                           │
 ├──────────────────────────────────────────────────────┴───────────────────────────┤
-│ Left  ▰▰▰▰▰▰▰▰▰▰ 99 % full     Right ▰▰▰▰▱▱▱▱▱▱ 41 % full                        │
+│ Left  ■■■■■■■■■■ 99 % full     Right ■■■■□□□□□□ 41 % full                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 ╭─ Page 3 of 3 ────────────────────────────────────────┬───────────────────────────╮
@@ -125,5 +127,5 @@
 │                   │ ✓ Thesis: a query planner for    │                           │
 │                   │   time series data               │                           │
 ├──────────────────────────────────────────────────────┴───────────────────────────┤
-│ Left  ▰▰▰▰▱▱▱▱▱▱ 36 % full     Right ▱▱▱▱▱▱▱▱▱▱ 0 % full                         │
+│ Left  ■■■■□□□□□□ 36 % full     Right □□□□□□□□□□ 0 % full                         │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
