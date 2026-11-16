@@ -193,17 +193,17 @@ column beside the right one, as in the finished document:
 │   ╰────────╯                                         │ +49 (0) 30 000 000        │
 │                                                      │ jane.doe@example.com      │
 │                                                      │ Profile »                 │
-│ PROFESSIONAL EXPERIENCE ──────────────────────────── │                           │
 │                                                      │                           │
-│ ● Senior Backend Engineer            03/2021 – today │ SKILLS ────────────────── │
-│ │                                                    │                           │
-│ │ Northwind Logistics GmbH · Berlin (DE)             │ Programming Languages     │
-│ │ › Rebuilt the shipment tracking service in Go      │   Go                ●●●●● │
-│ │   for ten times the load, at 40,000 events per     │   TypeScript        ●●●●○ │
-│ │   second                                           │   SQL               ●●●●○ │
-│ │ › Moved the event history from PostgreSQL to       │   Java              ●●●○○ │
+│ PROFESSIONAL EXPERIENCE ──────────────────────────── │ SKILLS ────────────────── │
+│                                                      │                           │
+│ ● Senior Backend Engineer            03/2021 – today │ Programming Languages     │
+│ │                                                    │   Go                ●●●●● │
+│ │ Northwind Logistics GmbH · Berlin (DE)             │   TypeScript        ●●●●○ │
+│ │ › Rebuilt the shipment tracking service in Go      │   SQL               ●●●●○ │
+│ │   for ten times the load, at 40,000 events per     │   Java              ●●●○○ │
+│ │   second                                           │   Rust              ●●○○○ │
 ├──────────────────────────────────────────────────────┴───────────────────────────┤
-│ Left  ■■■■■■■■□□ 84 % full     Right ■■■■■■■■■■ 98 % full                        │
+│ Left  ■■■■■■■■□□ 84 % full     Right ■■■■■■■■■■ 97 % full                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 ```
 
@@ -429,4 +429,11 @@ pnpm run format:check
 
 ## ⚖️ License
 
-GNU Affero General Public License v3.0, see [LICENSE](LICENSE).
+Copyright (C) 2026 Serkan Sipahi. oriko is free software under the
+[GNU Affero General Public License v3.0](LICENSE): you may use, change and share it. Anyone who
+shares a changed version, or offers one as a service over a network, must publish its source
+under the same license.
+
+The name oriko and the Oriko character are not covered by this license. That includes the
+files in [`brand/`](brand/) and the Oriko drawing the preview shows; all rights to them stay
+with the author. A changed version of oriko needs another name and logo.
