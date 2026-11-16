@@ -113,21 +113,43 @@ an AI agent, which cannot click through a menu or guess what a vague error means
 from Justin Poehnelt's article
 [Rewrite your CLI for AI agents](https://justin.poehnelt.com/posts/rewrite-your-cli-for-ai-agents/)
 (2026), with the [Google Workspace CLI](https://github.com/googleworkspace/cli) as its reference
-implementation. oriko adds its own rules on top.
+implementation. The rules marked ➕ oriko are new: the author of oriko added them from building
+tools for agents.
 
-| Rule | What oriko does | Why it helps the agent | From |
+| Rule | What oriko does | Why it helps the agent | Source |
 | :--- | :--- | :--- | :--- |
-| Raw JSON input | Every command takes its whole input as one JSON object, after `--json` or on standard input (text another program sends in). | The agent passes the data as it is, without turning it into many separate flags. | article |
-| Schema at runtime | `oriko schema` lists every command, and `oriko schema <command>` shows the exact input one accepts. | The agent looks the format up in the tool itself, so it never relies on an outdated manual. | article |
-| JSON when piped | In a terminal, oriko prints text for people. When another program reads the output through a pipe, oriko prints one JSON object. `--output` picks one by hand. | People get text they can read, programs get data they can parse. | article |
-| Input hardening | The path of the Word file and of every photo must stay inside its folder. | An agent can make a mistake, or follow a text it read. oriko then refuses instead of writing elsewhere on your computer. | article |
-| Dry runs | `--dry-run` answers what a command would do, and writes nothing. | The agent can try a command safely before it runs it for real. | article |
-| Agent skill | The agent's manual lies in the repository, next to the code. | The agent learns what no command can tell it, such as when to stop and ask you. | article |
-| Checks in layers | oriko checks in order: the shape of the data, then the version file, then whether it fits on the pages. Each step lists all of its errors at once. | The agent sees only real errors, never follow-up errors of an earlier one, and fixes them in one go. | added |
-| Errors with a hint | Each error names a code, where the wrong value is, and what to change. | The agent can fix the input on its own, without asking you what the error means. | added |
-| All or nothing | A refused command writes nothing, and every write passes the same checks. | No file is ever left half changed. | added |
-| Exit codes 0, 1, 2 | When it ends, oriko returns a number: 0 when all went well, 1 when the input needs a fix, 2 when something broke. | The agent knows what to do next from one number, without reading the text. | added |
-| Plan before the file | `plan` says which block lands on which page before any file exists. | The agent fixes a page that runs over first, instead of building the file and looking at it. | added |
+| Raw JSON input | Every command takes its whole input as one JSON object, after `--json` or on standard input (text another program sends in). | The agent passes the data as it is, without turning it into many separate flags. | 📄 Poehnelt |
+| Schema at runtime | `oriko schema` lists every command, and `oriko schema <command>` shows the exact input one accepts. | The agent looks the format up in the tool itself, so it never relies on an outdated manual. | 📄 Poehnelt |
+| JSON when piped | In a terminal, oriko prints text for people. When another program reads the output through a pipe, oriko prints one JSON object. `--output` picks one by hand. | People get text they can read, programs get data they can parse. | 📄 Poehnelt |
+| Input hardening | The path of the Word file and of every photo must stay inside its folder. | An agent can make a mistake, or follow a text it read. oriko then refuses instead of writing elsewhere on your computer. | 📄 Poehnelt |
+| Dry runs | `--dry-run` answers what a command would do, and writes nothing. | The agent can try a command safely before it runs it for real. | 📄 Poehnelt |
+| Agent skill | The agent's manual lies in the repository, next to the code. | The agent learns what no command can tell it, such as when to stop and ask you. | 📄 Poehnelt |
+| Checks in layers | oriko checks in order: the shape of the data, then the version file, then whether it fits on the pages. Each step lists all of its errors at once. | The agent sees only real errors, never follow-up errors of an earlier one, and fixes them in one go. | ➕ oriko |
+| Errors with a hint | Each error names a code, where the wrong value is, and what to change. | The agent can fix the input on its own, without asking you what the error means. | ➕ oriko |
+| All or nothing | A refused command writes nothing, and every write passes the same checks. | No file is ever left half changed. | ➕ oriko |
+| Exit codes 0, 1, 2 | When it ends, oriko returns a number: 0 when all went well, 1 when the input needs a fix, 2 when something broke. | The agent knows what to do next from one number, without reading the text. | ➕ oriko |
+| Plan before the file | `plan` says which block lands on which page before any file exists. | The agent fixes a page that runs over first, instead of building the file and looking at it. | ➕ oriko |
+
+<details>
+<summary><b>⌨️ CLI commands</b></summary>
+
+Every command answers one JSON object: on one line when another program reads it, indented in a
+terminal, where `preview` shows its sheets and a refusal shows as readable lines. oriko ends with
+exit code 0 when all went well, 1 when the input needs a fix (each issue with a hint), and 2 when
+something broke. `oriko schema` lists every command and option, `oriko schema <command>` the input
+one accepts.
+
+| Command | What it does |
+| :--- | :--- |
+| `cvs`, `profiles` | list your CVs and versions, and whether each one fits its pages |
+| `show` | outline of a CV; `--block <id>` shows one block in full |
+| `plan`, `preview` | the page plan as JSON, or as the sheets above |
+| `build --out <file>.docx` | writes the Word file; `--style terminal` in the look of the preview, `--dry-run` writes nothing |
+| `init`, `cv update` | create a CV, change its language, pages, person or contact title |
+| `block …`, `item …`, `contact …` | add, update, remove and move blocks, their items and contact lines |
+| `photo set <file>` | stores a PNG or JPEG as the square photo of a CV, or of one version |
+
+</details>
 
 A refusal the agent reads and acts on:
 
@@ -150,6 +172,21 @@ A refusal the agent reads and acts on:
 issue has a `code` the agent can check, a `path` to the wrong value, a `message` for people and a
 `hint` on what to change.
 
+<details>
+<summary><b>❓ Why a CLI and not an MCP server?</b></summary>
+
+- A CLI works with every agent that can run a command, such as Claude Code, Codex or Gemini CLI,
+  and with people at a terminal. An MCP server needs a running process and an entry in the
+  settings of each client.
+- The agent asks `oriko schema` only for the command it needs. Most MCP clients put the
+  description of every tool into the agent's context up front, whether it is used or not.
+- oriko reads and writes plain files on your computer, so you can check, script and test every
+  step yourself.
+- An MCP server could wrap the CLI later without changing it. Poehnelt's article calls this
+  serving several surfaces from one tool.
+
+</details>
+
 ## 🖥️ Terminal preview
 
 **See your CV before the file exists.** `oriko preview` draws every page in the terminal, the left
@@ -157,22 +194,24 @@ column beside the right one, as in the finished document:
 
 ```text
 ╭─ Page 1 of 3 ────────────────────────────────────────┬───────────────────────────╮
-│    ╭─────────╮                                       │ CONTACT                   │
-│    │         │                                  Jane │ Germany, Berlin           │
-│    │  ◠   ◠  │                                   Doe │ Example Street 1          │
-│    │    ◡    │               Senior Backend Engineer │ 10115 Berlin              │
-│    │         │                                       │ +49 (0) 30 000 000        │
-│    ╰─────────╯                                       │ jane.doe@example.com      │
+│                                                      │                           │
+│   ╭─────────╮                                   Jane │ CONTACT ───────────────── │
+│   │         │                                    Doe │                           │
+│   │  ◠   ◠  │                Senior Backend Engineer │ Germany, Berlin           │
+│   │    ◡    │                                        │ Example Street 1          │
+│   │         │                                        │ 10115 Berlin              │
+│   ╰─────────╯                                        │ +49 (0) 30 000 000        │
+│                                                      │ jane.doe@example.com      │
 │                                                      │ Profile »                 │
-│ PROFESSIONAL EXPERIENCE                              │                           │
-│                                                      │ SKILLS                    │
-│ 03/2021 – today   ● Senior Backend Engineer          │ Programming Languages     │
-│                   │ Northwind Logistics GmbH ·       │ Go                  ●●●●● │
-│                   │   Berlin (DE)                    │ TypeScript          ●●●●○ │
-│                   │ ✓ Rebuilt the shipment           │ SQL                 ●●●●○ │
-│                   │   tracking service in Go for ten │ Java                ●●●○○ │
-│                   │   times the load, at 40,000      │ Rust                ●●○○○ │
-│                   │   events per second              │                           │
+│ PROFESSIONAL EXPERIENCE ──────────────────────────── │                           │
+│                                                      │                           │
+│ 03/2021 – today   ● Senior Backend Engineer          │ SKILLS ────────────────── │
+│                   │ Northwind Logistics GmbH ·       │                           │
+│                   │   Berlin (DE)                    │ Programming Languages     │
+│                   │ › Rebuilt the shipment           │   Go                ●●●●● │
+│                   │   tracking service in Go for ten │   TypeScript        ●●●●○ │
+│                   │   times the load, at 40,000      │   SQL               ●●●●○ │
+│                   │   events per second              │   Java              ●●●○○ │
 ├──────────────────────────────────────────────────────┴───────────────────────────┤
 │ Left  ■■■■■■■■□□ 80 % full     Right ■■■■■■■■■■ 98 % full                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
@@ -199,7 +238,7 @@ oriko build --profile go-e-senior-backend --style terminal --out go-e-terminal.d
 | `╭─────────╮` with `◠   ◠` | where your photo goes; the terminal shows a face, the file shows the photo |
 | `UPPER CASE` | a section heading, such as Professional Experience |
 | `●` and `│` | a job: its dates, its marker and its timeline |
-| `✓` | a bullet point of a job |
+| `›` | a bullet point of a job |
 | `●●●●○` | a skill level, from 0 to 5 dots |
 | `■■■□□` | how full the column is; at 100 % the next block moves to the next page |
 
@@ -316,24 +355,6 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
 > Try oriko without your own data: [`examples/`](examples/) holds a complete data folder. Add
 > `--home examples` to any command.
 
-## ⌨️ Commands
-
-Every command answers one JSON object: on one line when another program reads it, indented in a
-terminal, where `preview` shows its sheets and a refusal shows as readable lines. oriko ends with
-exit code 0 when all went well, 1 when the input needs a fix (each issue with a hint), and 2 when
-something broke. `oriko schema` lists every command and option, `oriko schema <command>` the input
-one accepts.
-
-| Command | What it does |
-| :--- | :--- |
-| `cvs`, `profiles` | list your CVs and versions, and whether each one fits its pages |
-| `show` | outline of a CV; `--block <id>` shows one block in full |
-| `plan`, `preview` | the page plan as JSON, or as the sheets above |
-| `build --out <file>.docx` | writes the Word file; `--style terminal` in the look of the preview, `--dry-run` writes nothing |
-| `init`, `cv update` | create a CV, change its language, pages, person or contact title |
-| `block …`, `item …`, `contact …` | add, update, remove and move blocks, their items and contact lines |
-| `photo set <file>` | stores a PNG or JPEG as the square photo of a CV, or of one version |
-
 ## ✍️ First steps by hand
 
 The agent runs these commands for you. By hand, they look like this.
@@ -371,23 +392,31 @@ Upload `acme.docx` to Google Docs and save it there with File, Download, PDF.
 
 ## 📌 Good to know
 
-- ❗ **Important:** the agent never adds a skill, a level, a date or a fact you did not state. It
-  never changes your CV for a single job, and never overwrites a version you already have. When
-  it needs any of that, it stops and asks you.
-- ⚠️ **Warning:** an agent can still misread or reword a fact. Before you send a CV, read the
-  terminal preview and the PDF line by line: names, employers, places, dates and levels.
-- ⚠️ **Warning:** the preview shows what stands on which page, in which order, and how full each
-  column is. It does not show fonts, exact distances or the photo. The page plan behind it is the
-  one `build` uses.
-- ⚠️ **Warning:** send the terminal style by mail to people, not through an upload portal. A portal
-  reads the text of the file, and the two columns of a sheet run together line by line.
-- 💡 **Tip:** you can write to the agent in any language. It keeps your CV in the CV's own
-  language.
-- ℹ️ **Note:** your CVs never go into the repository. They stay in `~/.oriko` on your computer. An
-  AI assistant you work with reads the parts of them it needs, as with any file you show it.
-- 💡 **Tip:** a page that looks too empty usually has a block pinned to the next page in your CV:
-  `"page": 2` on a block makes it start on page 2, however much room is left before it. A version
-  can remove the pin with `"page": null`.
+**💡 Tips**
+
+- You can write to the agent in any language. Your CV keeps its own language.
+- A page looks too empty? A block is pinned: `"page": 2` makes it start on page 2, however much
+  room is left before it. A version removes the pin with `"page": null`.
+
+**ℹ️ Your data**
+
+- Your CVs never go into the repository. They stay in `~/.oriko` on your computer. An AI
+  assistant you work with reads the parts of them it needs, as with any file you show it.
+
+**⚠️ Before you send**
+
+- An agent can misread or reword a fact. Read the preview and the PDF line by line: names,
+  employers, places, dates and levels.
+- The preview shows what stands on which page and how full each column is. It does not show
+  fonts, exact distances or the photo.
+- Send the terminal style by mail to people, not through an upload portal. A portal reads the
+  text, and the two columns run together line by line.
+
+**❗ What the agent never does**
+
+- It never adds a skill, a level, a date or a fact you did not state. It never changes your CV for
+  a single job, and never overwrites a version you already have. When it needs any of that, it
+  stops and asks you.
 
 ## 🛠️ Development
 
