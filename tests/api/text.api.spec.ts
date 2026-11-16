@@ -49,7 +49,7 @@ test('wraps a long rated name instead of cutting it off', () => {
 const rightCell = (line: string) => line.slice(-27, -2).trim();
 
 test('rules each section heading off, with more room above it than between groups', () => {
-  const heading = lines.findIndex(line => rightCell(line).startsWith('SKILLS ─'));
+  const heading = lines.findIndex(line => rightCell(line).startsWith('INTERESTS ─'));
   assert.deepEqual(lines.slice(heading - 2, heading + 2).map(rightCell), [
     '',
     '',
@@ -58,6 +58,21 @@ test('rules each section heading off, with more room above it than between group
   ]);
   assert.ok(lines.some(line => line.includes('│ PROFESSIONAL EXPERIENCE ──')));
   assert.ok(lines.some(line => rightCell(line).startsWith('CONTACT ─')));
+});
+
+// Row 0 is the top edge. The fixture's contact takes six rows, one more than the name block.
+test('starts both columns of page 1 on one row, with a blank row below the contact', () => {
+  const rowOf = (sheet: string[], start: string) =>
+    sheet.findIndex(line => line.includes(`│ ${start} ─`));
+  assert.equal(rowOf(lines, 'SKILLS'), 11);
+  assert.equal(rowOf(lines, 'PROFESSIONAL EXPERIENCE'), 11);
+  assert.match(rightCell(lines[9] ?? ''), /^Profile/);
+  assert.equal(rightCell(lines[10] ?? ''), '');
+  const cv = fixture();
+  cv.contact.items.pop();
+  const shorter = preview(cv, unwrap(place(cv))).split('\n');
+  assert.equal(rowOf(shorter, 'SKILLS'), 10);
+  assert.equal(rowOf(shorter, 'PROFESSIONAL EXPERIENCE'), 10);
 });
 
 test('indents the items of a group below its title', () => {

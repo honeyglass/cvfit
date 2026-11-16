@@ -30,6 +30,8 @@ const FACE = [
   '  ╰────────╯',
 ];
 const FACE_WIDTH = 12;
+/** The rows of the name block of page 1, with a blank row above and one below it. */
+const NAME_ROWS = FACE.length + 2;
 /** Where oriko lives, in the top edge of every sheet, so a reader of the file can find it. */
 export const REPOSITORY = 'github.com/honeyglass/oriko';
 
@@ -111,7 +113,7 @@ const cut = (word: string, width: number) => word.match(new RegExp(`.{1,${width}
 const blockOf = (cv: Master, placed: Placed) => cv.blocks.find(block => block.id === placed.id);
 
 function leftLines(cv: Master, column: Column, page: number) {
-  const top = page === 0 ? ['', ...nameBlock(cv.person), ''] : [];
+  const top = page === 0 ? padded(['', ...nameBlock(cv.person)], topRows(cv)) : [];
   return stacked(top, column.blocks, placed => jobLines(cv, placed));
 }
 
@@ -170,10 +172,21 @@ const hanging = (text: string, width: number) =>
   wrap(text, width - 2).map((line, index) => (index === 0 ? line : `  ${line}`));
 
 function rightLines(cv: Master, column: Column, page: number) {
-  const contact = cv.contact.items.flatMap(item => item.lines.flatMap(line => wrap(line, RIGHT)));
-  const top = page === 0 ? ['', ...ruled(cv.contact.title, RIGHT), ...contact, ''] : [];
+  const top = page === 0 ? padded(contactLines(cv), topRows(cv)) : [];
   return stacked(top, column.blocks, placed => blockLines(cv, placed));
 }
+
+// Both columns of page 1 start their first section on the same row: below the name block, or
+// lower where the contact reaches further down, so one blank row still ends the contact.
+const topRows = (cv: Master) => Math.max(NAME_ROWS, contactLines(cv).length);
+
+function contactLines(cv: Master) {
+  const contact = cv.contact.items.flatMap(item => item.lines.flatMap(line => wrap(line, RIGHT)));
+  return ['', ...ruled(cv.contact.title, RIGHT), ...contact];
+}
+
+const padded = (lines: string[], rows: number) =>
+  Array.from({ length: rows }, (_, row) => lines[row] ?? '');
 
 function blockLines(cv: Master, placed: Placed) {
   const block = blockOf(cv, placed);
