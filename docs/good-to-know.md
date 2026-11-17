@@ -1,5 +1,11 @@
 # 📌 Good to know
 
+## 🤖 No CV yet
+
+Paste a job posting anyway. The agent asks you a few short questions (your name, where
+you live, where you have worked, what you can do), creates your CV from your answers, and then
+fits it to the posting.
+
 ## 💡 Tips
 
 - You can write to the agent in any language. Your CV keeps its own language.

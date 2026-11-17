@@ -39,13 +39,10 @@ when LibreOffice is installed.
   need your yes.
 - 👀 **Preview before you build**: see every page in the terminal, and how full it is.
 - 🌍 **Several CVs**: one per language or per person, side by side.
-- 🛡️ **Safe dependencies**: every CI run starts with a
-  [supply check](https://github.com/honeyglass/actions/tree/main/supply-check) we built for it,
-  before any package (code from other people) is installed. It lets a package in only from an
-  allow list and keeps the safety settings of the package manager as they are: a new version
-  comes in only once it is three days old, so a bad release is usually caught first, and no
-  package may run its own programs while it installs. Every version is fixed, so every install
-  gets the same code. The rules stand in [SECURITY.md](SECURITY.md).
+- 🛡️ **Safe dependencies**: our own [supply check](https://github.com/honeyglass/actions/tree/main/supply-check)
+  runs first in every CI run. A package comes in only from an allow list, a new version only once
+  it is three days old, and no package may run programs while it installs. More in
+  [SECURITY.md](SECURITY.md).
 
 ## 🚀 Quickstart
 
@@ -92,13 +89,7 @@ node bin/oriko.ts schema
 
 </details>
 
-## 🤖 Working with oriko and an agent
-
-Open [Claude Code](https://claude.com/claude-code) and say what you want. The skill in
-[`.claude/skills/oriko/`](.claude/skills/oriko/SKILL.md) tells the agent how to use oriko. After a
-manual installation, open Claude Code in the oriko folder.
-
-### ⭐ The recommended way
+## ⭐ The recommended way
 
 Give the agent three things at once, then answer its questions:
 
@@ -135,9 +126,7 @@ Create a new CV for me. Since 03/2021 I have worked as a data engineer at …
 5. Builds the Word file and shows you the preview, every change, and why it made it.
 6. Tells you what the posting asks for that your CV does not show yet.
 
-No CV yet? Paste a job posting anyway. The agent asks you a few short questions (your name, where
-you live, where you have worked, what you can do), creates your CV from your answers, and then
-fits it to the posting.
+No CV yet? See [Good to know](docs/good-to-know.md#-no-cv-yet).
 
 ## 🧩 Agentic meets deterministic
 
