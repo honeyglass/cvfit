@@ -21,11 +21,19 @@ Use the command `oriko`; without it, run the repository's entry point with Node 
 
 - `command -v oriko` tells whether the command exists.
 - The repository is the folder three levels above this skill's base directory, with links resolved.
+- When neither the command nor '$ORIKO_REPO/bin/oriko.ts' exists, oriko is not installed.
+  Stop and ask the user to run the quickstart below; never run it yourself.
 - Every command answers one JSON object on stdout.
 
 ```bash
 ORIKO_REPO="$(cd -P "<base directory of this skill>/../../.." && pwd)"
 node "$ORIKO_REPO/bin/oriko.ts" profiles
+```
+
+The quickstart, for the user to run:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/honeyglass/oriko/main/install.sh | sh
 ```
 
 | Answer                      | Exit code | What to do                                                     |
