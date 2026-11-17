@@ -6,6 +6,16 @@ token. These are the rules this repository follows, and each one also stands as 
 comment at the line where it acts: in a workflow, in `pnpm-workspace.yaml` or in
 `.github/dependabot.yml`.
 
+> [!IMPORTANT]
+> **Every CI run starts with the supply check of
+> [honeyglass/actions](https://github.com/honeyglass/actions/tree/main/supply-check).**
+> It runs before any dependency is installed, pinned to a full commit id like every other
+> action. It is an allow list: a dependency passes only as a registry version, an `npm:` alias,
+> a link to a folder this repository tracks, or a pinned commit of `honeyglass/utils`. A pnpm
+> setting passes only as the template sets it, and a pnpmfile or a `.npmrc` key never passes.
+> After the install it runs a second time and fails the job on a symlink that leads out of the
+> checkout.
+
 - **Everything taken from elsewhere is pinned to a full commit id, never to a tag, and
   never copied.** An action is named as `uses: <owner>/<repo>@<sha>`, a package from a
   git repository as `github:<owner>/<repo>#<sha>`. A tag can be moved to another commit
