@@ -93,10 +93,10 @@ node bin/oriko.ts schema
 
 Give the agent three things at once, then answer its questions:
 
-1. **Your old CV**: a PDF, a Word file, or your oriko CV.
-2. **Notes in your own words**: what you did, how you work, what the old CV leaves out. Short
-   lines are enough, in any language.
-3. **The job posting**: a file or a link.
+- **Your old CV**: a PDF, a Word file, or your oriko CV.
+- **Notes in your own words**: what you did, how you work, what the old CV leaves out. Short
+  lines are enough, in any language.
+- **The job posting**: a file or a link.
 
 ```text
 Create a CV for this job. My CV: ~/cv.pdf. My notes: ~/notes.txt. The posting: ~/job.pdf
@@ -119,12 +119,12 @@ Create a new CV for me. Since 03/2021 I have worked as a data engineer at …
 
 **What the agent does for a job posting:**
 
-1. Picks your CV in the language of the posting.
-2. Reads the parts of your CV that matter for this job.
-3. Writes a version: matching skills first, unrelated old jobs hidden, long lists shortened.
-4. Checks that every block fits on the pages, and fixes it if not.
-5. Builds the Word file and shows you the preview, every change, and why it made it.
-6. Tells you what the posting asks for that your CV does not show yet.
+- Picks your CV in the language of the posting.
+- Reads the parts of your CV that matter for this job.
+- Writes a version: matching skills first, unrelated old jobs hidden, long lists shortened.
+- Checks that every block fits on the pages, and fixes it if not.
+- Builds the Word file and shows you the preview, every change, and why it made it.
+- Tells you what the posting asks for that your CV does not show yet.
 
 No CV yet? See [Good to know](docs/good-to-know.md#-no-cv-yet).
 
