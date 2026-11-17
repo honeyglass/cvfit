@@ -129,6 +129,10 @@ from Justin Poehnelt's article
 implementation. [The CLI page](docs/cli.md) lists every rule oriko follows, its commands, and a
 refusal as the agent reads it.
 
+Two of oriko's own rules go furthest for agents: a refusal can name the next command to run, and
+an option without a value lists the values it accepts. The agent fixes its input from what oriko
+answers, never from a guess.
+
 <details>
 <summary><b>Agent DX rules</b></summary>
 
@@ -147,6 +151,8 @@ The rules marked ➕ oriko are new: the author of oriko added them from building
 | All or nothing | a refused command writes nothing | no file is left half changed | ➕ oriko |
 | Exit codes 0, 1, 2 | 0 ok, 1 fix the input, 2 something broke | knows the next step from one number | ➕ oriko |
 | Plan before the file | `plan` shows which block lands on which page | fixes an overflow before building | ➕ oriko |
+| Hints that run | a refusal names the command that lists the fitting values | runs it and picks a real value | ➕ oriko |
+| Options that list | an option without a value lists the values it accepts | finds names and ids in one call | ➕ oriko |
 
 </details>
 

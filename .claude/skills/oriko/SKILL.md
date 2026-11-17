@@ -36,11 +36,13 @@ The quickstart, for the user to run:
 curl -fsSL https://raw.githubusercontent.com/honeyglass/oriko/main/install.sh | sh
 ```
 
-| Answer                      | Exit code | What to do                                                     |
-| :-------------------------- | :-------- | :------------------------------------------------------------- |
-| '"ok": true'                | 0         | go on                                                          |
-| '"ok": false' with 'issues' | 1         | follow the 'hint' of each issue, then call again               |
-| '"kind": "bug"'             | 2         | stop and tell the user; oriko has a bug, do not work around it |
+| Answer                      | Exit code | What to do                                                                       |
+| :-------------------------- | :-------- | :------------------------------------------------------------------------------- |
+| '"ok": true'                | 0         | go on                                                                            |
+| '"ok": false' with 'issues' | 1         | run the 'command' of each issue that has one, follow its 'hint', then call again |
+| '"kind": "bug"'             | 2         | stop and tell the user; oriko has a bug, do not work around it                   |
+
+An option without a value lists the values it accepts, such as `oriko show --cv` for the CV names.
 
 `oriko schema` lists all commands and options.
 `oriko schema <name>` gives the accepted input of one, such as `oriko schema profile`.

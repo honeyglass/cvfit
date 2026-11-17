@@ -19,6 +19,8 @@ The rules marked ➕ oriko are new: the author of oriko added them from building
 | All or nothing | a refused command writes nothing | no file is left half changed | ➕ oriko |
 | Exit codes 0, 1, 2 | 0 ok, 1 fix the input, 2 something broke | knows the next step from one number | ➕ oriko |
 | Plan before the file | `plan` shows which block lands on which page | fixes an overflow before building | ➕ oriko |
+| Hints that run | a refusal names the command that lists the fitting values | runs it and picks a real value | ➕ oriko |
+| Options that list | an option without a value lists the values it accepts | finds names and ids in one call | ➕ oriko |
 
 ## Commands
 
@@ -40,6 +42,16 @@ one accepts.
 
 When another program reads the output instead of a terminal, `preview` answers JSON with the
 sheets in its field `preview`. Add `--output text` to get the plain sheets there too.
+
+An option without a value lists the values it accepts:
+
+| Call | Answer |
+| :--- | :--- |
+| `oriko show --cv` | the names of all CVs |
+| `oriko plan --profile` | the names of all profiles |
+| `oriko show --cv jane-doe --block` | the outline of every block of that CV |
+| `oriko build --style` | `classic`, `terminal` |
+| `oriko preview --output` | `json`, `text` |
 
 ## A refusal
 
@@ -63,6 +75,19 @@ A refusal the agent reads and acts on:
 `"ok": false` means oriko refused. `"kind": "fix"` says the agent can fix the input itself. Each
 issue has a `code` the agent can check, a `path` to the wrong value, a `message` for people and a
 `hint` on what to change.
+
+When another command answers the values that fix an issue, the issue names it in `command`, and
+the hint says to run it. The agent runs the command and picks a value from its answer:
+
+```json
+{
+  "code": "UNKNOWN_CV",
+  "path": "cv",
+  "message": "The data folder has no CV jane-dough",
+  "hint": "Run the command and use one of the CV names it lists",
+  "command": "oriko show --cv"
+}
+```
 
 In a terminal, the same refusal reads as lines. When your CV needs more pages than allowed, the
 preview names the blocks that do not fit and says what to change:
