@@ -1,0 +1,107 @@
+/**
+ * A document as clean text: a posting, notes or an old CV, from a file or a download.
+ *
+ * textOf: the kind of the document, its text, and how many characters were replaced.
+ * Kind: the kinds oriko reads.
+ *
+ * The kind comes from the content, never from a file name or a header a server sends. The list
+ * holds PDF, Word, HTML and UTF-8 text; a kind nobody planned for is refused.
+ *
+ * @example const read = await textOf(bytes, 'posting');
+ */
+import { shown, trySync$ } from '@honeyglass/utils/ts';
+import { done, rejected } from '../core/errors.ts';
+import type { Issue, Result } from '../core/errors.ts';
+import { LIMITS } from '../core/limits.ts';
+import { tooLarge } from '../cli/files.ts';
+import { cleanText } from './clean.ts';
+import { docxText } from './docx.ts';
+import { htmlText } from './html.ts';
+import { pdfText } from './pdf.ts';
+
+export type Kind = 'pdf' | 'docx' | 'html' | 'text';
+
+type Read = { kind: Kind; text: string; replaced: number };
+
+/**
+ * @param bytes - the whole document
+ * @param option - the cli option that named it, for the path of an issue
+ * @returns its kind and clean text; a refusal for another kind, a broken document or no text
+ */
+export async function textOf(bytes: Buffer, option: string): Promise<Result<Read>> {
+  const raw = await rawText(bytes, option);
+  if (raw.error !== null) return raw;
+  const { text, replaced } = cleanText(raw.data.text);
+  if (text === '') return rejected('read', [noText(option)]);
+  return done({ kind: raw.data.kind, text, replaced });
+}
+
+const PDF = Buffer.from('%PDF-');
+const ZIP = Buffer.from([0x50, 0x4b, 0x03, 0x04]);
+
+// One property per kind, tested in this order; the first that holds decides.
+async function rawText(
+  bytes: Buffer,
+  option: string,
+): Promise<Result<{ kind: Kind; text: string }>> {
+  if (startsWith(bytes, PDF)) {
+    const read = await pdfText(bytes);
+    if (read.error !== null) return rejected('read', [unreadable(option, 'PDF')], read.error);
+    return done({ kind: 'pdf', text: read.data });
+  }
+  if (startsWith(bytes, ZIP)) return wordText(bytes, option);
+  const decoded = utf8(bytes);
+  if (decoded === null) return rejected('read', [unsupportedKind(option)]);
+  if (HTML_START.test(decoded)) return done({ kind: 'html', text: htmlText(decoded) });
+  return done({ kind: 'text', text: decoded });
+}
+
+const startsWith = (bytes: Buffer, magic: Buffer) => bytes.subarray(0, magic.length).equals(magic);
+
+async function wordText(
+  bytes: Buffer,
+  option: string,
+): Promise<Result<{ kind: Kind; text: string }>> {
+  const read = await docxText(bytes);
+  switch (read.problem) {
+    case null:
+      return done({ kind: 'docx', text: read.text });
+    case 'no-word':
+      return rejected('read', [unsupportedKind(option)]);
+    case 'too-large':
+      return rejected('read', [tooLarge(option, LIMITS.documentBytes)]);
+    case 'broken':
+      return rejected('read', [unreadable(option, 'Word file')]);
+  }
+}
+
+// Strict UTF-8, so a binary file is never read as text; a byte order mark is dropped.
+function utf8(bytes: Buffer) {
+  const decoder = new TextDecoder('utf-8', { fatal: true, ignoreBOM: false });
+  const decoded = trySync$(() => decoder.decode(bytes));
+  return decoded.error === null ? decoded.data : null;
+}
+
+// A page whose first element is html, after an optional XML declaration and comments.
+const HTML_START = /^\s*(?:<\?xml[^>]*>\s*)?(?:<!--[\s\S]*?-->\s*)*<(?:!doctype\s+html|html)[\s>]/i;
+
+const unsupportedKind = (option: string): Issue => ({
+  code: 'UNSUPPORTED_KIND',
+  path: option,
+  message: 'The document is no PDF, Word file, HTML page or UTF-8 text',
+  hint: 'Save it as PDF or as text, then pass that file',
+});
+
+const unreadable = (option: string, kind: string): Issue => ({
+  code: 'DOCUMENT_UNREADABLE',
+  path: option,
+  message: `The ${kind} is broken, encrypted or cannot be opened`,
+  hint: `Open it, save it again as a new ${kind} without a password, and pass that file`,
+});
+
+const noText = (option: string): Issue => ({
+  code: 'NO_TEXT',
+  path: option,
+  message: `The document behind --${shown(option)} holds no text, such as a scan`,
+  hint: 'Copy the text into a .txt or .md file and pass that file',
+});

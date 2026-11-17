@@ -13,7 +13,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { z } from 'zod';
 import { run } from '../../cli/run.ts';
+import type { Web } from '../../read/web.ts';
 import { FIXTURE_URL, photo } from './fixture.ts';
+import { fakeWeb } from './web.ts';
 
 const Answer = z.looseObject({
   ok: z.boolean(),
@@ -35,7 +37,8 @@ const Answer = z.looseObject({
     .optional(),
 });
 
-export type Space = { home: string; cwd: string };
+/** The data folder, the working directory, and the network, which by default reaches nothing. */
+export type Space = { home: string; cwd: string; web?: Web };
 
 export const workspace = (): Space => {
   const home = mkdtempSync(join(tmpdir(), 'oriko-home-'));
@@ -56,8 +59,8 @@ export const workspace = (): Space => {
   return { home, cwd };
 };
 
-export const call = async ({ home, cwd }: Space, argv: string[], stdin: string | null = null) => {
-  const { exit, out } = await ran({ home, cwd }, argv, stdin, false);
+export const call = async (space: Space, argv: string[], stdin: string | null = null) => {
+  const { exit, out } = await ran(space, argv, stdin, false);
   const answer = Answer.parse(JSON.parse(out));
   return { exit, answer, codes: answer.issues?.map(issue => issue.code) ?? [] };
 };
@@ -68,11 +71,13 @@ export const terminal = async (space: Space, argv: string[]) =>
 export const piped = async (space: Space, argv: string[]) =>
   (await ran(space, argv, null, false)).out;
 
-async function ran({ home, cwd }: Space, argv: string[], stdin: string | null, isTTY: boolean) {
+async function ran(space: Space, argv: string[], stdin: string | null, isTTY: boolean) {
+  const { home, cwd, web = fakeWeb({}, {}).web } = space;
   let out = '';
   const exit = await run(argv, {
     home,
     cwd,
+    web,
     isTTY,
     stdin: async () => stdin,
     write: text => (out += text),

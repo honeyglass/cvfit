@@ -21,5 +21,13 @@ export const LIMITS = {
   pages: 4,
   inputBytes: 1_000_000,
   photoBytes: 20_000_000,
+  /** A posting, notes or an old CV as a file or a download. */
+  readBytes: 10_000_000,
+  /** The text inside a Word file once unpacked, which its ZIP may state falsely. */
+  documentBytes: 5_000_000,
+  /** The redirects one download may follow. */
+  redirects: 5,
+  /** The whole download, from the first connect to the last byte. */
+  downloadSeconds: 20,
 } as const;
 export const EXIT = { ok: 0, expected: 1, fatal: 2 } as const;

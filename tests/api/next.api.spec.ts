@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { cpSync, renameSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { NEW_CV, call, piped, terminal, workspace } from '../utils/cli.ts';
@@ -20,7 +20,21 @@ test('a success names its next steps, each a command with what it still needs', 
       [],
       [
         ['oriko profiles', []],
-        ['oriko cvs', []],
+        ['oriko read', ['posting', 'profile']],
+      ],
+    ],
+    [
+      ['--home', 'empty'],
+      [
+        ['oriko read --home empty', ['resume']],
+        ['oriko init --home empty', ['cv', 'json']],
+      ],
+    ],
+    [
+      ['--home', 'solo'],
+      [
+        ['oriko cvs --home solo', []],
+        ['oriko read --home solo', ['posting', 'profile']],
       ],
     ],
     [
@@ -57,7 +71,26 @@ test('a success names its next steps, each a command with what it still needs', 
         ['oriko profiles', []],
       ],
     ],
+    [
+      ['read', '--profile', 'acme', '--posting', 'job.txt'],
+      [
+        ['oriko schema profile', []],
+        ['oriko plan --profile acme', []],
+      ],
+    ],
+    [['read', '--cv', 'jane', '--notes', 'job.txt'], [['oriko show --cv jane', []]]],
+    [
+      ['read', '--resume', 'job.txt'],
+      [
+        ['oriko init', ['cv', 'json']],
+        ['oriko schema init', []],
+      ],
+    ],
+    [['read', '--cv', 'jane', '--notes', 'job.txt', '--dry-run'], [[null, []]]],
   ];
+  writeFileSync(join(space.cwd, 'job.txt'), 'Senior Go Engineer');
+  mkdirSync(join(space.cwd, 'empty'));
+  cpSync(join(space.home, 'cvs'), join(space.cwd, 'solo', 'cvs'), { recursive: true });
   for (const [argv, expected] of cases)
     assert.deepEqual(shapes(await steps(space, argv)), expected, argv.join(' '));
 });

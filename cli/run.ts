@@ -49,12 +49,16 @@ import { createCv, cvNameMissing } from './init.ts';
 import { nextSteps } from './next.ts';
 import type { Step } from './next.ts';
 import { setPhoto } from './photo.ts';
+import { readDocuments } from './read.ts';
+import type { Web } from '../read/web.ts';
 
 export type Io = {
   /** The data folder: every CV in cvs/ and every profile in profiles/. */
   home: string;
   cwd: string;
   isTTY: boolean;
+  /** The network a download goes through. */
+  web: Web;
   /** The text piped in, or null when nothing is piped. */
   stdin: () => Promise<string | null>;
   write: (text: string) => void;
@@ -384,6 +388,8 @@ async function dispatched(call: Call): Promise<Result<Fields>> {
       return plan(call);
     case 'preview':
       return previewed(call);
+    case 'read':
+      return read(call);
     case 'photo set':
       return photo(call, call.rest[0]);
     case 'build':
@@ -579,6 +585,23 @@ async function previewed(call: Call): Promise<Result<Fields>> {
   const placed = place(cv.data);
   if (placed.error !== null) return placed;
   return done({ preview: preview(cv.data, placed.data) });
+}
+
+async function read(call: Call): Promise<Result<Fields>> {
+  const { values } = call;
+  return readDocuments({
+    home: call.home,
+    cwd: call.io.cwd,
+    web: call.io.web,
+    posting: values.posting,
+    notes: values.notes ?? [],
+    resume: values.resume,
+    profile: values.profile,
+    cv: values.cv,
+    profileCv: await profileCv(call),
+    isReplace: values.replace === true,
+    isDryRun: values['dry-run'] === true,
+  });
 }
 
 async function photo(call: Call, source: string | undefined): Promise<Result<Fields>> {

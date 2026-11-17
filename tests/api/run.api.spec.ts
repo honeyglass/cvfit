@@ -18,6 +18,9 @@ import { fileURLToPath } from 'node:url';
 import { PNG } from 'pngjs';
 import { z } from 'zod';
 import { NEW_CV, call, workspace } from '../utils/cli.ts';
+import type { Space } from '../utils/cli.ts';
+import { docx, pdf } from '../utils/documents.ts';
+import { fakeWeb } from '../utils/web.ts';
 import { FIXTURE_URL, photo } from '../utils/fixture.ts';
 
 const tall = (cwd: string) => {
@@ -558,4 +561,139 @@ test('a refused write leaves none of the files of the command', async () => {
   });
   const { exit } = await call(space, ['init', '--cv', 'erika', '--json', NEW_CV]);
   assert.deepEqual([exit, existsSync(join(space.home, 'cvs', 'erika.png'))], [1, false]);
+});
+
+const PAGE = '<!doctype html><html><body><h1>Senior Go Engineer</h1><p>Berlin</p></body></html>';
+
+const reading = () => {
+  const space = workspace();
+  const { web } = fakeWeb(
+    { 'jobs.example': ['93.184.216.34'] },
+    { 'https://jobs.example/1': { status: 200, body: PAGE } },
+  );
+  return { ...space, web };
+};
+
+const stored = (space: Space, ...path: string[]) => {
+  const file = join(space.home, ...path);
+  return existsSync(file) ? readFileSync(file, 'utf8') : null;
+};
+
+test('read stores a posting from a file or an https address beside its profile', async () => {
+  const space = reading();
+  writeFileSync(join(space.cwd, 'job.pdf'), pdf('Senior Go Engineer'));
+  const fromFile = await call(space, ['read', '--profile', 'acme', '--posting', 'job.pdf']);
+  assert.deepEqual(
+    [fromFile.exit, fromFile.answer.read],
+    [
+      0,
+      [
+        {
+          role: 'posting',
+          source: 'job.pdf',
+          kind: 'pdf',
+          chars: 18,
+          replaced: 0,
+          stored: 'profiles/acme.posting.md',
+          text: 'Senior Go Engineer',
+        },
+      ],
+    ],
+  );
+  assert.equal(
+    stored(space, 'profiles', 'acme.posting.md'),
+    '---\nsource: "job.pdf"\nkind: pdf\n---\n\nSenior Go Engineer\n',
+  );
+  const link = 'https://jobs.example/1';
+  const fromWeb = await call(space, ['read', '--profile', 'globex', '--posting', link]);
+  assert.deepEqual(
+    [fromWeb.exit, stored(space, 'profiles', 'globex.posting.md')],
+    [0, `---\nsource: "${link}"\nkind: html\n---\n\n# Senior Go Engineer\n\nBerlin\n`],
+  );
+});
+
+test('read appends notes beside the CV, and answers an old CV without storing it', async () => {
+  const space = reading();
+  writeFileSync(join(space.cwd, 'a.md'), 'Led the move to Go');
+  writeFileSync(join(space.cwd, 'b.txt'), 'Mentored four engineers');
+  writeFileSync(join(space.cwd, 'old.docx'), await docx(['Jane Doe', 'Engineer']));
+  assert.equal((await call(space, ['read', '--notes', 'a.md', '--notes', 'b.txt'])).exit, 0);
+  assert.equal((await call(space, ['read', '--notes', 'a.md'])).exit, 0);
+  assert.equal(
+    stored(space, 'cvs', 'jane.notes.md'),
+    '## a.md\n\nLed the move to Go\n\n## b.txt\n\nMentored four engineers\n\n## a.md\n\nLed the move to Go\n',
+  );
+  const before = [readdirSync(join(space.home, 'cvs')), readdirSync(join(space.home, 'profiles'))];
+  const resume = await call(space, ['read', '--resume', 'old.docx']);
+  assert.deepEqual(resume.answer.read, [
+    {
+      role: 'resume',
+      source: 'old.docx',
+      kind: 'docx',
+      chars: 17,
+      replaced: 0,
+      text: 'Jane Doe\nEngineer',
+    },
+  ]);
+  assert.deepEqual(
+    [readdirSync(join(space.home, 'cvs')), readdirSync(join(space.home, 'profiles'))],
+    before,
+  );
+});
+
+// One answer names every issue of every input, and a refused call stores nothing at all.
+test('read refuses with every issue of every input, and then stores nothing', async () => {
+  const space = reading();
+  writeFileSync(join(space.cwd, 'job.pdf'), pdf('Senior Go Engineer'));
+  writeFileSync(join(space.cwd, 'scan.pdf'), pdf());
+  writeFileSync(join(space.cwd, 'image.png'), photo());
+  writeFileSync(join(space.cwd, 'a.md'), 'Led the move to Go');
+  mkdirSync(join(space.cwd, 'empty'));
+  const cases: [string[], string[]][] = [
+    [['read'], ['MISSING_INPUT']],
+    [['read', '--posting', 'job.pdf'], ['MISSING_OPTION']],
+    [['read', '--profile', '../acme', '--posting', 'job.pdf'], ['SCHEMA']],
+    [
+      [
+        'read',
+        '--profile',
+        'acme',
+        '--posting',
+        'scan.pdf',
+        '--notes',
+        'a.md',
+        '--notes',
+        'image.png',
+      ],
+      ['NO_TEXT', 'UNSUPPORTED_KIND'],
+    ],
+    [['read', '--profile', 'acme', '--posting', 'http://jobs.example/1'], ['URL_NOT_ALLOWED']],
+    [['read', '--profile', 'acme', '--posting', 'missing.pdf'], ['FILE_NOT_FOUND']],
+    [['read', '--notes', 'a.md', '--home', 'empty'], ['NO_CV']],
+  ];
+  for (const [argv, expected] of cases) {
+    const { exit, codes } = await call(space, argv);
+    assert.deepEqual([exit, codes], [1, expected], argv.join(' '));
+  }
+  assert.deepEqual(
+    [stored(space, 'profiles', 'acme.posting.md'), stored(space, 'cvs', 'jane.notes.md')],
+    [null, null],
+  );
+  const [missing] = (await call(space, ['read'])).answer.issues ?? [];
+  assert.equal(missing?.command, 'oriko schema read');
+});
+
+// A posting is replaced only on request; the same text again is no change, and a dry run writes nothing.
+test('read keeps a stored posting unless --replace is given', async () => {
+  const space = reading();
+  writeFileSync(join(space.cwd, 'job.pdf'), pdf('Senior Go Engineer'));
+  writeFileSync(join(space.cwd, 'new.txt'), 'Staff Go Engineer');
+  const posting = ['read', '--profile', 'acme', '--posting'];
+  assert.equal((await call(space, [...posting, 'job.pdf'])).exit, 0);
+  assert.equal((await call(space, [...posting, 'job.pdf'])).exit, 0);
+  assert.deepEqual((await call(space, [...posting, 'new.txt'])).codes, ['POSTING_EXISTS']);
+  assert.equal((await call(space, [...posting, 'new.txt', '--replace', '--dry-run'])).exit, 0);
+  assert.match(stored(space, 'profiles', 'acme.posting.md') ?? '', /Senior Go Engineer/);
+  assert.equal((await call(space, [...posting, 'new.txt', '--replace'])).exit, 0);
+  assert.match(stored(space, 'profiles', 'acme.posting.md') ?? '', /Staff Go Engineer/);
 });

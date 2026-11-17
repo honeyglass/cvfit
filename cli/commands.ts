@@ -22,6 +22,8 @@ type Option = {
   text: string;
   /** What to add when the option comes without a value and no list holds its values. */
   missing?: string;
+  /** The option may come several times, each with a value of its own. */
+  multiple?: true;
 };
 
 export const OPTIONS = {
@@ -56,6 +58,26 @@ export const OPTIONS = {
     text: 'the id of one block to show in full, for show',
   },
   'dry-run': { type: 'boolean', text: 'check and answer, but write no file' },
+  posting: {
+    type: 'string',
+    text: 'the job posting, for read: a PDF, Word, HTML or text file, or an https:// address',
+    missing: 'Add the file or the https:// address of the job posting',
+  },
+  notes: {
+    type: 'string',
+    multiple: true,
+    text: 'notes on the career, for read, kept beside the CV; may come several times',
+    missing: 'Add the file or the https:// address of the notes',
+  },
+  resume: {
+    type: 'string',
+    text: 'an old CV, for read: its text is answered and stored nowhere',
+    missing: 'Add the file or the https:// address of the old CV',
+  },
+  replace: {
+    type: 'boolean',
+    text: 'for read: overwrite the posting a profile already has',
+  },
   style: {
     type: 'string',
     listed: true,
@@ -127,6 +149,10 @@ export const COMMANDS = {
   build: {
     does: 'writes the Word file',
     options: ['cv', 'profile', 'out', 'style', 'dry-run'],
+  },
+  read: {
+    does: 'reads a posting, notes or an old CV from a file or an https address',
+    options: ['cv', 'profile', 'posting', 'notes', 'resume', 'replace', 'dry-run'],
   },
   'photo set': {
     does: 'stores the square photo of a CV, or of one profile',

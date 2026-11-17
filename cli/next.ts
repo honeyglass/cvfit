@@ -59,6 +59,8 @@ export function nextSteps(facts: Facts): Step[] {
       return data.written === true ? [UPLOAD] : [];
     case 'schema':
       return [];
+    case 'read':
+      return readSteps(data);
     default:
       return data.fits === true
         ? [step('preview', selector), step('build', selector, ['out'])]
@@ -74,10 +76,27 @@ const step = (name: CommandName, args = '', needs?: string[]): Step => {
 
 // Where to start depends on what the data folder holds: no CV, CVs only, or CVs and profiles.
 function startSteps(data: Record<string, unknown>): Step[] {
-  if (count(data.cvs) === 0) return [step('init', '', ['cv', 'json']), step('schema')];
-  if (count(data.profiles) === 0) return [step('cvs'), step('schema', ' profile')];
-  return [step('profiles'), step('cvs')];
+  if (count(data.cvs) === 0)
+    return [step('read', '', ['resume']), step('init', '', ['cv', 'json'])];
+  const posting = step('read', '', ['posting', 'profile']);
+  if (count(data.profiles) === 0) return [step('cvs'), posting];
+  return [step('profiles'), posting];
 }
+
+// A posting leads to drafting its profile, notes to the CV they belong to, an old CV to a new one.
+function readSteps(data: Record<string, unknown>): Step[] {
+  const roles = Array.isArray(data.read) ? data.read.map(roleOf) : [];
+  const steps: Step[] = [];
+  if (roles.includes('posting') && typeof data.profile === 'string')
+    steps.push(step('schema', ' profile'), step('plan', optionText('profile', data.profile)));
+  if (roles.includes('notes') && typeof data.cv === 'string')
+    steps.push(step('show', optionText('cv', data.cv)));
+  if (steps.length > 0) return steps;
+  return [step('init', '', ['cv', 'json']), step('schema', ' init')];
+}
+
+const roleOf = (entry: unknown) =>
+  typeof entry === 'object' && entry !== null && 'role' in entry ? entry.role : undefined;
 
 // With one CV the step names it; with several the caller picks one.
 function cvsSteps(cvs: unknown): Step[] {

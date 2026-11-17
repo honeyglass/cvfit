@@ -17,8 +17,18 @@ import type { Issue } from '../core/errors.ts';
 import { OPTIONS } from './commands.ts';
 import type { OptionName } from './commands.ts';
 
-type TextOption = Exclude<OptionName, 'dry-run'>;
-export type Values = { [Name in TextOption]?: string } & { 'dry-run'?: boolean };
+type Options = typeof OPTIONS;
+type Switch = {
+  [Name in OptionName]: Options[Name] extends { type: 'boolean' } ? Name : never;
+}[OptionName];
+type Many = {
+  [Name in OptionName]: Options[Name] extends { multiple: true } ? Name : never;
+}[OptionName];
+type One = Exclude<OptionName, Switch | Many>;
+
+export type Values = { [Name in One]?: string } & { [Name in Switch]?: boolean } & {
+  [Name in Many]?: string[];
+};
 
 /**
  * @param argv - the arguments after the program name
@@ -44,19 +54,23 @@ export function readArgs(argv: string[]) {
       issues.push(unknownOption(token.name));
       continue;
     }
-    given.push(token.name);
-    if (token.name === 'dry-run') {
-      if (token.value === undefined) values['dry-run'] = true;
-      else issues.push(unexpectedValue(token.name));
+    const name = token.name;
+    given.push(name);
+    if (isSwitch(name)) {
+      if (token.value === undefined) values[name] = true;
+      else issues.push(unexpectedValue(name));
       continue;
     }
-    if (token.value === undefined || token.value === '') empty.push(token.name);
-    else values[token.name] = token.value;
+    if (token.value === undefined || token.value === '') empty.push(name);
+    else if (isMany(name)) values[name] = [...(values[name] ?? []), token.value];
+    else values[name] = token.value;
   }
   return { values, words, given, empty, issues: [...issues, ...repeated(given)] };
 }
 
 const isOption = (name: string): name is OptionName => Object.hasOwn(OPTIONS, name);
+const isSwitch = (name: OptionName): name is Switch => OPTIONS[name].type === 'boolean';
+const isMany = (name: OptionName): name is Many => 'multiple' in OPTIONS[name];
 
 // Node's strict parse calls a separate value that starts with '-' ambiguous: it is the next
 // option, so the option before it stays without a value; '--opt=-x' still gives one.
@@ -81,7 +95,7 @@ const isDashed = (arg: string | undefined) =>
  * @param value - its value, from the call or the data folder
  * @returns ' --name value', or ' --name=value' when the value starts with a dash
  */
-export function optionText(name: TextOption, value: string) {
+export function optionText(name: One, value: string) {
   const word = shellWord(value);
   return isDashed(value) ? ` --${name}=${word}` : ` --${name} ${word}`;
 }
@@ -102,8 +116,11 @@ function escapedChar(char: string) {
   return [...Buffer.from(char)].map(byte => `\\x${byte.toString(16).padStart(2, '0')}`).join('');
 }
 
+// An option that takes several values may come again; any other only once.
 function repeated(given: OptionName[]) {
-  const twice = given.filter((name, index) => given.indexOf(name) !== index);
+  const twice = given.filter(
+    (name, index) => isMany(name) === false && given.indexOf(name) !== index,
+  );
   return [...new Set(twice)].map(repeatedOption);
 }
 

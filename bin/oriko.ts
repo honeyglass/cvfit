@@ -9,10 +9,12 @@ import { join } from 'node:path';
 import { LIMITS } from '../core/limits.ts';
 import { pipedText } from '../cli/files.ts';
 import { run } from '../cli/run.ts';
+import { NODE_WEB } from '../read/web.ts';
 
 process.exitCode = await run(process.argv.slice(2), {
   home: join(homedir(), '.oriko'),
   cwd: process.cwd(),
+  web: NODE_WEB,
   isTTY: process.stdout.isTTY === true,
   stdin: async () =>
     process.stdin.isTTY === true ? null : pipedText(process.stdin, LIMITS.inputBytes),

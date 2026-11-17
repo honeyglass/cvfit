@@ -2,7 +2,7 @@
  * Every file the cli reads or writes, and the checks that keep a path where it belongs.
  *
  * readJson: the value of a JSON file.
- * readBounded, pipedText: the bytes of a file or a pipe, never more than a limit.
+ * readBounded, pipedBytes, pipedText: a file or a pipe, never more than a limit.
  * pathIssue: any refusal of the system on a path, as an issue for the caller.
  * isMissing, fileNotFound, notAFile, notAFolder, tooLarge, invalidJson, missingOption: the
  * expected failures of a file, as issues.
@@ -138,11 +138,11 @@ async function readAtMost(handle: FileHandle, size: number) {
 const CHUNK_BYTES = 65_536;
 
 /**
- * @param stream - the piped input, such as stdin
+ * @param stream - the piped input, such as stdin or the body of a download
  * @param limit - the most bytes the input may hold
- * @returns the text, cut one byte past the limit, so the caller refuses it without holding it whole
+ * @returns the bytes, cut one byte past the limit, so the caller refuses them without holding them whole
  */
-export async function pipedText(stream: AsyncIterable<unknown>, limit: number) {
+export async function pipedBytes(stream: AsyncIterable<unknown>, limit: number) {
   const chunks: Buffer[] = [];
   let total = 0;
   for await (const chunk of stream) {
@@ -151,10 +151,11 @@ export async function pipedText(stream: AsyncIterable<unknown>, limit: number) {
     total += bytes.length;
     if (total > limit) break;
   }
-  return Buffer.concat(chunks)
-    .subarray(0, limit + 1)
-    .toString('utf8');
+  return Buffer.concat(chunks).subarray(0, limit + 1);
 }
+
+export const pipedText = async (stream: AsyncIterable<unknown>, limit: number) =>
+  (await pipedBytes(stream, limit)).toString('utf8');
 
 export const fileNotFound = (path: string, option: string): Issue => ({
   code: 'FILE_NOT_FOUND',
