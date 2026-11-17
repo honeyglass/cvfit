@@ -76,7 +76,7 @@ export const OPTIONS = {
   },
   replace: {
     type: 'boolean',
-    text: 'for read: overwrite the posting a profile already has',
+    text: 'for read and profile set: overwrite the posting or the profile that is already stored',
   },
   style: {
     type: 'string',
@@ -153,6 +153,15 @@ export const COMMANDS = {
   read: {
     does: 'reads a posting, notes or an old CV from a file or an https address',
     options: ['cv', 'profile', 'posting', 'notes', 'resume', 'replace', 'dry-run'],
+  },
+  'profile set': {
+    does: 'stores the profile of one job posting, checked against its CV',
+    options: ['profile', 'json', 'replace', 'dry-run'],
+    input: Profile,
+  },
+  'profile show': {
+    does: 'shows a stored profile and the posting read for it',
+    options: ['profile'],
   },
   'photo set': {
     does: 'stores the square photo of a CV, or of one profile',

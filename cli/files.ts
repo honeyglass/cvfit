@@ -3,6 +3,7 @@
  *
  * readJson: the value of a JSON file.
  * readBounded, pipedBytes, pipedText: a file or a pipe, never more than a limit.
+ * existingText: the text a stored file holds, or null when there is none yet.
  * pathIssue: any refusal of the system on a path, as an issue for the caller.
  * isMissing, fileNotFound, notAFile, notAFolder, tooLarge, invalidJson, missingOption: the
  * expected failures of a file, as issues.
@@ -156,6 +157,14 @@ export async function pipedBytes(stream: AsyncIterable<unknown>, limit: number) 
 
 export const pipedText = async (stream: AsyncIterable<unknown>, limit: number) =>
   (await pipedBytes(stream, limit)).toString('utf8');
+
+// The text a stored file holds; null when there is none yet.
+export async function existingText(path: string): Promise<Result<string | null>> {
+  const bytes = await readBounded(path, LIMITS.readBytes, 'home');
+  if (bytes.error === null) return done(bytes.data.toString('utf8'));
+  const isMissing = bytes.error.issues.every(issue => issue.code === 'FILE_NOT_FOUND');
+  return isMissing ? done(null) : bytes;
+}
 
 export const fileNotFound = (path: string, option: string): Issue => ({
   code: 'FILE_NOT_FOUND',

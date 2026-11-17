@@ -50,6 +50,7 @@ import { nextSteps } from './next.ts';
 import type { Step } from './next.ts';
 import { setPhoto } from './photo.ts';
 import { readDocuments } from './read.ts';
+import { setProfile, showProfile } from './profile.ts';
 import type { Web } from '../read/web.ts';
 
 export type Io = {
@@ -390,6 +391,10 @@ async function dispatched(call: Call): Promise<Result<Fields>> {
       return previewed(call);
     case 'read':
       return read(call);
+    case 'profile set':
+      return profileSet(call);
+    case 'profile show':
+      return showProfile(call.home, call.values.profile);
     case 'photo set':
       return photo(call, call.rest[0]);
     case 'build':
@@ -585,6 +590,18 @@ async function previewed(call: Call): Promise<Result<Fields>> {
   const placed = place(cv.data);
   if (placed.error !== null) return placed;
   return done({ preview: preview(cv.data, placed.data) });
+}
+
+async function profileSet(call: Call): Promise<Result<Fields>> {
+  const input = await payload(call, 'profile set');
+  if (input.error !== null) return input;
+  return setProfile({
+    home: call.home,
+    name: call.values.profile,
+    input: input.data,
+    isReplace: call.values.replace === true,
+    isDryRun: call.values['dry-run'] === true,
+  });
 }
 
 async function read(call: Call): Promise<Result<Fields>> {

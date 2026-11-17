@@ -75,7 +75,7 @@ test('a success names its next steps, each a command with what it still needs', 
       ['read', '--profile', 'acme', '--posting', 'job.txt'],
       [
         ['oriko schema profile', []],
-        ['oriko plan --profile acme', []],
+        ['oriko profile set --profile acme', ['json']],
       ],
     ],
     [['read', '--cv', 'jane', '--notes', 'job.txt'], [['oriko show --cv jane', []]]],

@@ -434,6 +434,7 @@ test('a group of commands without its action lists the actions', async () => {
     ['contact', ['contact add', 'contact update', 'contact remove', 'contact move']],
     ['cv', ['cv update']],
     ['photo', ['photo set']],
+    ['profile', ['profile set', 'profile show']],
   ];
   for (const [group, actions] of cases)
     assert.deepEqual((await call(space, [group])).answer, {
@@ -696,4 +697,102 @@ test('read keeps a stored posting unless --replace is given', async () => {
   assert.match(stored(space, 'profiles', 'acme.posting.md') ?? '', /Senior Go Engineer/);
   assert.equal((await call(space, [...posting, 'new.txt', '--replace'])).exit, 0);
   assert.match(stored(space, 'profiles', 'acme.posting.md') ?? '', /Staff Go Engineer/);
+});
+
+const profileSet = (name: string, profile: unknown, ...flags: string[]) => [
+  'profile',
+  'set',
+  '--profile',
+  name,
+  '--json',
+  JSON.stringify(profile),
+  ...flags,
+];
+
+// The whole profile is replaced, so the answer names what it adds, changes and removes; an
+// existing profile is replaced only on request, and a dry run shows the same without writing.
+test('profile set stores a checked profile and names what it adds, changes and removes', async () => {
+  const space = workspace();
+  const acme = stored(space, 'profiles', 'acme.json');
+  const fresh = { cv: 'jane', blocks: { campus: { hidden: true } } };
+  const created = await call(space, profileSet('globex', fresh));
+  assert.deepEqual(
+    [created.exit, created.answer.added, created.answer.changed, created.answer.removed],
+    [0, ['blocks.campus', 'cv'], [], []],
+  );
+  assert.equal(stored(space, 'profiles', 'globex.json'), `${JSON.stringify(fresh, null, 2)}\n`);
+  const [exists] = (await call(space, profileSet('acme', fresh))).answer.issues ?? [];
+  assert.deepEqual(
+    [exists?.code, exists?.command],
+    ['PROFILE_EXISTS', 'oriko profile show --profile acme'],
+  );
+  const preview = await call(space, profileSet('acme', fresh, '--replace', '--dry-run'));
+  assert.deepEqual(
+    [preview.answer.written, preview.answer.added, preview.answer.removed],
+    [false, ['blocks.campus'], ['blocks.freelance']],
+  );
+  assert.equal(stored(space, 'profiles', 'acme.json'), acme);
+  assert.equal((await call(space, profileSet('acme', fresh, '--replace'))).exit, 0);
+  assert.equal(stored(space, 'profiles', 'acme.json'), `${JSON.stringify(fresh, null, 2)}\n`);
+});
+
+// The same checks plan runs, before anything is written: a refused profile is never stored.
+test('profile set refuses a profile that does not fit its CV, and stores nothing', async () => {
+  const space = workspace();
+  const cases: [string[], [string, string][]][] = [
+    [
+      profileSet('globex', { cv: 'jane', blocks: { nobody: { hidden: true } } }),
+      [['UNKNOWN_BLOCK', 'blocks.nobody']],
+    ],
+    [
+      profileSet('globex', { cv: 'jane', blocks: { northwind: { bullets: ['a\nb'] } } }),
+      [['SCHEMA', 'blocks.northwind.bullets.0']],
+    ],
+    [profileSet('globex', { cv: 'jane', colour: 'red' }), [['SCHEMA', '']]],
+    [profileSet('globex', { cv: 'nobody' }), [['UNKNOWN_CV', 'profile.cv']]],
+    [profileSet('../globex', { cv: 'jane' }), [['SCHEMA', 'profile']]],
+    [['profile', 'set', '--json', '{"cv":"jane"}'], [['MISSING_OPTION', 'profile']]],
+    [['profile', 'set', '--profile', 'globex'], [['MISSING_INPUT', 'json']]],
+  ];
+  for (const [argv, expected] of cases) {
+    const { exit, answer } = await call(space, argv);
+    assert.deepEqual(
+      [exit, answer.issues?.map(issue => [issue.code, issue.path])],
+      [1, expected],
+      argv.join(' '),
+    );
+  }
+  assert.equal(stored(space, 'profiles', 'globex.json'), null);
+});
+
+test('profile show answers a stored profile and its posting', async () => {
+  const space = workspace();
+  writeFileSync(join(space.cwd, 'job.txt'), 'Senior Go Engineer');
+  writeFileSync(join(space.home, 'profiles', 'odd.json'), JSON.stringify({ colour: 'red' }));
+  assert.deepEqual((await call(space, ['profile', 'show', '--profile', 'acme'])).answer, {
+    ok: true,
+    name: 'acme',
+    profile: { cv: 'jane', blocks: { freelance: { hidden: true } } },
+    posting: null,
+    next: [
+      {
+        does: 'places every block on the pages',
+        command: 'oriko plan --profile acme',
+      },
+    ],
+  });
+  await call(space, ['read', '--profile', 'globex', '--posting', 'job.txt']);
+  const posting = (await call(space, ['profile', 'show', '--profile', 'globex'])).answer;
+  assert.deepEqual(
+    [posting.profile, posting.posting],
+    [null, '---\nsource: "job.txt"\nkind: text\n---\n\nSenior Go Engineer\n'],
+  );
+  const refused = [
+    await call(space, ['profile', 'show', '--profile', 'nobody']),
+    await call(space, ['profile', 'show', '--profile', 'odd']),
+  ];
+  assert.deepEqual(
+    refused.map(({ codes }) => codes),
+    [['UNKNOWN_PROFILE'], ['SCHEMA']],
+  );
 });

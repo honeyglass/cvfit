@@ -21,7 +21,7 @@ import { textOf } from '../read/index.ts';
 import type { Kind } from '../read/index.ts';
 import { download } from '../read/web.ts';
 import type { Web } from '../read/web.ts';
-import { missingOption, readBounded, tooLarge, writeAll } from './files.ts';
+import { existingText, missingOption, readBounded, tooLarge, writeAll } from './files.ts';
 import type { NewFile } from './files.ts';
 import { chosenCv } from './home.ts';
 import type { CvFile } from './home.ts';
@@ -171,14 +171,6 @@ async function notesFile(notes: Document[], path: string): Promise<Result<NewFil
   if (Buffer.byteLength(content) > LIMITS.readBytes)
     return rejected('read', [tooLarge('notes', LIMITS.readBytes)]);
   return done({ path, content });
-}
-
-// The text a stored file holds; null when there is none yet.
-async function existingText(path: string): Promise<Result<string | null>> {
-  const bytes = await readBounded(path, LIMITS.readBytes, 'home');
-  if (bytes.error === null) return done(bytes.data.toString('utf8'));
-  const isMissing = bytes.error.issues.every(issue => issue.code === 'FILE_NOT_FOUND');
-  return isMissing ? done(null) : bytes;
 }
 
 const answerOf = (document: Document, stored: string | undefined) => ({

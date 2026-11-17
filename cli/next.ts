@@ -61,6 +61,10 @@ export function nextSteps(facts: Facts): Step[] {
       return [];
     case 'read':
       return readSteps(data);
+    case 'profile show':
+      return data.profile === null
+        ? [step('profile set', selector, ['json'])]
+        : [step('plan', selector)];
     default:
       return data.fits === true
         ? [step('preview', selector), step('build', selector, ['out'])]
@@ -83,12 +87,15 @@ function startSteps(data: Record<string, unknown>): Step[] {
   return [step('profiles'), posting];
 }
 
-// A posting leads to drafting its profile, notes to the CV they belong to, an old CV to a new one.
+// A posting leads to storing its profile, notes to the CV they belong to, an old CV to a new one.
 function readSteps(data: Record<string, unknown>): Step[] {
   const roles = Array.isArray(data.read) ? data.read.map(roleOf) : [];
   const steps: Step[] = [];
   if (roles.includes('posting') && typeof data.profile === 'string')
-    steps.push(step('schema', ' profile'), step('plan', optionText('profile', data.profile)));
+    steps.push(
+      step('schema', ' profile'),
+      step('profile set', optionText('profile', data.profile), ['json']),
+    );
   if (roles.includes('notes') && typeof data.cv === 'string')
     steps.push(step('show', optionText('cv', data.cv)));
   if (steps.length > 0) return steps;
