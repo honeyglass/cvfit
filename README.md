@@ -57,13 +57,6 @@ pnpm install --frozen-lockfile
 node bin/oriko.ts schema
 ```
 
-## 📖 Docs
-
-- [**Examples**](docs/examples.md)
-- [**Good to know**](docs/good-to-know.md)
-- [**Security**](SECURITY.md)
-- [**Agent skill**](.claude/skills/oriko/SKILL.md)
-
 ## 🤖 Working with oriko and an agent
 
 Open [Claude Code](https://claude.com/claude-code) and say what you want. The skill in
@@ -317,3 +310,12 @@ under the same license.
 The name oriko and the Oriko character are not covered by this license. That includes the
 files in [`brand/`](brand/) and the Oriko drawing the preview shows; all rights to them stay
 with the author. A changed version of oriko needs another name and logo.
+
+## 📖 Docs
+
+- [**Examples**](docs/examples.md)
+- [**Sample data**](docs/sample-data.md)
+- [**CLI**](docs/cli.md)
+- [**Good to know**](docs/good-to-know.md)
+- [**Security**](SECURITY.md)
+- [**Agent skill**](.claude/skills/oriko/SKILL.md)
