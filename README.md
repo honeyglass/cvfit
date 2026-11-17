@@ -94,8 +94,8 @@ It has two paths. To fit a CV to a posting, the agent reads the posting, inspect
 your CV, drafts a version, checks it, builds it and reports. To write a CV, it sorts your facts,
 writes them, checks them and hands over; with no CV at all, it first asks you a few short
 questions. The agent moves only along the listed steps. When oriko refuses a draft, the agent goes back
-one step and fixes it, at most three times; then it stops and asks you. Every step and its rules
-stand in [the skill](.claude/skills/oriko/SKILL.md).
+one step and fixes it, at most three times; then it stops and asks you. The steps, what each one
+does and which may follow it, stand in [the flow of the skill](.claude/skills/oriko/SKILL.md#flow).
 
 ### The CLI: Agent DX rules
 
@@ -106,6 +106,27 @@ from Justin Poehnelt's article
 (2026), with the [Google Workspace CLI](https://github.com/googleworkspace/cli) as its reference
 implementation. [The CLI page](docs/cli.md) lists every rule oriko follows, its commands, and a
 refusal as the agent reads it.
+
+<details>
+<summary><b>Agent DX rules</b></summary>
+
+The rules marked ➕ oriko are new: the author of oriko added them from building tools for agents.
+
+| Rule | What oriko does | Why it helps the agent | Source |
+| :--- | :--- | :--- | :--- |
+| Raw JSON input | takes its whole input as one JSON object | passes the data as it is, without many flags | article |
+| Schema at runtime | `oriko schema` shows every command and its input | looks the format up in the tool itself | article |
+| JSON when piped | text for people, JSON for programs | each reader gets what it can read | article |
+| Input hardening | the Word file and photos stay inside their folder | a mistake never writes elsewhere | article |
+| Dry runs | `--dry-run` says what would happen | tries a command safely first | article |
+| Agent skill | the agent's manual ships with the code | knows when to stop and ask you | article |
+| Checks in layers | shape, then version, then pages; all errors at once | fixes real errors in one go | ➕ oriko |
+| Errors with a hint | each error says where and what to change | fixes the input on its own | ➕ oriko |
+| All or nothing | a refused command writes nothing | no file is left half changed | ➕ oriko |
+| Exit codes 0, 1, 2 | 0 ok, 1 fix the input, 2 something broke | knows the next step from one number | ➕ oriko |
+| Plan before the file | `plan` shows which block lands on which page | fixes an overflow before building | ➕ oriko |
+
+</details>
 
 ## 🖥️ Terminal preview
 
