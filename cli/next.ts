@@ -23,7 +23,9 @@ type Facts = {
 };
 
 const AGAIN: Step = { does: 'repeat the call without --dry-run to write' };
-const UPLOAD: Step = { does: 'upload the .docx to Google Docs, then choose File, Download, PDF' };
+const UPLOAD: Step = {
+  does: 'upload the .docx to Google Docs, then choose File, Download, PDF; or build a .pdf with LibreOffice',
+};
 
 /**
  * @param facts - the command of the call, its --cv or --profile, its answer, and --dry-run
@@ -56,7 +58,7 @@ export function nextSteps(facts: Facts): Step[] {
     case 'photo set':
       return [step('build', selector, ['out'])];
     case 'build':
-      return data.written === true ? [UPLOAD] : [];
+      return isDocxWritten(data) ? [UPLOAD] : [];
     case 'schema':
       return [];
     case 'read':
@@ -111,6 +113,10 @@ function cvsSteps(cvs: unknown): Step[] {
   const show = only === undefined ? step('show', '', ['cv']) : step('show', optionText('cv', only));
   return [show, step('profiles')];
 }
+
+// A PDF is the finished file; only a .docx still goes through Google Docs.
+const isDocxWritten = (data: Record<string, unknown>) =>
+  data.written === true && typeof data.out === 'string' && data.out.endsWith('.docx');
 
 const count = (list: unknown) => (Array.isArray(list) ? list.length : 0);
 

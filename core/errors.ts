@@ -29,8 +29,10 @@ export type Result<Data> = { data: Data; error: null } | { data: null; error: Re
 
 export const done = <Data>(data: Data): Result<Data> => ({ data, error: null });
 
-/** The code of an issue only the person can solve, such as a full disk; it makes a refusal `ask`. */
+/** The codes of an issue only the person can solve, such as a full disk; they make a refusal `ask`. */
 export const SYSTEM_REFUSED = 'SYSTEM_REFUSED';
+export const NOT_INSTALLED = 'NOT_INSTALLED';
+const PERSON = new Set([SYSTEM_REFUSED, NOT_INSTALLED]);
 
 /** The codes of an issue a later call may not meet, such as a failed connection; they make it `retry`. */
 export const NETWORK_FAILED = 'NETWORK_FAILED';
@@ -39,7 +41,7 @@ const LATER = new Set([NETWORK_FAILED, SERVER_BUSY]);
 
 // The person comes first, then a later call; every other issue the caller fixes now.
 function kindOf(issues: Issue[]) {
-  if (issues.some(issue => issue.code === SYSTEM_REFUSED)) return 'ask';
+  if (issues.some(issue => PERSON.has(issue.code))) return 'ask';
   return issues.some(issue => LATER.has(issue.code)) ? 'retry' : 'fix';
 }
 

@@ -8,7 +8,7 @@
  * isMissing, fileNotFound, notAFile, notAFolder, tooLarge, invalidJson, missingOption: the
  * expected failures of a file, as issues.
  * photoBytes: the photo a master file or a profile names, from the data folder only.
- * outputPath: the path of the .docx to write, inside the working directory only.
+ * outputPath: the path of the .docx or .pdf to write, inside the working directory only.
  * writeAll, NewFile: the files of one command, all written whole or none, never through a link.
  *
  * A master file or a profile may come from an agent that read a job posting. A path inside it
@@ -233,8 +233,9 @@ export async function outputPath(
   out: string | undefined,
 ): Promise<Result<{ path: string; name: string }>> {
   if (out === undefined)
-    return rejected('build', [missingOption('out', 'the path of the .docx to write')]);
-  if (out.endsWith('.docx') === false) return rejected('build', [wrongExtension(out)]);
+    return rejected('build', [missingOption('out', 'the path of the .docx or .pdf to write')]);
+  if (OUTPUTS.some(extension => out.endsWith(extension)) === false)
+    return rejected('build', [wrongExtension(out)]);
   const path = resolve(cwd, out);
   const parent = await $try(realpath(dirname(path)));
   if (parent.error !== null)
@@ -298,11 +299,13 @@ export const missingOption = (
   hint,
 });
 
+const OUTPUTS = ['.docx', '.pdf'];
+
 const wrongExtension = (out: string): Issue => ({
   code: 'WRONG_EXTENSION',
   path: 'out',
-  message: `The output ${shown(out)} is no .docx file`,
-  hint: 'Use a file name that ends in .docx',
+  message: `The output ${shown(out)} is no .docx or .pdf file`,
+  hint: 'Use a file name that ends in .docx, or in .pdf when LibreOffice is installed',
 });
 
 export type NewFile = { path: string; content: string | Uint8Array };

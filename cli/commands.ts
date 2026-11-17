@@ -44,8 +44,8 @@ export const OPTIONS = {
   },
   out: {
     type: 'string',
-    text: 'the .docx to write, for build; a path inside the working directory',
-    missing: 'Add the path of the .docx file to write, inside the working directory',
+    text: 'the .docx or .pdf to write, for build; a path inside the working directory; a .pdf needs LibreOffice',
+    missing: 'Add the path of the .docx or .pdf file to write, inside the working directory',
   },
   json: {
     type: 'string',
@@ -81,7 +81,7 @@ export const OPTIONS = {
   style: {
     type: 'string',
     listed: true,
-    text: 'the look of the .docx, for build: classic, or terminal like the preview; classic when left out',
+    text: 'the look of the file, for build: classic, or terminal like the preview; classic when left out',
   },
   output: {
     type: 'string',
@@ -147,7 +147,7 @@ export const COMMANDS = {
   plan: { does: 'places every block on the pages', options: ['cv', 'profile'] },
   preview: { does: 'draws the pages in the terminal', options: ['cv', 'profile'] },
   build: {
-    does: 'writes the Word file',
+    does: 'writes the Word file, or its PDF through LibreOffice',
     options: ['cv', 'profile', 'out', 'style', 'dry-run'],
   },
   read: {

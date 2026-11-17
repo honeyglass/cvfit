@@ -1,10 +1,14 @@
 /**
  * The .docx of a CV: tables with invisible borders, one page table per page of the plan.
  *
- * render: the bytes of the .docx for a checked CV and its plan.
+ * render: the bytes of the .docx for a checked CV and its plan, for Google Docs or LibreOffice.
+ * Engine: the program that sets the .docx.
  *
  * Google Docs drops or misplaces floating shapes, so every position is a table cell, and each
  * page is its own table: the plan decides what stands on a page, never the text flow.
+ *
+ * LibreOffice sets the same .docx apart from Google Docs in a few places. Its .docx carries other
+ * values there, so its PDF shows the page Google Docs shows; LOOKS holds both sets.
  *
  * @example const docx = await render(cv, plan, readFileSync('photo.png'));
  */
@@ -56,9 +60,47 @@ const FONT = { sans: 'Open Sans', light: 'Open Sans Light', head: 'Calibri', sym
 /** The edge length of each contact icon, in pt. */
 const ICON_SIZE = { pin: 9.64, home: 9.64, phone: 7.94, mail: 8.79, globe: 7.94 } as const;
 const ASSETS = join(import.meta.dirname, '..', 'assets');
-const JOB_COLUMNS = [WIDTH.gutter, WIDTH.rail, WIDTH.rail, WIDTH.jobTitle, WIDTH.jobDate];
 const NAME_COLUMNS = [754, 1190, 1190, WIDTH.name];
 const GUTTER = WIDTH.page - WIDTH.left - WIDTH.right;
+
+export type Engine = 'google' | 'libreoffice';
+
+/**
+ * The values where the two engines differ, in DXA; an absent gap is the 1 pt gap paragraph.
+ *
+ * Google Docs draws the header bar 15 pt high, sets an empty 1 pt paragraph before a table about
+ * 3 pt high, grows the exact photo row to the photo's line, rounds every table column to whole
+ * pixels of 1/96 inch, draws a cell border 1 pt wide inside the cell, ignores the spacing
+ * between letters, and sets an image on whole pixels with a margin of 2 pixels around it, so the
+ * exact photo row grows by those margins. The LibreOffice values
+ * reproduce the Google Docs PDFs of the examples in examples/showcase to a quarter point.
+ */
+type Look = {
+  headerBar: number;
+  pageGap?: number;
+  cellGap?: number;
+  tableGap?: number;
+  imageMargin: number;
+  pixels: boolean;
+  letterSpacing: boolean;
+};
+const LOOKS: Record<Engine, Look> = {
+  google: { headerBar: 252, imageMargin: 0, pixels: false, letterSpacing: true },
+  libreoffice: {
+    headerBar: 300,
+    pageGap: 62,
+    cellGap: 68,
+    tableGap: 63,
+    imageMargin: 30,
+    pixels: true,
+    letterSpacing: false,
+  },
+};
+
+/** One pixel of 1/96 inch, in DXA. */
+const PIXEL = 15;
+/** The timeline drawn as a column for LibreOffice, 1 pt wide as Google Docs draws the border. */
+const LINE_WIDTH = 20;
 
 type Images = {
   photo: Uint8Array;
@@ -73,17 +115,19 @@ type Job = Extract<Block, { kind: 'job' }>;
  * @param cv - a checked CV
  * @param plan - the plan place() made for this CV
  * @param photo - the bytes of the photo, a PNG or JPEG file
+ * @param engine - the program that sets the .docx; Google Docs when left out
  * @returns the bytes of the .docx, the same for the same input
  */
 export async function render(
   cv: Master,
   plan: Plan,
   photo: Uint8Array,
+  engine: Engine = 'google',
 ): Promise<Result<Uint8Array>> {
   const round = trySync$(() => circlePhoto(photo));
   if (round.error !== null) return rejected('render', [photoUnreadable()], round.error);
   const images = { photo: round.data, ...packagedImages() };
-  return done(await stable(await Packer.toBuffer(document(cv, plan, images))));
+  return done(await stable(await Packer.toBuffer(document(cv, plan, images, LOOKS[engine]))));
 }
 
 export const photoUnreadable = () => ({
@@ -105,10 +149,14 @@ function packagedImages() {
   return { bar: solidPng(170, 23, COLOR.bar), jobPin: icon('job-pin'), icons };
 }
 
-function document(cv: Master, plan: Plan, images: Images) {
+function document(cv: Master, plan: Plan, images: Images, look: Look) {
   const pages = plan.pages.flatMap((page, index) => [
-    gap(index === 0 ? {} : { pageBreakBefore: true }),
-    pageTable(leftCell(cv, page.left, index, images), rightCell(cv, page.right, index, images)),
+    gap(index === 0 ? {} : { pageBreakBefore: true }, look.pageGap),
+    pageTable(
+      leftCell(cv, page.left, index, images, look),
+      rightCell(cv, page.right, index, images, look),
+      look,
+    ),
   ]);
   return new Document({
     creator: `${cv.person.firstName} ${cv.person.lastName}`,
@@ -130,8 +178,8 @@ function document(cv: Master, plan: Plan, images: Images) {
             margin: { top: 660, right: 0, bottom: 280, left: 0, header: 0, footer: 0 },
           },
         },
-        headers: { default: new Header({ children: [bar()] }) },
-        footers: { default: new Footer({ children: [bar()] }) },
+        headers: { default: new Header({ children: [bar(look.headerBar)] }) },
+        footers: { default: new Footer({ children: [bar(LOOKS.google.headerBar)] }) },
         children: [...pages, gap()],
       },
     ],
@@ -172,8 +220,13 @@ const para = (children: ParagraphChild[], options: IParagraphOptions = {}) =>
 
 // Word needs a paragraph between two tables and at the end of a cell; at 1 pt it stays invisible.
 // Google Docs adds a 14.5 pt line before a table that starts a page or a cell, so one stands there too.
-const gap = (options: IParagraphOptions = {}) =>
-  new Paragraph({ run: { size: 2 }, spacing: { line: 240 }, ...options });
+// A height in DXA fixes the paragraph at the height Google Docs gives it, for LibreOffice.
+const gap = (options: IParagraphOptions = {}, height?: number) =>
+  new Paragraph({
+    run: { size: 2 },
+    spacing: height === undefined ? { line: 240 } : { line: height, lineRule: LineRuleType.EXACT },
+    ...options,
+  });
 
 const cell = (children: Cell[], width: number, options: Partial<ITableCellOptions> = {}) =>
   new TableCell({
@@ -195,52 +248,112 @@ const table = (columnWidths: number[], rows: TableRow[]) =>
   });
 
 // An ImageRun takes CSS pixels, the page is laid out in pt.
-const image = (data: Uint8Array, width: number, height: number) =>
+const image = (data: Uint8Array, width: number, height: number, look: Look) =>
   new ImageRun({
     type: 'png',
     data,
-    transformation: { width: (width * 96) / 72, height: (height * 96) / 72 },
+    transformation: { width: cssPixels(width, look), height: cssPixels(height, look) },
   });
 
-const headingText = (text: string) =>
-  new TextRun({ text, font: FONT.head, size: 28, color: COLOR.black, characterSpacing: 10 });
+// Google Docs shows an image on whole pixels.
+const cssPixels = (pt: number, look: Look) =>
+  look.pixels ? Math.round((pt * 96) / 72) : (pt * 96) / 72;
+
+const headingText = (text: string, look: Look) =>
+  new TextRun({ text, font: FONT.head, size: 28, color: COLOR.black, ...letters(10, look) });
+
+// The spacing between letters in twentieths of a pt, where the engine shows it.
+const letters = (characterSpacing: number, look: Look) =>
+  look.letterSpacing ? { characterSpacing } : {};
 
 const dot = () => run('●', { font: FONT.symbol, size: 26, color: COLOR.black });
 
-// The full-width bar of header and footer: a shaded empty paragraph, 12.6 pt high.
-const bar = () =>
+// The full-width bar of header and footer: a shaded empty paragraph of the given height in DXA.
+const bar = (height: number) =>
   new Paragraph({
     run: { font: FONT.symbol, size: 22 },
     shading: { type: ShadingType.CLEAR, fill: COLOR.bar, color: 'auto' },
-    spacing: { line: 252, lineRule: LineRuleType.EXACT },
+    spacing: { line: height, lineRule: LineRuleType.EXACT },
   });
 
-const pageTable = (left: Cell[], right: Cell[]) =>
-  table(
-    [WIDTH.left, WIDTH.right, GUTTER],
-    [
-      new TableRow({
-        children: [cell(left, WIDTH.left), cell(right, WIDTH.right), cell([gap()], GUTTER)],
-      }),
-    ],
-  );
+const pageTable = (left: Cell[], right: Cell[], look: Look) =>
+  table(columnsOf([WIDTH.left, WIDTH.right, GUTTER], look), [
+    new TableRow({
+      children: [cell(left, WIDTH.left), cell(right, WIDTH.right), cell([gap()], GUTTER)],
+    }),
+  ]);
+
+// Google Docs sets every table column on whole pixels; LibreOffice needs them so already.
+const columnsOf = (widths: number[], look: Look) =>
+  look.pixels ? widths.map(width => Math.round(width / PIXEL) * PIXEL) : widths;
+
+const shadedLine = { type: ShadingType.CLEAR, fill: COLOR.line, color: 'auto' };
+
+/**
+ * The two columns of a timeline's rail; the line is the right border of the first.
+ *
+ * Google Docs draws that border 1 pt wide, starting one pixel left of the column edge.
+ * LibreOffice draws it across the edge and moves the next column's text, so for LibreOffice
+ * the line is a shaded column of its own, where Google Docs draws it.
+ *
+ * @param left - the width of the first column
+ * @param right - the width of the second column
+ * @param look - the values of the engine
+ * @returns the widths of the rail's columns and its empty cells
+ */
+function rail(left: number, right: number, look: Look) {
+  if (look.pixels === false)
+    return {
+      columns: [left, right],
+      cells: [cell([gap()], left, { borders: TIMELINE }), cell([gap()], right)],
+    };
+  const [first = 0, second = 0] = columnsOf([left, right], look);
+  const columns = [first - PIXEL, LINE_WIDTH, second + PIXEL - LINE_WIDTH];
+  const [before = 0, line = 0, after = 0] = columns;
+  const cells = [
+    cell([gap()], before),
+    cell([gap()], line, { shading: shadedLine }),
+    cell([gap()], after),
+  ];
+  return { columns, cells };
+}
 
 const blockOf = (cv: Master, placed: Placed) => cv.blocks.find(block => block.id === placed.id);
 
 // ---------- left column ----------
 
-function leftCell(cv: Master, column: Column, page: number, images: Images) {
-  const top = page === 0 ? [gap(), nameBlock(cv.person, images.photo), gap()] : [gap()];
-  const rows = column.blocks.flatMap(placed => jobRowsOf(cv, placed, images));
+function leftCell(cv: Master, column: Column, page: number, images: Images, look: Look) {
+  const first = gap({}, look.cellGap);
+  const top =
+    page === 0
+      ? [first, nameBlock(cv.person, images.photo, look), gap({}, look.tableGap)]
+      : [first];
+  const rows = column.blocks.flatMap(placed => jobRowsOf(cv, placed, images, look));
   if (rows.length === 0) return top;
-  return [...top, table(JOB_COLUMNS, rows), gap()];
+  return [...top, table(jobColumns(look), rows), gap()];
 }
 
-function nameBlock(person: Master['person'], photo: Uint8Array) {
+const jobColumns = (look: Look) => [
+  ...columnsOf([WIDTH.gutter], look),
+  ...rail(WIDTH.rail, WIDTH.rail, look).columns,
+  ...columnsOf([WIDTH.jobTitle, WIDTH.jobDate], look),
+];
+
+function nameBlock(person: Master['person'], photo: Uint8Array, look: Look) {
   const [margin = 0, half = 0, , name = 0] = NAME_COLUMNS;
+  const timeline = rail(half, half, look);
+  const around = look.imageMargin;
+  const photoSpacing =
+    around === 0 ? {} : { spacing: { before: around }, indent: { left: around } };
   const right = { alignment: AlignmentType.RIGHT, indent: { right: WIDTH.nameRight } };
   const nameRun = (text: string, size: number, characterSpacing: number) =>
-    new TextRun({ text, font: FONT.head, size, color: COLOR.black, characterSpacing });
+    new TextRun({
+      text,
+      font: FONT.head,
+      size,
+      color: COLOR.black,
+      ...letters(characterSpacing, look),
+    });
   const nameCell = cell(
     [
       para([nameRun(person.firstName, 40, -30)], { ...right, spacing: { before: 1540 } }),
@@ -253,56 +366,60 @@ function nameBlock(person: Master['person'], photo: Uint8Array) {
     name,
     { verticalMerge: 'restart' },
   );
-  return table(NAME_COLUMNS, [
+  const columns = [...columnsOf([margin], look), ...timeline.columns, ...columnsOf([name], look)];
+  const span = { columnSpan: timeline.columns.length };
+  const picture = para([image(photo, 119, 118.4, look)], { run: { size: 2 }, ...photoSpacing });
+  return table(columns, [
     new TableRow({
-      height: { value: 2380, rule: HeightRule.EXACT },
-      children: [
-        cell([gap()], margin),
-        cell([para([image(photo, 119, 118.4)], { run: { size: 2 } })], half * 2, { columnSpan: 2 }),
-        nameCell,
-      ],
+      height: { value: 2380 + 2 * around, rule: HeightRule.EXACT },
+      children: [cell([gap()], margin), cell([picture], half * 2, span), nameCell],
     }),
     new TableRow({
       height: { value: 760, rule: HeightRule.EXACT },
       children: [
         cell([gap()], margin),
-        cell([gap()], half, { borders: TIMELINE }),
-        cell([gap()], half),
+        ...timeline.cells,
         cell([gap()], name, { verticalMerge: 'continue' }),
       ],
     }),
     new TableRow({
       children: [
         cell([gap()], margin),
-        cell([para([dot()], { alignment: AlignmentType.CENTER })], half * 2, { columnSpan: 2 }),
+        cell([para([dot()], { alignment: AlignmentType.CENTER })], half * 2, span),
         cell([gap()], name),
       ],
     }),
   ]);
 }
 
-function jobRowsOf(cv: Master, placed: Placed, images: Images) {
+function jobRowsOf(cv: Master, placed: Placed, images: Images, look: Look) {
   const block = blockOf(cv, placed);
   if (block?.kind !== 'job') return [];
-  const heading = placed.heading === null ? [] : [sectionRow(placed.heading, images.bar)];
-  return [...heading, ...jobRows(block, images.jobPin)];
+  const heading = placed.heading === null ? [] : [sectionRow(placed.heading, images.bar, look)];
+  return [...heading, ...jobRows(block, images.jobPin, look)];
 }
 
 // The section heading is a row of the jobs table: the gray bar on the left, the title beside it.
-function sectionRow(heading: Heading, barImage: Uint8Array) {
+function sectionRow(heading: Heading, barImage: Uint8Array, look: Look) {
   const spacing = { before: heading.before };
+  const columnSpan = rail(WIDTH.rail, WIDTH.rail, look).columns.length + 2;
   const center = { verticalAlign: VerticalAlignTable.CENTER };
   return new TableRow({
     children: [
       cell(
-        [para([image(barImage, 85, 11.4)], { spacing, indent: { left: -48 } })],
+        [
+          para([image(barImage, 85, 11.4, look)], {
+            spacing,
+            indent: { left: -48 + look.imageMargin },
+          }),
+        ],
         WIDTH.gutter,
         center,
       ),
       cell(
-        [para([headingText(heading.text)], { indent: { left: 160 }, spacing })],
+        [para([headingText(heading.text, look)], { indent: { left: 160 }, spacing })],
         WIDTH.leftText - WIDTH.gutter,
-        { columnSpan: 4, ...center },
+        { columnSpan, ...center },
       ),
     ],
   });
@@ -311,7 +428,8 @@ function sectionRow(heading: Heading, barImage: Uint8Array) {
 // A job is two rows. First: dot, title, date. Second: timeline, employer with place, bullets.
 // A text reader takes the date with its title and the place with its employer.
 // Neither row may split, so a job stays whole even where the estimate is off.
-function jobRows(job: Job, pin: Uint8Array) {
+function jobRows(job: Job, pin: Uint8Array, look: Look) {
+  const timeline = rail(WIDTH.rail, WIDTH.rail, look);
   const wide = { line: 276, lineRule: LineRuleType.AUTO };
   const marker = para([dot()], {
     alignment: AlignmentType.CENTER,
@@ -325,12 +443,7 @@ function jobRows(job: Job, pin: Uint8Array) {
     alignment: AlignmentType.RIGHT,
     spacing: { before: SPACE.jobGap, ...wide },
   });
-  const employer = [
-    run(job.employer),
-    run('   '),
-    image(pin, 8.75, 8.75),
-    run(` ${job.place}`, { font: FONT.light }),
-  ];
+  const employer = [run(job.employer), ...pinned(pin, job.place, look)];
   const details = [
     para(employer, { indent: { left: WIDTH.jobIndent }, spacing: { after: SPACE.afterEmployer } }),
     ...job.bullets.map(bullet =>
@@ -342,7 +455,7 @@ function jobRows(job: Job, pin: Uint8Array) {
       cantSplit: true,
       children: [
         cell([gap()], WIDTH.gutter, { verticalMerge: 'restart' }),
-        cell([marker], WIDTH.rail * 2, { columnSpan: 2 }),
+        cell([marker], WIDTH.rail * 2, { columnSpan: timeline.columns.length }),
         cell([title], WIDTH.jobTitle),
         cell([date], WIDTH.jobDate),
       ],
@@ -351,29 +464,41 @@ function jobRows(job: Job, pin: Uint8Array) {
       cantSplit: true,
       children: [
         cell([gap()], WIDTH.gutter, { verticalMerge: 'continue' }),
-        cell([gap()], WIDTH.rail, { borders: TIMELINE }),
-        cell([gap()], WIDTH.rail),
+        ...timeline.cells,
         cell(details, WIDTH.jobTitle + WIDTH.jobDate, { columnSpan: 2 }),
       ],
     }),
   ];
 }
 
+// The place behind its pin; for LibreOffice the spaces beside the pin carry its image margin.
+function pinned(pin: Uint8Array, place: string, look: Look) {
+  const margin = look.imageMargin;
+  if (margin === 0)
+    return [run('   '), image(pin, 8.75, 8.75, look), run(` ${place}`, { font: FONT.light })];
+  return [
+    run('   ', { characterSpacing: margin / 3 }),
+    image(pin, 8.75, 8.75, look),
+    run(' ', { font: FONT.light, characterSpacing: margin }),
+    run(place, { font: FONT.light }),
+  ];
+}
+
 // ---------- right column ----------
 
-function rightCell(cv: Master, column: Column, page: number, images: Images) {
-  const top = page === 0 ? contactBlock(cv.contact, images.icons) : [];
-  const children = [...top, ...column.blocks.flatMap(placed => rightBlock(cv, placed))];
+function rightCell(cv: Master, column: Column, page: number, images: Images, look: Look) {
+  const top = page === 0 ? contactBlock(cv.contact, images.icons, look) : [];
+  const children = [...top, ...column.blocks.flatMap(placed => rightBlock(cv, placed, look))];
   const last = children.at(-1);
   const endsWithParagraph = last instanceof Paragraph;
   return endsWithParagraph ? children : [...children, gap()];
 }
 
-function contactBlock(contact: Master['contact'], icons: Images['icons']): Cell[] {
+function contactBlock(contact: Master['contact'], icons: Images['icons'], look: Look): Cell[] {
   const columns = [WIDTH.contactIcon, WIDTH.right - WIDTH.contactIcon];
   const rows = contact.items.map(item => {
     const size = ICON_SIZE[item.icon];
-    const icon = para([image(icons[item.icon], size, size)], {
+    const icon = para([image(icons[item.icon], size, size, look)], {
       alignment: AlignmentType.CENTER,
       indent: { right: 184 },
     });
@@ -389,15 +514,15 @@ function contactBlock(contact: Master['contact'], icons: Images['icons']): Cell[
       ],
     });
   });
-  const heading = para([headingText(contact.title)], {
+  const heading = para([headingText(contact.title, look)], {
     indent: { left: 60 },
     spacing: { before: SPACE.rightTop, after: SPACE.afterContactHeading },
   });
   // A .docx table needs at least one row; a new CV starts without contact lines.
-  return rows.length === 0 ? [heading] : [heading, table(columns, rows)];
+  return rows.length === 0 ? [heading] : [heading, table(columnsOf(columns, look), rows)];
 }
 
-function rightBlock(cv: Master, placed: Placed): Cell[] {
+function rightBlock(cv: Master, placed: Placed, look: Look): Cell[] {
   const block = blockOf(cv, placed);
   if (block === undefined || block.kind === 'job') return [];
   // Google Docs shows only the larger of two spacings that meet, so the gap below a heading
@@ -405,14 +530,14 @@ function rightBlock(cv: Master, placed: Placed): Cell[] {
   const below = placed.heading?.after ?? 0;
   const titled = block.title !== undefined;
   const heading =
-    placed.heading === null ? [] : [sectionHeading(placed.heading, titled ? 0 : below)];
+    placed.heading === null ? [] : [sectionHeading(placed.heading, titled ? 0 : below, look)];
   const title =
     block.title === undefined ? [] : [blockTitle(block.title, SPACE.beforeTitle + below)];
-  return [...heading, ...title, ...content(block)];
+  return [...heading, ...title, ...content(block, look)];
 }
 
-const sectionHeading = (heading: Heading, after: number) =>
-  para([headingText(heading.text)], {
+const sectionHeading = (heading: Heading, after: number, look: Look) =>
+  para([headingText(heading.text, look)], {
     indent: { left: WIDTH.indent },
     spacing: { before: heading.before, after },
   });
@@ -423,10 +548,10 @@ const blockTitle = (title: string, before: number) =>
     spacing: { before, after: SPACE.afterTitle },
   });
 
-function content(block: Exclude<Block, Job>): Cell[] {
+function content(block: Exclude<Block, Job>, look: Look): Cell[] {
   switch (block.kind) {
     case 'rated':
-      return [ratedTable(block.items)];
+      return [ratedTable(block.items, look)];
     case 'list':
       return [
         para([run(block.items.join(', '))], {
@@ -439,7 +564,7 @@ function content(block: Exclude<Block, Job>): Cell[] {
 }
 
 // One rated item is one row: the name on the left, the dots on the right.
-function ratedTable(items: { name: string; level: number }[]) {
+function ratedTable(items: { name: string; level: number }[], look: Look) {
   const columns = [WIDTH.ratedName, WIDTH.right - WIDTH.ratedName];
   const rows = items.map(
     item =>
@@ -458,7 +583,7 @@ function ratedTable(items: { name: string; level: number }[]) {
         ],
       }),
   );
-  return table(columns, rows);
+  return table(columnsOf(columns, look), rows);
 }
 
 // The dots are text: Google Docs has no letter spacing, so a small space stands between them.
