@@ -79,7 +79,7 @@ A block with `page` starts on that page at the earliest.
   Tailoring to a posting writes a profile and leaves the master as it is.
 - Time order: jobs in the left column stay newest first, because recruiters read them so.
   Hide an old or unrelated job instead of moving the job.
-- Existing profiles: overwrite `profiles/NAME.json` only when the user asked to revise that profile.
+- Existing profiles: pass `--replace` to `oriko profile set` only when the user asked to revise that profile.
 - Privacy: never paste a master or a profile into a web service. Reading the posting from a URL is fine.
 
 ## Flow
@@ -97,8 +97,8 @@ A block with `page` starts on that page at the earliest.
 | 1 Posting    | 2 Inspect    | the posting text is at hand                                     |
 | 1 Posting    | STOP         | no posting, the URL cannot be read, or the master unclear       |
 | 2 Inspect    | 3 Draft      | every block that may change has been read                       |
-| 3 Draft      | 4 Check      | the profile file is written                                     |
-| 3 Draft      | STOP         | the profile exists, a new claim is needed, or more pages        |
+| 3 Draft      | 4 Check      | 'oriko profile set' answers ok                                  |
+| 3 Draft      | STOP         | 'PROFILE_EXISTS' unasked, a new claim is needed, or more pages  |
 | 4 Check      | 3 Draft      | 'oriko plan' refuses the profile (**back edge**, bound 3)       |
 | 4 Check      | STOP         | 'oriko plan' refused the profile a third time                   |
 | 4 Check      | 5 Build      | 'oriko plan' answers ok                                         |
@@ -146,7 +146,10 @@ Run `oriko show --cv NAME` for the outline, then `oriko show --cv NAME --block <
 
 ### 3 Draft
 
-Write `profiles/NAME.json` in the data folder: its field `cv` names the master, the rest only what differs.
+Store the profile with `oriko profile set --profile NAME --json '<profile>'`: its field `cv` names the master, the rest only what differs.
+
+- The JSON is the whole profile; `oriko profile show --profile NAME` answers the stored one and its posting.
+- Revising, add `--replace`, and check `removed` in the answer: each part named there is gone from this version.
 
 - Read `./references/profile.md` for the format before the first draft.
 - Put first what the posting asks for: order the right-column groups by match.

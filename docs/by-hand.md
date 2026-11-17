@@ -19,10 +19,10 @@ Read the job posting, from a file or an `https://` address; oriko stores its tex
 oriko read --profile backend-job --posting ~/Downloads/backend-job.pdf
 ```
 
-Write the version for that posting in `~/.oriko/profiles/backend-job.json`:
+Store the version for that posting; oriko checks it against the CV before it writes:
 
-```json
-{ "cv": "jane-doe", "blocks": { "tools": { "items": ["Go", "Kafka"] } } }
+```sh
+oriko profile set --profile backend-job --json '{"cv":"jane-doe","blocks":{"tools":{"items":["Go","Kafka"]}}}'
 ```
 
 Check, look, build:

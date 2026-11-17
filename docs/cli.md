@@ -42,12 +42,17 @@ one accepts.
 | `block …`, `item …`, `contact …` | add, update, remove and move blocks, their items and contact lines |
 | `photo set <file>` | stores a PNG or JPEG as the square photo of a CV, or of one version |
 | `read` | reads a posting (`--posting`, with `--profile`), notes (`--notes`) or an old CV (`--resume`) |
+| `profile set`, `profile show` | stores the version for one posting, checked against its CV, and shows it with its posting |
 
 `read` takes a file or an `https://` address and answers its text. The posting is stored as
 `profiles/<profile>.posting.md`, notes are added to `cvs/<cv>.notes.md`, and an old CV is stored
 nowhere. The kind comes from the content: PDF, Word, HTML or UTF-8 text; any other is refused. A
 download goes only to a public address over https on port 443, at every redirect, and each
 document stops at a size limit. Every character that does not show as itself becomes a space.
+
+`profile set` takes the whole version as JSON and runs the checks of `plan` before it writes, so
+a refused version is never stored. An existing version is replaced only with `--replace`, and the
+answer names each part it adds, changes or removes, with `--dry-run` too.
 
 When another program reads the output instead of a terminal, `preview` answers JSON with the
 sheets in its field `preview`. Add `--output text` to get the plain sheets there too.
