@@ -4,7 +4,7 @@
 
 | Mark | Meaning |
 | :--- | :--- |
-| `╭───────┐` with `●   ●` | where your photo goes; the terminal shows Oriko, the oriko logo, the classic file shows the photo |
+| `╭───────┐` with `●   ●` | where your photo goes; the terminal shows Oriko, the mascot of the logo, the classic file shows the photo |
 | `UPPER CASE` | a section heading, such as Professional Experience |
 | `●` and `│` | a job: its marker and its timeline; the dates stand right of the title |
 | `›` | a bullet point of a job |

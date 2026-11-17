@@ -1,7 +1,7 @@
 # TODO
 
 Open work on oriko, the CLI and its skill.
-<!-- last item number: 8 -->
+<!-- last item number: 9 -->
 
 ## Next
 
@@ -22,3 +22,5 @@ Open work on oriko, the CLI and its skill.
       'install.sh'
 - [ ] #7 Create a CV from a LinkedIn export or a JSON Resume file (added 2026-11-17)
 - [ ] #8 Get the PDF from Google Docs without uploading the .docx by hand (added 2026-11-17)
+- [ ] #9 Publish oriko on npm, where the name is still free (added 2026-11-17)
+      'package.json'

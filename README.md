@@ -7,10 +7,11 @@
 
 **One CV, made to fit every job posting, laid out so no job ever breaks across a page.**
 
+![Agent Driven](https://img.shields.io/badge/Agent_Driven-purple.svg)
 ![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
 ![License](https://img.shields.io/badge/license-AGPL--3.0-green.svg)
 ![Node](https://img.shields.io/badge/node-24+-brightgreen.svg)
-![Agent-driven](https://img.shields.io/badge/CLI-agent--driven-purple.svg)
+![Coverage](https://img.shields.io/badge/coverage-%E2%89%A595%25-brightgreen.svg)
 
 </div>
 
@@ -81,7 +82,11 @@ No CV yet? Paste a job posting anyway. The agent asks you a few short questions 
 you live, where you have worked, what you can do), creates your CV from your answers, and then
 fits it to the posting.
 
-## 🧩 Built for agents
+## 🧩 Agentic meets deterministic
+
+An agent alone can be wrong without noticing, and a tool alone cannot read a job posting. oriko
+puts the two together: the agent does what needs judgment, and every step it takes runs through
+a CLI that checks it, refuses what does not fit and never guesses.
 
 oriko has two parts. The **CLI** does the work and checks every input. The **skill** in
 [`.claude/skills/oriko/`](.claude/skills/oriko/SKILL.md) is the agent's manual: which command to
@@ -229,11 +234,12 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
 - [ ] A one-line installer for Windows
 - [ ] A new CV from a LinkedIn export or a JSON Resume file
 - [ ] The PDF from Google Docs without uploading the file by hand
+- [ ] Publish on npm as `oriko`
 
 ## 🛠️ Development
 
 ```sh
-pnpm test             # api and internals tests
+pnpm test             # api and internals tests, fails below 95 % coverage
 pnpm run typecheck
 pnpm run format:check
 sh tests/e2e/install.e2e.sh   # the install script in empty home folders
