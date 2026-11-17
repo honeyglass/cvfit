@@ -18,7 +18,9 @@ import { FIXTURE_URL, photo } from '../utils/fixture.ts';
 
 const Answer = z.looseObject({
   ok: z.boolean(),
-  issues: z.array(z.looseObject({ code: z.string() })).optional(),
+  issues: z
+    .array(z.looseObject({ code: z.string(), path: z.string(), command: z.string().optional() }))
+    .optional(),
 });
 
 // A data folder with the reference CV 'jane' and two profiles, and an empty working directory.
@@ -245,6 +247,7 @@ test('refuses bad input with exit code 1 and the code of the reason', async () =
     [['block', 'remove'], 'MISSING_INPUT'],
     [['paint'], 'UNKNOWN_COMMAND'],
     [['plan', '--color'], 'UNKNOWN_OPTION'],
+    [['preview', '--output', 'pdf'], 'UNKNOWN_OUTPUT'],
     [['plan', '--home', 'missing'], 'NO_CV'],
     [['profiles', '--home', 'missing'], 'NO_CV'],
     [['plan', '--home', 'broken-home'], 'SCHEMA'],
@@ -263,6 +266,95 @@ test('refuses bad input with exit code 1 and the code of the reason', async () =
     const { exit, codes } = await call(space, argv);
     assert.deepEqual([exit, codes.slice(0, 1)], [1, [code]], argv.join(' '));
   }
+});
+
+test('an option without a value answers the values it accepts', async () => {
+  const space = workspace();
+  await call(space, ['init', '--cv', 'erika', '--json', NEW_CV]);
+  const values = async (argv: string[]) => (await call(space, argv)).answer;
+  assert.deepEqual(await values(['show', '--cv']), {
+    ok: true,
+    option: 'cv',
+    values: ['erika', 'jane'],
+  });
+  assert.deepEqual(await values(['plan', '--profile']), {
+    ok: true,
+    option: 'profile',
+    values: ['acme', 'broken'],
+  });
+  assert.deepEqual(await values(['build', '--style']), {
+    ok: true,
+    option: 'style',
+    values: ['classic', 'terminal'],
+  });
+  assert.deepEqual(await values(['preview', '--output']), {
+    ok: true,
+    option: 'output',
+    values: ['json', 'text'],
+  });
+  const blocks = await values(['show', '--cv', 'jane', '--block']);
+  assert.deepEqual(
+    [blocks.option, blocks.cv, Array.isArray(blocks.values) && blocks.values.length],
+    ['block', 'jane', 15],
+  );
+  assert.equal((await values(['show', '--profile', 'acme', '--block'])).cv, 'jane');
+});
+
+// A free value, such as a path or a JSON input, has no list; the refusal names the option.
+test('an option without a value and without a list is refused by its name', async () => {
+  const space = workspace();
+  const cases: [string[], string][] = [
+    [['build', '--out'], 'out'],
+    [['plan', '--home'], 'home'],
+    [['block', 'add', '--json'], 'json'],
+  ];
+  for (const [argv, path] of cases) {
+    const { exit, answer } = await call(space, argv);
+    assert.deepEqual(
+      [exit, answer.issues?.map(issue => [issue.code, issue.path])],
+      [1, [['MISSING_VALUE', path]]],
+      argv.join(' '),
+    );
+  }
+});
+
+// The command of a refusal answers the values that fix it, so the agent runs it and picks one.
+test('a refusal names a command that lists the fitting values, and that command runs', async () => {
+  const space = workspace();
+  await call(space, ['init', '--cv', 'erika', '--json', NEW_CV]);
+  const cases: [string[], string, string][] = [
+    [['plan'], 'CV_REQUIRED', 'oriko show --cv'],
+    [['plan', '--cv', 'nobody'], 'UNKNOWN_CV', 'oriko show --cv'],
+    [['plan', '--profile', 'nobody'], 'UNKNOWN_PROFILE', 'oriko plan --profile'],
+    [
+      ['show', '--cv', 'jane', '--block', 'nobody'],
+      'UNKNOWN_BLOCK',
+      'oriko show --cv jane --block',
+    ],
+    [['block', 'remove', '--cv', 'jane'], 'MISSING_INPUT', 'oriko schema block remove'],
+    [['block', 'add', '--cv', 'jane', '--json'], 'MISSING_VALUE', 'oriko schema block add'],
+    [['paint'], 'UNKNOWN_COMMAND', 'oriko schema'],
+    [['plan', '--color'], 'UNKNOWN_OPTION', 'oriko schema'],
+  ];
+  for (const [argv, code, command] of cases) {
+    const [issue] = (await call(space, argv)).answer.issues ?? [];
+    assert.deepEqual([issue?.code, issue?.command], [code, command], argv.join(' '));
+    const listed = await call(space, command.split(' ').slice(1));
+    assert.equal(listed.answer.ok, true, command);
+  }
+});
+
+// The command keeps the --home of the call, or it would list the CVs of another data folder.
+test('the command of a refusal keeps the data folder of the call', async () => {
+  const space = workspace();
+  const [issue] =
+    (await call(space, ['plan', '--cv', 'nobody', '--home', space.home])).answer.issues ?? [];
+  assert.equal(issue?.command, `oriko show --cv --home ${space.home}`);
+});
+
+test('names the unknown option in the path of the refusal', async () => {
+  const [issue] = (await call(workspace(), ['plan', '--color'])).answer.issues ?? [];
+  assert.equal(issue?.path, 'color');
 });
 
 test('refuses a photo path that leaves the data folder', async () => {

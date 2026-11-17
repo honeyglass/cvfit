@@ -55,8 +55,8 @@ export async function chosenCv(
   const names = await cvNames(home);
   if (names.length === 0) return rejected('read', [noCv(home)]);
   const name = explicit ?? fromProfile ?? (names.length === 1 ? names[0] : undefined);
-  if (name === undefined) return rejected('read', [cvRequired(names)]);
-  if (names.includes(name) === false) return rejected('read', [unknownCv(name, names)]);
+  if (name === undefined) return rejected('read', [cvRequired()]);
+  if (names.includes(name) === false) return rejected('read', [unknownCv(name)]);
   return done({ name, path: join(home, 'cvs', `${name}${SUFFIX}`) });
 }
 
@@ -78,18 +78,23 @@ const noCv = (home: string): Issue => ({
   hint: 'Check --home, or create a CV with: oriko init --cv NAME --json ...',
 });
 
-const cvRequired = (names: string[]): Issue => ({
+// --cv without a value lists the CVs, so the command answers every name the caller may pass.
+const LIST_CVS = 'oriko show --cv';
+
+const cvRequired = (): Issue => ({
   code: 'CV_REQUIRED',
   path: 'cv',
   message: 'The data folder holds several CVs and the call names none',
-  hint: `Pass --cv with one of: ${names.join(', ')}`,
+  hint: 'Run the command, then pass --cv with one of the CV names it lists',
+  command: LIST_CVS,
 });
 
-const unknownCv = (name: string, names: string[]): Issue => ({
+const unknownCv = (name: string): Issue => ({
   code: 'UNKNOWN_CV',
   path: 'cv',
   message: `The data folder has no CV ${shown(name)}`,
-  hint: `Use one of: ${names.join(', ')}`,
+  hint: 'Run the command and use one of the CV names it lists',
+  command: LIST_CVS,
 });
 
 const cvMismatch = (explicit: string, fromProfile: string): Issue => ({
@@ -99,12 +104,20 @@ const cvMismatch = (explicit: string, fromProfile: string): Issue => ({
   hint: 'Leave out --cv, or change the field cv of the profile',
 });
 
-const unknownProfile = (name: string, names: string[]): Issue => ({
-  code: 'UNKNOWN_PROFILE',
-  path: 'profile',
-  message: `The data folder has no profile ${shown(name)}`,
-  hint:
-    names.length === 0
-      ? 'Add a profile as profiles/NAME.json to the data folder'
-      : `Use one of: ${names.join(', ')}`,
-});
+function unknownProfile(name: string, names: string[]): Issue {
+  const message = `The data folder has no profile ${shown(name)}`;
+  if (names.length === 0)
+    return {
+      code: 'UNKNOWN_PROFILE',
+      path: 'profile',
+      message,
+      hint: 'Add a profile as profiles/NAME.json to the data folder',
+    };
+  return {
+    code: 'UNKNOWN_PROFILE',
+    path: 'profile',
+    message,
+    hint: 'Run the command and use one of the profile names it lists',
+    command: 'oriko plan --profile',
+  };
+}

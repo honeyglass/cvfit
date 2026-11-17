@@ -64,11 +64,12 @@ export const duplicateId = (id: string): Issue => ({
   hint: 'Give every block its own id',
 });
 
-export const unknownBlock = (id: string, path: string, blocks: Block[]): Issue => ({
+// The cli adds the command that lists the block ids, as only it knows the name of the CV.
+export const unknownBlock = (id: string, path: string): Issue => ({
   code: 'UNKNOWN_BLOCK',
   path,
   message: `No block has the id ${shown(id)}`,
-  hint: `Use one of: ${blocks.map(block => block.id).join(', ')}`,
+  hint: 'Run the command and use one of the block ids it lists',
 });
 
 function applyProfile(master: Master, value: unknown): Result<Master> {
@@ -87,10 +88,10 @@ function unknownIds(master: Master, profile: Profile) {
   const known = new Set(master.blocks.map(block => block.id));
   const issues: Issue[] = [];
   for (const id of Object.keys(profile.blocks ?? {})) {
-    if (known.has(id) === false) issues.push(unknownBlock(id, `blocks.${id}`, master.blocks));
+    if (known.has(id) === false) issues.push(unknownBlock(id, `blocks.${id}`));
   }
   for (const [index, id] of (profile.order ?? []).entries()) {
-    if (known.has(id) === false) issues.push(unknownBlock(id, `order.${index}`, master.blocks));
+    if (known.has(id) === false) issues.push(unknownBlock(id, `order.${index}`));
   }
   return issues;
 }

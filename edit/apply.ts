@@ -79,8 +79,7 @@ function updateBlock(master: Master, input: unknown): Result<Master> {
   if (parsed.success === false)
     return rejected('block update', schemaIssues(parsed.error, [], 'block update'));
   const block = master.blocks.find(candidate => candidate.id === parsed.data.id);
-  if (block === undefined)
-    return rejected('block update', [unknownBlock(parsed.data.id, 'id', master.blocks)]);
+  if (block === undefined) return rejected('block update', [unknownBlock(parsed.data.id, 'id')]);
   const issues: Issue[] = [];
   const changed = patched(block, parsed.data.set, issues);
   if (issues.length > 0) return rejected('block update', issues);
@@ -93,7 +92,7 @@ function removeBlock(master: Master, input: unknown): Result<Master> {
     return rejected('block remove', schemaIssues(parsed.error, [], 'block remove'));
   const { id } = parsed.data;
   const exists = master.blocks.some(block => block.id === id);
-  if (exists === false) return rejected('block remove', [unknownBlock(id, 'id', master.blocks)]);
+  if (exists === false) return rejected('block remove', [unknownBlock(id, 'id')]);
   return done({ ...master, blocks: master.blocks.filter(block => block.id !== id) });
 }
 
@@ -103,7 +102,7 @@ function moveBlock(master: Master, input: unknown): Result<Master> {
     return rejected('block move', schemaIssues(parsed.error, [], 'block move'));
   const { id, before, after, page } = parsed.data;
   const block = master.blocks.find(candidate => candidate.id === id);
-  if (block === undefined) return rejected('block move', [unknownBlock(id, 'id', master.blocks)]);
+  if (block === undefined) return rejected('block move', [unknownBlock(id, 'id')]);
   const hasNothing = before === undefined && after === undefined && page === undefined;
   if (hasNothing) return rejected('block move', [nothingToDo()]);
   const issues = anchorIssues(master, block, before, after);
@@ -151,7 +150,7 @@ function anchorIssues(
   if (id === undefined) return [];
   const path = before === undefined ? 'after' : 'before';
   const anchor = master.blocks.find(candidate => candidate.id === id);
-  if (anchor === undefined) return [unknownBlock(id, path, master.blocks)];
+  if (anchor === undefined) return [unknownBlock(id, path)];
   const column = COLUMN[block.kind];
   if (COLUMN[anchor.kind] === column) return [];
   const sameColumn = master.blocks.filter(
@@ -185,8 +184,7 @@ function addItem(master: Master, input: unknown): Result<Master> {
   if (parsed.success === false)
     return rejected('item add', schemaIssues(parsed.error, [], 'item add'));
   const block = master.blocks.find(candidate => candidate.id === parsed.data.block);
-  if (block === undefined)
-    return rejected('item add', [unknownBlock(parsed.data.block, 'block', master.blocks)]);
+  if (block === undefined) return rejected('item add', [unknownBlock(parsed.data.block, 'block')]);
   const value = ITEM[block.kind].safeParse(parsed.data.value);
   if (value.success === false)
     return rejected('item add', schemaIssues(value.error, ['value'], 'item'));
@@ -201,7 +199,7 @@ function updateItem(master: Master, input: unknown): Result<Master> {
     return rejected('item update', schemaIssues(parsed.error, [], 'item update'));
   const block = master.blocks.find(candidate => candidate.id === parsed.data.block);
   if (block === undefined)
-    return rejected('item update', [unknownBlock(parsed.data.block, 'block', master.blocks)]);
+    return rejected('item update', [unknownBlock(parsed.data.block, 'block')]);
   const value = ITEM_PATCH[block.kind].safeParse(parsed.data.value);
   if (value.success === false)
     return rejected('item update', schemaIssues(value.error, ['value'], 'item'));
@@ -216,7 +214,7 @@ function removeItem(master: Master, input: unknown): Result<Master> {
     return rejected('item remove', schemaIssues(parsed.error, [], 'item remove'));
   const block = master.blocks.find(candidate => candidate.id === parsed.data.block);
   if (block === undefined)
-    return rejected('item remove', [unknownBlock(parsed.data.block, 'block', master.blocks)]);
+    return rejected('item remove', [unknownBlock(parsed.data.block, 'block')]);
   const items = removed(itemsOf(block), parsed.data.index, 'item remove');
   if (items.error !== null) return items;
   return withItems(master, block, items.data, 'item remove');
@@ -227,8 +225,7 @@ function moveItem(master: Master, input: unknown): Result<Master> {
   if (parsed.success === false)
     return rejected('item move', schemaIssues(parsed.error, [], 'item move'));
   const block = master.blocks.find(candidate => candidate.id === parsed.data.block);
-  if (block === undefined)
-    return rejected('item move', [unknownBlock(parsed.data.block, 'block', master.blocks)]);
+  if (block === undefined) return rejected('item move', [unknownBlock(parsed.data.block, 'block')]);
   const items = moved(itemsOf(block), parsed.data.index, parsed.data.to, 'item move');
   if (items.error !== null) return items;
   return withItems(master, block, items.data, 'item move');

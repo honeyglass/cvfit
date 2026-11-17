@@ -1,7 +1,8 @@
 /**
  * The one error of this package: a refusal that lists every issue of the input.
  *
- * Issue: one thing wrong with the input, with its path and a hint that says how to fix it.
+ * Issue: one thing wrong with the input, with its path and a hint that says how to fix it; a
+ * command, when there is one, answers the values that fix it, and the hint says to run it.
  * Rejection: the refusal error that carries the issues.
  * Result: the shape every public function answers in.
  * done, rejected: a result with data, and a result refused for its issues.
@@ -11,7 +12,7 @@
 import { RefusalError } from '@honeyglass/utils/ts';
 import type { Refusal } from '@honeyglass/utils/ts';
 
-export type Issue = { code: string; path: string; message: string; hint: string };
+export type Issue = { code: string; path: string; message: string; hint: string; command?: string };
 
 export class Rejection extends RefusalError {
   readonly refusal: Refusal;
