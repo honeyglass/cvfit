@@ -8,7 +8,8 @@
 # @example curl -fsSL https://raw.githubusercontent.com/honeyglass/oriko/main/install.sh | sh
 set -eu
 
-REPOSITORY='https://github.com/honeyglass/oriko.git'
+# ORIKO_REPOSITORY points the script at another copy, as the install test does with its checkout.
+REPOSITORY="${ORIKO_REPOSITORY:-https://github.com/honeyglass/oriko.git}"
 DIR="${XDG_DATA_HOME:-$HOME/.local/share}/oriko"
 BIN_DIR="$HOME/.local/bin"
 SKILLS_DIR="$HOME/.claude/skills"
@@ -43,11 +44,11 @@ need_node() {
   [ "$major" -ge 24 ] || fail "oriko needs Node 24 or newer, found $(node --version)."
 }
 
-# A new folder gets a clone; an existing checkout moves to the newest commit of main. git
-# refuses that move over local changes, so nothing of yours is overwritten.
+# A new folder gets a clone; an existing checkout moves to the newest commit of the default
+# branch. git refuses that move over local changes, so nothing of yours is overwritten.
 fetch_oriko() {
   if [ -d "$DIR/.git" ]; then
-    git -C "$DIR" fetch --quiet --depth 1 origin main
+    git -C "$DIR" fetch --quiet --depth 1 origin HEAD
     git -C "$DIR" checkout --quiet --detach FETCH_HEAD
     return
   fi

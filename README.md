@@ -201,6 +201,7 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
 pnpm test             # api and internals tests
 pnpm run typecheck
 pnpm run format:check
+sh tests/e2e/install.e2e.sh   # the install script in empty home folders
 ```
 
 ## ⚖️ License
