@@ -33,9 +33,11 @@ fail() {
 }
 
 installs_command_and_skill() {
-  run_install fresh || fail 'a fresh install ends with an error'
+  run_install fresh >"$WORK/fresh.log" || fail 'a fresh install ends with an error'
   "$WORK/fresh/.local/bin/oriko" schema | grep -q '"ok":true' || fail 'oriko schema does not answer ok'
   grep -qx 'name: oriko' "$WORK/fresh/.agents/skills/oriko/SKILL.md" || fail 'the skills CLI did not add the skill'
+  # With LibreOffice the script says so, without it how to get it; either way a PDF is named.
+  grep -q 'oriko: .*LibreOffice' "$WORK/fresh.log" || fail 'the install does not say what a PDF needs'
 }
 
 updates_an_existing_install() {
