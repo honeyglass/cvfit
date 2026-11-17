@@ -219,6 +219,17 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
 - [**Security**](SECURITY.md)
 - [**Agent skill**](.claude/skills/oriko/SKILL.md)
 
+## 🗺️ Roadmap
+
+- [ ] More CV templates
+- [ ] An [ATS check](https://enhancv.com/resources/resume-checker/) of the classic CV after every build
+- [ ] The skill for Codex
+- [ ] The skill for Gemini CLI
+- [ ] A cover letter per job posting, from the same facts as the CV
+- [ ] A one-line installer for Windows
+- [ ] A new CV from a LinkedIn export or a JSON Resume file
+- [ ] The PDF from Google Docs without uploading the file by hand
+
 ## 🛠️ Development
 
 ```sh
