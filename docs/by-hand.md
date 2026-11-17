@@ -13,7 +13,13 @@ oriko block add --json '{"block":{"id":"tools","kind":"list","section":"Skills",
 oriko photo set ~/Pictures/portrait.jpg
 ```
 
-Write a version for one job posting in `~/.oriko/profiles/backend-job.json`:
+Read the job posting, from a file or an `https://` address; oriko stores its text beside the version:
+
+```sh
+oriko read --profile backend-job --posting ~/Downloads/backend-job.pdf
+```
+
+Write the version for that posting in `~/.oriko/profiles/backend-job.json`:
 
 ```json
 { "cv": "jane-doe", "blocks": { "tools": { "items": ["Go", "Kafka"] } } }

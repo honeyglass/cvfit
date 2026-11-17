@@ -41,6 +41,13 @@ one accepts.
 | `init`, `cv update` | create a CV, change its language, pages, person or contact title |
 | `block …`, `item …`, `contact …` | add, update, remove and move blocks, their items and contact lines |
 | `photo set <file>` | stores a PNG or JPEG as the square photo of a CV, or of one version |
+| `read` | reads a posting (`--posting`, with `--profile`), notes (`--notes`) or an old CV (`--resume`) |
+
+`read` takes a file or an `https://` address and answers its text. The posting is stored as
+`profiles/<profile>.posting.md`, notes are added to `cvs/<cv>.notes.md`, and an old CV is stored
+nowhere. The kind comes from the content: PDF, Word, HTML or UTF-8 text; any other is refused. A
+download goes only to a public address over https on port 443, at every redirect, and each
+document stops at a size limit. Every character that does not show as itself becomes a space.
 
 When another program reads the output instead of a terminal, `preview` answers JSON with the
 sheets in its field `preview`. Add `--output text` to get the plain sheets there too.
@@ -105,7 +112,8 @@ A refusal the agent reads and acts on:
 ```
 
 `"ok": false` means oriko refused. `"kind": "fix"` says the agent can fix the input itself;
-`"kind": "ask"` says only the person can solve it, such as a full disk, so the agent stops. Each
+`"kind": "ask"` says only the person can solve it, such as a full disk, so the agent stops;
+`"kind": "retry"` says a later call may succeed, such as after a failed connection. Each
 issue has a `code` the agent can check, a `path` to the wrong value, a `message` for people and a
 `hint` on what to change.
 
