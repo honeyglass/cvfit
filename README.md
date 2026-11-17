@@ -39,10 +39,13 @@ when LibreOffice is installed.
   need your yes.
 - 👀 **Preview before you build**: see every page in the terminal, and how full it is.
 - 🌍 **Several CVs**: one per language or per person, side by side.
-- 🛡️ **Safe dependencies**: oriko takes in a new version of a package (code from other people)
-  only once it is three days old, so a bad release is usually caught first. Packages may not run
-  their own programs while they install, and every version is fixed, so every install gets the
-  same code.
+- 🛡️ **Safe dependencies**: every CI run starts with a
+  [supply check](https://github.com/honeyglass/actions/tree/main/supply-check) we built for it,
+  before any package (code from other people) is installed. It lets a package in only from an
+  allow list and keeps the safety settings of the package manager as they are: a new version
+  comes in only once it is three days old, so a bad release is usually caught first, and no
+  package may run its own programs while it installs. Every version is fixed, so every install
+  gets the same code. The rules stand in [SECURITY.md](SECURITY.md).
 
 ## 🚀 Quickstart
 
@@ -94,6 +97,29 @@ node bin/oriko.ts schema
 Open [Claude Code](https://claude.com/claude-code) and say what you want. The skill in
 [`.claude/skills/oriko/`](.claude/skills/oriko/SKILL.md) tells the agent how to use oriko. After a
 manual installation, open Claude Code in the oriko folder.
+
+### ⭐ The recommended way
+
+Give the agent three things at once, then answer its questions:
+
+1. **Your old CV**: a PDF, a Word file, or your oriko CV.
+2. **Notes in your own words**: what you did, how you work, what the old CV leaves out. Short
+   lines are enough, in any language.
+3. **The job posting**: a file or a link.
+
+```text
+Create a CV for this job. My CV: ~/cv.pdf. My notes: ~/notes.txt. The posting: ~/job.pdf
+```
+
+The agent reads all three, asks in short rounds before a fact from your notes goes into your CV,
+and builds a version for the posting. You read the preview and say what to change in plain
+words ("shorter", "leave out Figma", "Built instead of Delivered"); the agent changes it and
+shows the preview again. At the end you get the Word file, or the PDF.
+
+This works well because each part does one job: your notes bring the facts the old CV misses,
+the posting says what matters, and oriko checks every step, so nothing is invented.
+
+Shorter requests work too:
 
 ```text
 Fit my CV to this job: <paste the job posting>
