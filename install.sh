@@ -79,10 +79,14 @@ link_skill() {
 # A link that already points at oriko stays; anything else at that path is the user's and stays too.
 link() {
   target=$1 name=$2 what=$3
-  if [ -L "$name" ] && [ "$(readlink "$name")" = "$target" ]; then return; fi
+  if [ -L "$name" ] && [ "$(readlink "$name")" = "$target" ]; then
+    say "$what: $name"
+    return
+  fi
   [ -e "$name" ] || [ -L "$name" ] && fail "$name exists and is not the $what of oriko; move it away and run this script again."
   mkdir -p "$(dirname "$name")"
   ln -s "$target" "$name"
+  say "$what: $name"
 }
 
 path_hint() {

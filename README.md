@@ -48,10 +48,6 @@ terminal, and you get a Word file that you open in Google Docs and save as PDF.
 curl -fsSL https://raw.githubusercontent.com/honeyglass/oriko/main/install.sh | sh
 ```
 
-oriko needs Node 24 or newer and git. The [script](install.sh) installs oriko in
-`~/.local/share/oriko`, adds the command `oriko` to `~/.local/bin` and, when Claude Code is set
-up, the skill to `~/.claude/skills`. Run it again to update.
-
 ### Manual installation
 
 ```sh
