@@ -61,9 +61,12 @@ pnpm install --frozen-lockfile
 node bin/oriko.ts schema
 ```
 
-> [!NOTE]
-> You do not compile anything first: Node 24 runs the TypeScript files of oriko as they are. The
-> examples below write `oriko` for `node bin/oriko.ts`.
+## 📖 Docs
+
+- [**Examples**](docs/examples.md)
+- [**Good to know**](docs/good-to-know.md)
+- [**Security**](SECURITY.md)
+- [**Agent skill**](.claude/skills/oriko/SKILL.md)
 
 ## 🤖 Working with oriko and an agent
 
@@ -250,80 +253,6 @@ The first line says that oriko refused, that the input can be fixed (`fix`), and
 When another program reads the output instead of a terminal, `preview` answers JSON with the
 sheets in its field `preview`. Add `--output text` to get the plain sheets there too.
 
-## 📚 Examples
-
-Three made-up people, three real job postings, one agent run each.
-
-| 👩‍💻 Jane Doe · go-e Labs | 📋 Lukas Berger · DaVita | 🍳 Marco Weber · GALERIA |
-| :---: | :---: | :---: |
-| <img src="examples/showcase/go-e-senior-backend/page-1.png" width="200" alt="Jane Doe's CV for go-e Labs, page 1"> | <img src="examples/showcase/davita-it-project-manager/page-1.png" width="200" alt="Lukas Berger's CV for DaVita, page 1"> | <img src="examples/showcase/galeria-cook/terminal-page-1.png" width="200" alt="Marco Weber's CV for GALERIA in the terminal style, page 1"> |
-| Senior Backend Engineer · 3 pages | IT Project Manager · 2 pages | Cook · 1 page |
-| [posting](examples/showcase/go-e-senior-backend/posting.md) · [report](examples/showcase/go-e-senior-backend/report.md) · [preview](examples/showcase/go-e-senior-backend/preview.txt) | [posting](examples/showcase/davita-it-project-manager/posting.md) · [report](examples/showcase/davita-it-project-manager/report.md) · [preview](examples/showcase/davita-it-project-manager/preview.txt) | [posting](examples/showcase/galeria-cook/posting.md) · [report](examples/showcase/galeria-cook/report.md) · [preview](examples/showcase/galeria-cook/preview.txt) |
-| classic: [Word](examples/showcase/go-e-senior-backend/go-e-senior-backend.docx) · [PDF](examples/showcase/go-e-senior-backend/go-e-senior-backend.pdf) | classic: [Word](examples/showcase/davita-it-project-manager/davita-it-project-manager.docx) · [PDF](examples/showcase/davita-it-project-manager/davita-it-project-manager.pdf) | classic: [Word](examples/showcase/galeria-cook/galeria-cook.docx) · [PDF](examples/showcase/galeria-cook/galeria-cook.pdf) |
-| terminal: [Word](examples/showcase/go-e-senior-backend/go-e-senior-backend-terminal.docx) · [PDF](examples/showcase/go-e-senior-backend/go-e-senior-backend-terminal.pdf) | terminal: [Word](examples/showcase/davita-it-project-manager/davita-it-project-manager-terminal.docx) · [PDF](examples/showcase/davita-it-project-manager/davita-it-project-manager-terminal.pdf) | terminal: [Word](examples/showcase/galeria-cook/galeria-cook-terminal.docx) · [PDF](examples/showcase/galeria-cook/galeria-cook-terminal.pdf) |
-
-<details>
-<summary><b>👩‍💻 Jane Doe · Senior Backend Engineer at go-e Labs · all 3 pages</b></summary>
-
-**Classic**
-
-<p align="center">
-  <img src="examples/showcase/go-e-senior-backend/page-1.png" width="32%" alt="Jane Doe's CV for go-e Labs, page 1 of 3">
-  <img src="examples/showcase/go-e-senior-backend/page-2.png" width="32%" alt="Jane Doe's CV for go-e Labs, page 2 of 3">
-  <img src="examples/showcase/go-e-senior-backend/page-3.png" width="32%" alt="Jane Doe's CV for go-e Labs, page 3 of 3">
-</p>
-
-**Terminal style**
-
-<p align="center">
-  <img src="examples/showcase/go-e-senior-backend/terminal-page-1.png" width="32%" alt="Jane Doe's CV for go-e Labs in the terminal style, page 1 of 3">
-  <img src="examples/showcase/go-e-senior-backend/terminal-page-2.png" width="32%" alt="Jane Doe's CV for go-e Labs in the terminal style, page 2 of 3">
-  <img src="examples/showcase/go-e-senior-backend/terminal-page-3.png" width="32%" alt="Jane Doe's CV for go-e Labs in the terminal style, page 3 of 3">
-</p>
-
-</details>
-
-<details>
-<summary><b>📋 Lukas Berger · IT Project Manager at DaVita · all 2 pages</b></summary>
-
-**Classic**
-
-<p align="center">
-  <img src="examples/showcase/davita-it-project-manager/page-1.png" width="32%" alt="Lukas Berger's CV for DaVita, page 1 of 2">
-  <img src="examples/showcase/davita-it-project-manager/page-2.png" width="32%" alt="Lukas Berger's CV for DaVita, page 2 of 2">
-</p>
-
-**Terminal style**
-
-<p align="center">
-  <img src="examples/showcase/davita-it-project-manager/terminal-page-1.png" width="32%" alt="Lukas Berger's CV for DaVita in the terminal style, page 1 of 2">
-  <img src="examples/showcase/davita-it-project-manager/terminal-page-2.png" width="32%" alt="Lukas Berger's CV for DaVita in the terminal style, page 2 of 2">
-</p>
-
-</details>
-
-<details>
-<summary><b>🍳 Marco Weber · Cook at GALERIA · 1 page</b></summary>
-
-**Classic**
-
-<p align="center">
-  <img src="examples/showcase/galeria-cook/page-1.png" width="32%" alt="Marco Weber's CV for GALERIA, page 1 of 1">
-</p>
-
-**Terminal style**
-
-<p align="center">
-  <img src="examples/showcase/galeria-cook/terminal-page-1.png" width="32%" alt="Marco Weber's CV for GALERIA in the terminal style, page 1 of 1">
-</p>
-
-</details>
-
-> [!NOTE]
-> The people are invented. The postings are real, summarized in our own words with a link to the
-> source, and may be gone by now. The portraits are drawn avatars from
-> [DiceBear](https://www.dicebear.com/styles/lorelei/) (Lorelei, CC0 1.0).
-
 ## 🗂️ Your data
 
 Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points oriko at another one.
@@ -373,49 +302,6 @@ Upload `acme.docx` to Google Docs and save it there with File, Download, PDF.
 > The layout is tuned to how Google Docs sets the file, with Open Sans and Calibri. Word or
 > LibreOffice set the same file with other line breaks, and a block that fits in Google Docs may
 > spill over elsewhere.
-
-## 📌 Good to know
-
-**💡 Tips**
-
-- You can write to the agent in any language. Your CV keeps its own language.
-- A page looks too empty? A block is pinned: `"page": 2` makes it start on page 2, however much
-  room is left before it. A version removes the pin with `"page": null`.
-
-**ℹ️ Your data**
-
-- Your CVs never go into the repository. They stay in `~/.oriko` on your computer. An AI
-  assistant you work with reads the parts of them it needs, as with any file you show it.
-
-**⚠️ Before you send**
-
-- An agent can misread or reword a fact. Read the preview and the PDF line by line: names,
-  employers, places, dates and levels.
-- The preview shows what stands on which page and how full each column is. It does not show
-  fonts, exact distances or the photo.
-- Send the terminal style by mail to people, not through an upload portal. A portal reads the
-  text, and the two columns run together line by line.
-
-**❗ What the agent never does**
-
-- It never adds a skill, a level, a date or a fact you did not state. It never changes your CV for
-  a single job, and never overwrites a version you already have. When it needs any of that, it
-  stops and asks you.
-
-<details>
-<summary><b>❓ Why a CLI and not an MCP server?</b></summary>
-
-- A CLI works with every agent that can run a command, such as Claude Code, Codex or Gemini CLI,
-  and with people at a terminal. An MCP server needs a running process and an entry in the
-  settings of each client.
-- The agent asks `oriko schema` only for the command it needs. Most MCP clients put the
-  description of every tool into the agent's context up front, whether it is used or not.
-- oriko reads and writes plain files on your computer, so you can check, script and test every
-  step yourself.
-- An MCP server could wrap the CLI later without changing it. Poehnelt's article calls this
-  serving several surfaces from one tool.
-
-</details>
 
 ## 🛠️ Development
 
