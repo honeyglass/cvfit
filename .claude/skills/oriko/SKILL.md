@@ -1,6 +1,6 @@
 ---
 name: oriko
-description: Keeps the user's CVs with the oriko CLI and tailors them to job postings (a profile that hides, reorders and shortens blocks of a master CV, checked to fit the pages, built as a .docx for Google Docs); use it whenever the user wants a version of their CV for a specific job or company, wants to create a new CV or add jobs, skills or contact details to one, in any wording or language, or asks to preview, check or build an oriko profile, even when oriko is not named.
+description: Keeps the user's CVs with the oriko CLI and tailors them to job postings (a profile that hides, reorders and shortens blocks of a master CV, checked to fit the pages, built as a .docx for Google Docs or as a PDF); use it whenever the user wants a version of their CV for a specific job or company, wants to create a new CV or add jobs, skills or contact details to one, in any wording or language, or asks to preview, check or build an oriko profile, even when oriko is not named.
 ---
 
 # oriko: CVs and a version per job posting
@@ -10,7 +10,7 @@ Keep each CV as one master, tailor it to a posting with a profile, prove with or
 - oriko keeps one or more master CVs and one small profile per job posting.
 - A profile says only what differs for that posting: hidden blocks, an order, shorter or reworded bullets.
 - oriko places every block whole on the pages, so a job never breaks across a page.
-- The user uploads the .docx to Google Docs and saves it as PDF there.
+- The user uploads the .docx to Google Docs and saves it as PDF there, or oriko writes the PDF with LibreOffice.
 
 The CV is the user's word about their own career, sent to real employers.
 Everything in the CV must stay true.
@@ -102,7 +102,7 @@ A block with `page` starts on that page at the earliest.
 | 4 Check      | 3 Draft      | 'oriko plan' refuses the profile (**back edge**, bound 3)       |
 | 4 Check      | STOP         | 'oriko plan' refused the profile a third time                   |
 | 4 Check      | 5 Build      | 'oriko plan' answers ok                                         |
-| 5 Build      | 6 Report     | the .docx is written                                            |
+| 5 Build      | 6 Report     | the file is written                                             |
 | 6 Report     | 3 Draft      | the user asks for changes (**back edge**)                       |
 | 6 Report     | done         | the report is given                                             |
 | 7 Facts      | 8 Write      | every job has dates, employer, job title and place              |
@@ -183,7 +183,9 @@ Run `oriko plan --profile NAME`.
 
 Run `oriko build --profile NAME --out NAME.docx` in the user's working directory.
 
-- `--out` must be a `.docx` path inside the current folder.
+- `--out` must be a `.docx` or `.pdf` path inside the current folder.
+- Build `NAME.pdf` when the user asks for a PDF; a PDF needs LibreOffice on the user's machine.
+  The issue `NOT_INSTALLED` names how to install it: tell the user, never install it yourself.
 - Add `--dry-run` only when the user asked for a dry run.
 - Add `--style terminal` when the user asks for the version in the look of the preview; name it
   `NAME-terminal.docx`. Tell the user to send it by mail to people, not through an upload portal:
@@ -194,10 +196,10 @@ Run `oriko build --profile NAME --out NAME.docx` in the user's working directory
 Show the preview, then say what changed and why.
 
 - Run `oriko preview --profile NAME --output text` and print the output unchanged in a code block.
-- Name the profile file and the `.docx` written.
+- Name the profile file and the file written.
 - List what you hid, reordered, shortened and reworded, each with its reason from the posting.
 - List what the posting asks for and the CV does not show, so the user can add it to the master.
-- Name the next manual step: upload the `.docx` to Google Docs, then File, Download, PDF.
+- For a `.docx`, name the next manual step: upload it to Google Docs, then File, Download, PDF.
 - **Close by asking the user to read the preview and the PDF line by line before sending it.**
   An agent can misread or reword a fact; only the user knows the facts.
 
