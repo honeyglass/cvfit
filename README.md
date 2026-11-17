@@ -42,23 +42,20 @@ terminal, and you get a Word file that you open in Google Docs and save as PDF.
   their own programs while they install, and every version is fixed, so every install gets the
   same code.
 
-### oriko vs editing a document by hand
-
-| Task | Word or Google Docs by hand | **oriko** |
-| :--- | :--- | :--- |
-| **Add a job** | ⚠️ move text boxes and lines yourself | ✅ one command; everything below moves down |
-| **A version per job posting** | ❌ copy the document, edit every copy | ✅ a small file with the changes |
-| **Change all versions** | ❌ in every copy | ✅ once, in your CV |
-| **Page breaks** | ⚠️ checked by eye, after the edit | ✅ planned before the file exists |
-| **Work with an AI assistant** | ❌ copy and paste | ✅ the assistant runs oriko itself |
-| **Stay truthful** | ⚠️ up to you | ✅ nothing is added that you did not say |
-
-## 📦 Installation
-
-oriko needs Node 24 or newer and pnpm.
+## 🚀 Quickstart
 
 ```sh
-git clone git@github.com:honeyglass/oriko.git
+curl -fsSL https://raw.githubusercontent.com/honeyglass/oriko/main/install.sh | sh
+```
+
+oriko needs Node 24 or newer and git. The [script](install.sh) installs oriko in
+`~/.local/share/oriko`, adds the command `oriko` to `~/.local/bin` and, when Claude Code is set
+up, the skill to `~/.claude/skills`. Run it again to update.
+
+### Manual installation
+
+```sh
+git clone https://github.com/honeyglass/oriko.git
 cd oriko
 pnpm install --frozen-lockfile
 node bin/oriko.ts schema
@@ -68,10 +65,11 @@ node bin/oriko.ts schema
 > You do not compile anything first: Node 24 runs the TypeScript files of oriko as they are. The
 > examples below write `oriko` for `node bin/oriko.ts`.
 
-## 🤖 Working with an agent
+## 🤖 Working with oriko and an agent
 
-Open [Claude Code](https://claude.com/claude-code) in this folder and say what you want. The skill
-in [`.claude/skills/oriko/`](.claude/skills/oriko/SKILL.md) tells the agent how to use oriko.
+Open [Claude Code](https://claude.com/claude-code) and say what you want. The skill in
+[`.claude/skills/oriko/`](.claude/skills/oriko/SKILL.md) tells the agent how to use oriko. After a
+manual installation, open Claude Code in the oriko folder.
 
 ```text
 Fit my CV to this job: <paste the job posting>
