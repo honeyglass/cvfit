@@ -45,8 +45,19 @@ terminal, and you get a Word file that you open in Google Docs and save as PDF.
 
 ## 🚀 Quickstart
 
-```sh
+```bash
 curl -fsSL https://raw.githubusercontent.com/honeyglass/oriko/main/install.sh | sh
+```
+
+The script installs the command `oriko` and then the agent skill, for Claude Code and every other
+agent it finds. For the skill it runs the [skills CLI](https://www.skills.sh/) behind skills.sh.
+Run the line again to update both.
+
+### Command and skill separately
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/honeyglass/oriko/main/install.sh | sh -s -- --no-skill
+npx skills add honeyglass/oriko -g -y
 ```
 
 ### Manual installation
@@ -57,19 +68,6 @@ cd oriko
 pnpm install --frozen-lockfile
 node bin/oriko.ts schema
 ```
-
-### Add the skill to other agents
-
-The quickstart sets up the skill for Claude Code. For other agents, such as Codex, Cursor or
-Gemini CLI, add it with the [skills CLI](https://www.skills.sh/):
-
-```sh
-npx skills add honeyglass/oriko
-```
-
-> [!WARNING]
-> The skill drives the command `oriko`, so run the quickstart first: `npx skills add` copies only
-> the skill, not oriko itself.
 
 ## 🤖 Working with oriko and an agent
 
@@ -223,8 +221,8 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
 - **Terminal preview**: every line is 84 characters wide; a narrower terminal breaks the lines.
 - **Node**: 24 or newer, which runs the TypeScript files of oriko as they are.
 - **Install script**: macOS and Linux. Windows is not tested; use the manual installation there.
-- **Agents**: the skill is written and tested for Claude Code. Other agents get it through
-  `npx skills add honeyglass/oriko`; any agent that can run a command can use the CLI through
+- **Agents**: the skill is written and tested for Claude Code. The quickstart adds it to every
+  agent the skills CLI finds; any agent that can run a command can use the CLI through
   `oriko schema`.
 
 ## 📖 Docs
