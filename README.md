@@ -192,9 +192,9 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
 
 ```text
 ~/.oriko/
-  cvs/jane-doe.json        your CV: language, person, contact, pages, blocks
-  cvs/jane-doe.png         its photo
-  profiles/acme.json       one version per job posting, naming its CV in "cv"
+  cvs/jane-doe.json           your CV: language, person, contact, pages, blocks
+  cvs/jane-doe.png            its photo
+  profiles/backend-job.json   one version per job posting, naming its CV in "cv"
 ```
 
 > [!TIP]
@@ -215,7 +215,7 @@ oriko block add --json '{"block":{"id":"tools","kind":"list","section":"Skills",
 oriko photo set ~/Pictures/portrait.jpg
 ```
 
-Write a version for one job posting in `~/.oriko/profiles/acme.json`:
+Write a version for one job posting in `~/.oriko/profiles/backend-job.json`:
 
 ```json
 { "cv": "jane-doe", "blocks": { "tools": { "items": ["Go", "Kafka"] } } }
@@ -224,17 +224,26 @@ Write a version for one job posting in `~/.oriko/profiles/acme.json`:
 Check, look, build:
 
 ```sh
-oriko plan --profile acme
-oriko preview --profile acme
-oriko build --profile acme --out acme.docx
+oriko plan --profile backend-job
+oriko preview --profile backend-job
+oriko build --profile backend-job --out backend-job.docx
 ```
 
-Upload `acme.docx` to Google Docs and save it there with File, Download, PDF.
+Upload `backend-job.docx` to Google Docs and save it there with File, Download, PDF.
 
-> [!WARNING]
-> The layout is tuned to how Google Docs sets the file, with Open Sans and Calibri. Word or
-> LibreOffice set the same file with other line breaks, and a block that fits in Google Docs may
-> spill over elsewhere.
+## 🔌 Compatibility
+
+- **Google Docs**: the layout is tuned to how Google Docs sets the file, with Open Sans and
+  Calibri. Open the Word file there and save it as PDF.
+- ⚠️ **Word and LibreOffice** set the same file with other line breaks, so a block that fits in
+  Google Docs may spill over to the next page.
+- **Terminal style**: set in Fira Code, which Google Docs offers, so every character keeps its
+  column.
+- **Terminal preview**: every line is 84 characters wide; a narrower terminal breaks the lines.
+- **Node**: 24 or newer, which runs the TypeScript files of oriko as they are.
+- **Install script**: macOS and Linux. Windows is not tested; use the manual installation there.
+- **Agents**: the skill is written for Claude Code. Any other agent that can run a command, such
+  as Codex or Gemini CLI, can use the CLI through `oriko schema`.
 
 ## 🛠️ Development
 
