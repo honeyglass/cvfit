@@ -9,7 +9,7 @@
     "oriko": "bin/oriko.ts"
   },
   "scripts": {
-    "test": "node --test 'tests/api/*.api.spec.ts' 'tests/internals/*.internals.spec.ts'",
+    "test": "node --test --experimental-test-coverage --test-coverage-exclude='tests/**' --test-coverage-lines=95 --test-coverage-branches=85 --test-coverage-functions=95 'tests/api/*.api.spec.ts' 'tests/internals/*.internals.spec.ts'",
     "typecheck": "tsc -p . --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check ."

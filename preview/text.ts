@@ -20,7 +20,7 @@ const RIGHT = 25;
 const DOTS = LIMITS.level + 1;
 /** The cells of a fill bar; one cell is a tenth of a column. */
 const BAR = 10;
-/** Where the photo stands: Oriko, the oriko logo, since the terminal shows no picture. */
+/** Where the photo stands: Oriko, the mascot of the logo, since the terminal shows no picture. */
 const FACE = [
   '  ╭───────┐ ',
   '  │       └┐',
