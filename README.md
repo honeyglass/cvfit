@@ -58,6 +58,19 @@ pnpm install --frozen-lockfile
 node bin/oriko.ts schema
 ```
 
+### Add the skill to other agents
+
+The quickstart sets up the skill for Claude Code. For other agents, such as Codex, Cursor or
+Gemini CLI, add it with the [skills CLI](https://www.skills.sh/):
+
+```sh
+npx skills add honeyglass/oriko
+```
+
+> [!WARNING]
+> The skill drives the command `oriko`, so run the quickstart first: `npx skills add` copies only
+> the skill, not oriko itself.
+
 ## 🤖 Working with oriko and an agent
 
 Open [Claude Code](https://claude.com/claude-code) and say what you want. The skill in
@@ -210,8 +223,9 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
 - **Terminal preview**: every line is 84 characters wide; a narrower terminal breaks the lines.
 - **Node**: 24 or newer, which runs the TypeScript files of oriko as they are.
 - **Install script**: macOS and Linux. Windows is not tested; use the manual installation there.
-- **Agents**: the skill is written for Claude Code. Any other agent that can run a command, such
-  as Codex or Gemini CLI, can use the CLI through `oriko schema`.
+- **Agents**: the skill is written and tested for Claude Code. Other agents get it through
+  `npx skills add honeyglass/oriko`; any agent that can run a command can use the CLI through
+  `oriko schema`.
 
 ## 📖 Docs
 
