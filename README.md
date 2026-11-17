@@ -197,10 +197,6 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
   profiles/backend-job.json   one version per job posting, naming its CV in "cv"
 ```
 
-> [!TIP]
-> Try oriko without your own data: [`examples/`](examples/) holds a complete data folder. Add
-> `--home examples` to any command.
-
 ## ✍️ First steps by hand
 
 The agent runs these commands for you. By hand, they look like this.
