@@ -1,7 +1,7 @@
 # TODO
 
 Open work on oriko, the CLI and its skill.
-<!-- last item number: 9 -->
+<!-- last item number: 11 -->
 
 ## Next
 
@@ -24,3 +24,6 @@ Open work on oriko, the CLI and its skill.
 - [ ] #8 Get the PDF from Google Docs without uploading the .docx by hand (added 2026-11-17)
 - [ ] #9 Publish oriko on npm, where the name is still free (added 2026-11-17)
       'package.json'
+- [ ] #10 Add an MCP server as a wrapper around the oriko CLI (added 2026-11-17)
+- [ ] #11 Connect the LinkedIn API to read or write the LinkedIn profile (added 2026-11-17)
+      'https://learn.microsoft.com/en-us/linkedin/dma/member-data-portability/member-data-portability-member/?view=li-dma-data-portability-2026-08'
