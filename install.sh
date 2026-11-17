@@ -2,28 +2,32 @@
 # @file install.sh
 # @brief Installs oriko, its command and its agent skill; run it again to update.
 # @description Clones oriko into ~/.local/share/oriko, installs its dependencies with the pnpm
-# that package.json pins, links the command oriko into ~/.local/bin and, when Claude Code is
-# set up, the skill into ~/.claude/skills. It never replaces a file it did not write.
+# that package.json pins and links the command oriko into ~/.local/bin. The skill comes from the
+# skills CLI behind skills.sh; --no-skill leaves it out. The script never replaces a file it did
+# not write.
 #
 # @example curl -fsSL https://raw.githubusercontent.com/honeyglass/oriko/main/install.sh | sh
+# @example curl -fsSL https://raw.githubusercontent.com/honeyglass/oriko/main/install.sh | sh -s -- --no-skill
 set -eu
 
 # ORIKO_REPOSITORY points the script at another copy, as the install test does with its checkout.
 REPOSITORY="${ORIKO_REPOSITORY:-https://github.com/honeyglass/oriko.git}"
 DIR="${XDG_DATA_HOME:-$HOME/.local/share}/oriko"
 BIN_DIR="$HOME/.local/bin"
-SKILLS_DIR="$HOME/.claude/skills"
+# The skills CLI of skills.sh, pinned to a version at least three days old.
+SKILLS_CLI='skills@1.8.1'
 
 # The whole script sits in functions, and main runs last: a download cut short runs nothing.
 main() {
+  with_skill=$(skill_wanted "$@")
   need_node
   need_command git
   fetch_oriko
   install_dependencies
   link "$DIR/bin/oriko.ts" "$BIN_DIR/oriko" 'command'
-  link_skill
   "$BIN_DIR/oriko" schema >/dev/null || fail "oriko does not start; see the output above. Nothing else was changed."
   say "installed in $DIR"
+  if [ "$with_skill" = yes ]; then install_skill; fi
   path_hint
 }
 
@@ -31,6 +35,15 @@ say() { printf 'oriko: %s\n' "$*"; }
 fail() {
   printf 'oriko: %s\n' "$*" >&2
   exit 1
+}
+
+# No option installs the skill too; --no-skill leaves it out; anything else is refused.
+skill_wanted() {
+  case "$*" in
+    '') echo yes ;;
+    --no-skill) echo no ;;
+    *) fail "unknown option: $*; the only option is --no-skill." ;;
+  esac
 }
 
 need_command() {
@@ -68,13 +81,15 @@ install_dependencies() {
   (cd "$DIR" && pnpm install --frozen-lockfile --prod)
 }
 
-# The skill finds the oriko folder through this link, so it works in every folder.
-link_skill() {
-  if [ -d "$HOME/.claude" ]; then
-    link "$DIR/.claude/skills/oriko" "$SKILLS_DIR/oriko" 'skill'
-    return
-  fi
-  say "Claude Code is not set up, so no skill was linked; run this script again after setting it up."
+# The skills CLI installs the skill for every agent it finds, Claude Code among them, and a later
+# run updates it. With ORIKO_REPOSITORY it installs the skill of that copy instead of GitHub's.
+install_skill() {
+  need_command npx
+  source='honeyglass/oriko'
+  if [ -n "${ORIKO_REPOSITORY:-}" ]; then source="$DIR"; fi
+  say "adding the skill with the skills CLI of skills.sh ($SKILLS_CLI)"
+  npx --yes "$SKILLS_CLI" add "$source" -g -y ||
+    fail "the skills CLI could not add the skill; the command oriko works. Add the skill later with: npx skills add honeyglass/oriko -g -y"
 }
 
 # A link that already points at oriko stays; anything else at that path is the user's and stays too.
