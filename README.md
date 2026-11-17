@@ -24,7 +24,8 @@ with your jobs, skills, languages and contact details. When you find a job you l
 posting to an AI assistant, in plain words and in any language. The assistant fits your CV to
 it: it moves the matching skills up, hides what does not help and shortens long lists, and it
 never invents anything. You see the result right away as a preview of every page in the
-terminal, and you get a Word file that you open in Google Docs and save as PDF.
+terminal, and you get a Word file that you open in Google Docs and save as PDF, or the PDF itself
+when LibreOffice is installed.
 
 ### Why oriko?
 
@@ -244,6 +245,16 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
   Calibri. Open the Word file there and save it as PDF.
 - ⚠️ **Word and LibreOffice** set the same file with other line breaks, so a block that fits in
   Google Docs may spill over to the next page.
+- **PDF without Google Docs**: `oriko build --out <name>.pdf` writes the PDF through
+  [LibreOffice](https://www.libreoffice.org/download), which has to be installed: on macOS
+  `brew install --cask libreoffice`, on Debian or Ubuntu `sudo apt install libreoffice`, on
+  Windows `winget install TheDocumentFoundation.LibreOffice`. Without it, oriko refuses and names
+  these commands. For the PDF, oriko writes a .docx adjusted to how LibreOffice sets it and hands
+  over the font files Google Docs uses ([assets/fonts](assets/fonts/README.md)), so the PDF shows
+  the page Google Docs shows: the same lines, page breaks and positions, within about 1 pt. Only
+  Calibri differs: it is not free, so the name and the headings use a font with its widths and
+  its baseline, whose letters look a little different. The terminal style matches exactly. macOS
+  and Linux; Windows is not covered yet.
 - **Terminal style**: set in Fira Code, which Google Docs offers, so every character keeps its
   column.
 - **Terminal preview**: every line is 84 characters wide; a narrower terminal breaks the lines.

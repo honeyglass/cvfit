@@ -33,7 +33,9 @@ oriko preview --profile backend-job
 oriko build --profile backend-job --out backend-job.docx
 ```
 
-Upload `backend-job.docx` to Google Docs and save it there with File, Download, PDF.
+Upload `backend-job.docx` to Google Docs and save it there with File, Download, PDF. With
+LibreOffice installed, `oriko build --profile backend-job --out backend-job.pdf` writes the PDF
+directly.
 
 ---
 
