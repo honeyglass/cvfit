@@ -57,8 +57,10 @@ export function sheets(cv: Master, plan: Plan, height = 0) {
   return plan.pages.map((page, index) => {
     const title = `Page ${index + 1} of ${count}`;
     const fill = `Left  ${bar(page.left)}     Right ${bar(page.right)}`;
-    const left = leftLines(cv, page.left, index);
-    return sheet(title, left, rightLines(cv, page.right, index), fill, height);
+    // A later page starts one blank row below the top edge, as page 1 does above the name.
+    const gap = index === 0 ? [] : [''];
+    const left = [...gap, ...leftLines(cv, page.left, index)];
+    return sheet(title, left, [...gap, ...rightLines(cv, page.right, index)], fill, height);
   });
 }
 

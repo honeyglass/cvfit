@@ -75,6 +75,12 @@ test('starts both columns of page 1 on one row, with a blank row below the conta
   assert.equal(rowOf(shorter, 'PROFESSIONAL EXPERIENCE'), 10);
 });
 
+test('starts both columns of a later page one blank row below the top edge', () => {
+  const top = lines.findIndex(line => line.startsWith('╭─ Page 2 of 2'));
+  assert.equal(lines[top + 1], `│ ${' '.repeat(52)} │ ${' '.repeat(25)} │`);
+  assert.match(lines[top + 2] ?? '', /^│ PROFESSIONAL EXPERIENCE ─+ │ LANGUAGES ─+ │$/);
+});
+
 test('indents the items of a group below its title', () => {
   assert.ok(lines.some(line => /│   Go\s+●●●●● │$/.test(line)));
   assert.equal(

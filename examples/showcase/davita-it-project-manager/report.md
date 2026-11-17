@@ -53,6 +53,7 @@ languages and certificates in it. Here is the preview:
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 ╭─ Page 2 of 2 ────────── github.com/honeyglass/oriko ─┬───────────────────────────╮
+│                                                      │                           │
 │                                                      │ CERTIFICATES ──────────── │
 │                                                      │                           │
 │                                                      │ PRINCE2 Practitioner      │
