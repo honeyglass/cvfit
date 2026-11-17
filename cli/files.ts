@@ -2,24 +2,76 @@
  * Every file the cli reads or writes, and the checks that keep a path where it belongs.
  *
  * readJson: the value of a JSON file.
- * isMissing, fileNotFound, tooLarge, invalidJson, missingOption: the expected failures of a file, as issues.
+ * readBounded, pipedText: the bytes of a file or a pipe, never more than a limit.
+ * pathIssue: any refusal of the system on a path, as an issue for the caller.
+ * isMissing, fileNotFound, notAFile, notAFolder, tooLarge, invalidJson, missingOption: the
+ * expected failures of a file, as issues.
  * photoBytes: the photo a master file or a profile names, from the data folder only.
  * outputPath: the path of the .docx to write, inside the working directory only.
- * writeAtomic: a file written whole or not at all.
+ * writeAll, NewFile: the files of one command, all written whole or none, never through a link.
  *
  * A master file or a profile may come from an agent that read a job posting. A path inside it
  * therefore opens nothing outside the data folder, also not through a link.
  *
  * @example const master = await readJson(masterPath(home), 'home');
  */
-import { readFile, realpath, rename, writeFile } from 'node:fs/promises';
-import { dirname, isAbsolute, relative, resolve } from 'node:path';
-import { $try, shown, trySync$ } from '@honeyglass/utils/ts';
-import { done, rejected } from '../core/errors.ts';
+import { constants } from 'node:fs';
+import { lstat, mkdir, open, realpath, rename, rm, stat, writeFile } from 'node:fs/promises';
+import type { FileHandle } from 'node:fs/promises';
+import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path';
+import { $try, anyError, shown, trySync$ } from '@honeyglass/utils/ts';
+import { SYSTEM_REFUSED, done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
 import { LIMITS } from '../core/limits.ts';
+import { missingHint } from './commands.ts';
+import type { OptionName } from './commands.ts';
 
 export const isMissing = (error: Error) => 'code' in error && error.code === 'ENOENT';
+
+// Node marks an error of the operating system with the call that failed.
+const isSystemError = (error: Error): error is Error & { code: string } =>
+  'syscall' in error && 'code' in error && typeof error.code === 'string';
+
+/**
+ * A path the caller gave, and every file in the data folder, is the caller's to fix, whatever the
+ * system answers; any other error is a bug of this program and flies on.
+ *
+ * @param error - the error of a call on the path
+ * @param path - the path
+ * @param option - the cli option that named it, or that names the data folder
+ * @returns the issue for the caller
+ */
+export function pathIssue(error: Error, path: string, option: string): Issue {
+  if (isSystemError(error) === false) throw error;
+  if (isMissing(error)) return fileNotFound(path, option);
+  const message = `The system refused ${shown(path)}: ${error.code}`;
+  if (PATH_CODES.has(error.code))
+    return {
+      code: 'PATH_REFUSED',
+      path: option,
+      message,
+      hint: 'Check the path and that you may read and write there',
+    };
+  return {
+    code: SYSTEM_REFUSED,
+    path: option,
+    message,
+    hint: 'Tell the person what the system answered, such as a full disk, and call again once solved',
+  };
+}
+
+// A definition from POSIX's error numbers: the codes another path or its access rights fix. Any
+// other code, one nobody planned for too, goes to the person.
+const PATH_CODES = new Set([
+  'ENOTDIR',
+  'EISDIR',
+  'EACCES',
+  'EPERM',
+  'ELOOP',
+  'ENAMETOOLONG',
+  'EEXIST',
+  'EROFS',
+]);
 
 /**
  * @param path - the absolute path of the file
@@ -27,27 +79,116 @@ export const isMissing = (error: Error) => 'code' in error && error.code === 'EN
  * @returns the parsed value, unchecked
  */
 export async function readJson(path: string, option: string): Promise<Result<unknown>> {
-  const text = await $try(readFile(path, 'utf8'), { or: null, expected: isMissing });
-  if (text === null) return rejected('read', [fileNotFound(path, option)]);
-  if (Buffer.byteLength(text) > LIMITS.inputBytes) return rejected('read', [tooLarge(option)]);
-  const value = trySync$((): unknown => JSON.parse(text));
+  const bytes = await readBounded(path, LIMITS.inputBytes, option);
+  if (bytes.error !== null) return bytes;
+  const value = trySync$((): unknown => JSON.parse(bytes.data.toString('utf8')));
   if (value.error !== null)
-    return rejected('read', [invalidJson(`The file ${shown(path)}`)], value.error);
+    return rejected('file', [invalidJson(`The file ${shown(path)}`)], value.error);
   return done(value.data);
+}
+
+/**
+ * Every file the cli reads comes through here: the kind and the size come from the opened file,
+ * so a file swapped after a check cannot slip through, and the open never waits on a pipe.
+ *
+ * @param path - the absolute path of the file
+ * @param limit - the most bytes the file may hold
+ * @param option - the cli option that named the file, or the field of the data that did
+ * @returns the bytes; a refusal for no regular file, more than limit bytes, or a refusal of the system
+ */
+export async function readBounded(
+  path: string,
+  limit: number,
+  option: string,
+): Promise<Result<Buffer>> {
+  const opened = await $try(open(path, constants.O_RDONLY | constants.O_NONBLOCK));
+  if (opened.error !== null)
+    return rejected('file', [pathIssue(opened.error, path, option)], opened.error);
+  const read = await $try(regularBytes(opened.data, { path, limit, option }));
+  await opened.data.close();
+  if (read.error !== null)
+    return rejected('file', [pathIssue(read.error, path, option)], read.error);
+  return read.data;
+}
+
+type Bound = { path: string; limit: number; option: string };
+
+async function regularBytes(handle: FileHandle, bound: Bound): Promise<Result<Buffer>> {
+  const info = await handle.stat();
+  if (info.isFile() === false) return rejected('file', [notAFile(bound.path, bound.option)]);
+  const bytes = await readAtMost(handle, bound.limit + 1);
+  if (bytes.length > bound.limit) return rejected('file', [tooLarge(bound.option, bound.limit)]);
+  return done(bytes);
+}
+
+// The size a stat reports can change before the read, so the read itself stops at the limit.
+async function readAtMost(handle: FileHandle, size: number) {
+  const chunks: Buffer[] = [];
+  let total = 0;
+  while (total < size) {
+    const chunk = Buffer.alloc(Math.min(CHUNK_BYTES, size - total));
+    const { bytesRead } = await handle.read(chunk, 0, chunk.length, null);
+    if (bytesRead === 0) break;
+    chunks.push(chunk.subarray(0, bytesRead));
+    total += bytesRead;
+  }
+  return Buffer.concat(chunks);
+}
+
+const CHUNK_BYTES = 65_536;
+
+/**
+ * @param stream - the piped input, such as stdin
+ * @param limit - the most bytes the input may hold
+ * @returns the text, cut one byte past the limit, so the caller refuses it without holding it whole
+ */
+export async function pipedText(stream: AsyncIterable<unknown>, limit: number) {
+  const chunks: Buffer[] = [];
+  let total = 0;
+  for await (const chunk of stream) {
+    const bytes = Buffer.isBuffer(chunk) ? chunk : Buffer.from(`${chunk}`);
+    chunks.push(bytes);
+    total += bytes.length;
+    if (total > limit) break;
+  }
+  return Buffer.concat(chunks)
+    .subarray(0, limit + 1)
+    .toString('utf8');
 }
 
 export const fileNotFound = (path: string, option: string): Issue => ({
   code: 'FILE_NOT_FOUND',
   path: option,
   message: `There is no file ${shown(path)}`,
-  hint: 'Check the path; "oriko schema" lists where each file is looked for',
+  hint: 'Check the path, or pass the full path of the file',
 });
 
-export const tooLarge = (path: string): Issue => ({
+const folderNotFound = (path: string, option: string): Issue => ({
+  code: 'FOLDER_NOT_FOUND',
+  path: option,
+  message: `There is no folder ${shown(path)}`,
+  hint: 'Create the folder, or write into the working directory',
+});
+
+export const notAFile = (path: string, option: string): Issue => ({
+  code: 'NOT_A_FILE',
+  path: option,
+  message: `${shown(path)} is no file`,
+  hint: 'Pass the path of a file, not of a folder',
+});
+
+export const notAFolder = (path: string, option: string): Issue => ({
+  code: 'NOT_A_FOLDER',
+  path: option,
+  message: `${shown(path)} is no folder`,
+  hint: 'Pass the path of a folder, not of a file',
+});
+
+export const tooLarge = (path: string, limit: number = LIMITS.inputBytes): Issue => ({
   code: 'INPUT_TOO_LARGE',
   path,
-  message: `The input is larger than ${LIMITS.inputBytes} bytes`,
-  hint: 'Send less; a CV is a few thousand bytes',
+  message: `The input is larger than ${limit} bytes`,
+  hint: `Send at most ${limit} bytes; a CV is a few thousand, a photo a few million`,
 });
 
 export const invalidJson = (what: string): Issue => ({
@@ -64,31 +205,56 @@ export const invalidJson = (what: string): Issue => ({
  */
 export async function photoBytes(folder: string, photo: string): Promise<Result<Uint8Array>> {
   const path = resolve(folder, photo);
-  if (leaves(folder, path)) return rejected('read', [pathOutside('person.photo', photo, folder)]);
-  const real = await $try(realpath(path), { or: null, expected: isMissing });
-  if (real === null) return rejected('read', [fileNotFound(path, 'person.photo')]);
-  if (leaves(await realpath(folder), real))
-    return rejected('read', [pathOutside('person.photo', photo, folder)]);
-  return done(await readFile(real));
+  const real = await $try(realpath(path));
+  if (real.error !== null)
+    return rejected('file', [pathIssue(real.error, path, 'person.photo')], real.error);
+  if (leaves(await realpath(folder), real.data))
+    return rejected('file', [pathOutside('person.photo', photo, folder)]);
+  return readBounded(real.data, LIMITS.photoBytes, 'person.photo');
 }
 
 /**
  * @param cwd - the working directory
  * @param out - the path the caller named, or nothing
- * @returns the absolute path to write the .docx to
+ * @returns the file to write, in the folder the check resolved, and its path from the working directory
  */
-export async function outputPath(cwd: string, out: string | undefined): Promise<Result<string>> {
+export async function outputPath(
+  cwd: string,
+  out: string | undefined,
+): Promise<Result<{ path: string; name: string }>> {
   if (out === undefined)
     return rejected('build', [missingOption('out', 'the path of the .docx to write')]);
   if (out.endsWith('.docx') === false) return rejected('build', [wrongExtension(out)]);
   const path = resolve(cwd, out);
-  if (leaves(cwd, path)) return rejected('build', [pathOutside('out', out, cwd)]);
-  const parent = await $try(realpath(dirname(path)), { or: null, expected: isMissing });
-  if (parent === null) return rejected('build', [fileNotFound(dirname(path), 'out')]);
+  const parent = await $try(realpath(dirname(path)));
+  if (parent.error !== null)
+    return rejected('build', [folderIssue(parent.error, dirname(path))], parent.error);
   const real = await realpath(cwd);
-  const isInside = parent === real || leaves(real, parent) === false;
+  const isInside = parent.data === real || leaves(real, parent.data) === false;
   if (isInside === false) return rejected('build', [pathOutside('out', out, cwd)]);
-  return done(path);
+  // The write goes into the folder the check resolved, never again through the path as given.
+  const target = join(parent.data, basename(path));
+  const kinds = await outputKinds(parent.data, target);
+  if (kinds.error !== null) return kinds;
+  return done({ path: target, name: relative(real, target) });
+}
+
+const folderIssue = (error: Error, folder: string) =>
+  isMissing(error) ? folderNotFound(folder, 'out') : pathIssue(error, folder, 'out');
+
+// Checked before the write, so --dry-run answers what the write would meet: a folder to write
+// into, and no folder in the place of the file. lstat reads the path as the rename does, which
+// replaces a link and never follows it.
+async function outputKinds(parent: string, path: string): Promise<Result<undefined>> {
+  const folder = await $try(stat(parent));
+  if (folder.error !== null) return rejected('build', [pathIssue(folder.error, parent, 'out')]);
+  if (folder.data.isDirectory() === false) return rejected('build', [notAFolder(parent, 'out')]);
+  const file = await $try(lstat(path));
+  if (file.error === null)
+    return file.data.isDirectory() ? rejected('build', [notAFile(path, 'out')]) : done(undefined);
+  return isMissing(file.error)
+    ? done(undefined)
+    : rejected('build', [pathIssue(file.error, path, 'out')]);
 }
 
 // True for the folder itself too: the check is for a file in the folder, never for the folder.
@@ -104,11 +270,22 @@ const pathOutside = (option: string, path: string, folder: string): Issue => ({
   hint: 'Use a path inside that folder, without a link that leads out of it',
 });
 
-export const missingOption = (option: string, what: string): Issue => ({
+/**
+ * @param option - the option the command needs
+ * @param what - what its value is
+ * @param hint - what to add; the option's own text when it has one, so a missing and an empty
+ *   option name the same step
+ * @returns the issue
+ */
+export const missingOption = (
+  option: OptionName,
+  what: string,
+  hint = missingHint(option),
+): Issue => ({
   code: 'MISSING_OPTION',
   path: option,
   message: `The command needs --${option}, ${what}`,
-  hint: `Add --${option}`,
+  hint,
 });
 
 const wrongExtension = (out: string): Issue => ({
@@ -118,12 +295,50 @@ const wrongExtension = (out: string): Issue => ({
   hint: 'Use a file name that ends in .docx',
 });
 
+export type NewFile = { path: string; content: string | Uint8Array };
+
 /**
- * @param path - the absolute path of the file
- * @param content - the whole new content
+ * Every file of one command is first written whole beside its place, and only then moved in, so
+ * a refused write leaves none of them.
+ *
+ * @param files - the files of one command, in the order they are moved in
+ * @param option - the cli option that named the files, or that names the data folder
+ * @returns nothing; a refusal when the system refuses a write, with no temporary file left
  */
-export async function writeAtomic(path: string, content: string | Uint8Array) {
-  const temporary = `${path}.${process.pid}.tmp`;
-  await writeFile(temporary, content);
-  await rename(temporary, path);
+export async function writeAll(files: NewFile[], option: string): Promise<Result<undefined>> {
+  for (const file of files) {
+    const staged = await $try(stage(file));
+    if (staged.error === null) continue;
+    await removeTemporaries(files);
+    return rejected('file', [pathIssue(staged.error, file.path, option)], staged.error);
+  }
+  for (const [index, file] of files.entries()) {
+    const moved = await $try(rename(temporaryOf(file), file.path));
+    if (moved.error === null) continue;
+    await removeTemporaries(files);
+    const state = writtenState(files.slice(0, index));
+    return rejected('file', [pathIssue(moved.error, file.path, option)], moved.error, state);
+  }
+  return done(undefined);
 }
+
+const temporaryOf = (file: NewFile) => `${file.path}.${process.pid}.tmp`;
+
+// 'wx' creates a new file or fails, so a link left at the temporary path is never followed;
+// the rename then replaces a link at the path itself, never its target.
+async function stage(file: NewFile) {
+  await mkdir(dirname(file.path), { recursive: true });
+  await rm(temporaryOf(file), { force: true });
+  await writeFile(temporaryOf(file), file.content, { flag: 'wx' });
+}
+
+async function removeTemporaries(files: NewFile[]) {
+  for (const file of files)
+    await $try(rm(temporaryOf(file), { force: true }), { or: undefined, expected: anyError });
+}
+
+// A rename can fail after an earlier one went through; the answer then names what is written.
+const writtenState = (written: NewFile[]) =>
+  written.length === 0
+    ? 'Nothing was written.'
+    : `Written before the failure: ${written.map(file => shown(file.path)).join(', ')}.`;

@@ -38,8 +38,9 @@ curl -fsSL https://raw.githubusercontent.com/honeyglass/oriko/main/install.sh | 
 
 | Answer                      | Exit code | What to do                                                                       |
 | :-------------------------- | :-------- | :------------------------------------------------------------------------------- |
-| '"ok": true'                | 0         | go on                                                                            |
+| '"ok": true'                | 0         | go on; 'next' names the commands that can follow, the choice stays yours         |
 | '"ok": false' with 'issues' | 1         | run the 'command' of each issue that has one, follow its 'hint', then call again |
+| '"kind": "ask"'             | 1         | stop and tell the user every issue, such as a full disk; call again once solved  |
 | '"kind": "bug"'             | 2         | stop and tell the user; oriko has a bug, do not work around it                   |
 
 An option without a value lists the values it accepts, such as `oriko show --cv` for the CV names.
@@ -117,7 +118,8 @@ A block with `page` starts on that page at the earliest.
 
 ### 0 Setup
 
-Find how to run oriko, then run `oriko cvs` and `oriko profiles`.
+Find how to run oriko, then run `oriko` alone: it answers the data folder, its CVs and profiles.
+Then run `oriko cvs` and `oriko profiles`.
 
 - `oriko cvs` lists every master with its name, language and person, and whether it fits its pages.
 - `oriko profiles` lists the existing profiles, their master, and whether each one builds.

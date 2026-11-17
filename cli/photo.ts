@@ -8,9 +8,8 @@
  *
  * @example const answer = await setPhoto({ home, cwd, source: 'portrait.jpg', profile: 'acme', isDryRun: false });
  */
-import { mkdir, readFile } from 'node:fs/promises';
-import { dirname, join, resolve } from 'node:path';
-import { $try, shown, trySync$ } from '@honeyglass/utils/ts';
+import { join, resolve } from 'node:path';
+import { trySync$ } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
 import { LIMITS } from '../core/limits.ts';
@@ -18,7 +17,7 @@ import { schemaIssues } from '../data/check.ts';
 import { Master, Profile } from '../data/cv.schema.ts';
 import { photoUnreadable } from '../render/docx.ts';
 import { squarePhoto } from '../render/images.ts';
-import { fileNotFound, isMissing, readJson, tooLarge, writeAtomic } from './files.ts';
+import { readBounded, readJson, writeAll } from './files.ts';
 import { chosenCv, profilePath } from './home.ts';
 
 type Request = {
@@ -44,15 +43,20 @@ export async function setPhoto(request: Request): Promise<Result<Record<string, 
   if (picture.error !== null) return picture;
   const { path, photo, content } = owner.data;
   if (isDryRun) return done({ command: 'photo set', photo, written: false });
-  await mkdir(dirname(join(home, photo)), { recursive: true });
-  await writeAtomic(join(home, photo), picture.data);
-  await writeAtomic(path, `${JSON.stringify(content, null, 2)}\n`);
+  const written = await writeAll(
+    [
+      { path: join(home, photo), content: picture.data },
+      { path, content: `${JSON.stringify(content, null, 2)}\n` },
+    ],
+    'home',
+  );
+  if (written.error !== null) return written;
   return done({ command: 'photo set', photo, written: true });
 }
 
 const missingPicture = (): Issue => ({
   code: 'MISSING_INPUT',
-  path: '',
+  path: 'file',
   message: 'The command names no picture',
   hint: 'Pass the path of a PNG or JPEG file: oriko photo set <file>',
 });
@@ -92,10 +96,10 @@ async function profileOwner(home: string, name: string): Promise<Result<Owner>> 
 }
 
 async function squared(path: string): Promise<Result<Uint8Array>> {
-  const bytes = await $try(readFile(path), { or: null, expected: isMissing });
-  if (bytes === null) return rejected('photo set', [fileNotFound(path, 'photo')]);
-  if (bytes.length > LIMITS.photoBytes) return rejected('photo set', [tooLarge(shown(path))]);
-  const square = trySync$(() => squarePhoto(bytes));
-  if (square.error !== null) return rejected('photo set', [photoUnreadable()], square.error);
+  const bytes = await readBounded(path, LIMITS.photoBytes, 'file');
+  if (bytes.error !== null) return bytes;
+  const square = trySync$(() => squarePhoto(bytes.data));
+  if (square.error !== null)
+    return rejected('photo set', [{ ...photoUnreadable(), path: 'file' }], square.error);
   return done(square.data);
 }

@@ -10,6 +10,7 @@
  *
  * @example const parsed = Master.safeParse(JSON.parse(text));
  */
+import { isAbsolute, normalize, sep } from 'node:path';
 import { UNSAFE_CHAR } from '@honeyglass/utils/ts';
 import { z } from 'zod';
 import { ICONS, LIMITS } from '../core/limits.ts';
@@ -91,8 +92,18 @@ export const ITEM_PATCH = {
   entries: EntryItem.partial(),
 };
 
-// A path relative to the data folder; the place that opens the file checks where it leads.
-const photo = z.string().min(1).max(200);
+// A path inside the data folder, written relative to it, on one visible line like every text.
+// This is its shape only; the place that opens the file checks where a link in it leads.
+const photo = z
+  .string()
+  .max(200)
+  .refine(isVisibleLine, 'Expected one line of visible text')
+  .refine(isInsidePath, 'Expected a path inside the data folder, relative to it');
+
+function isInsidePath(path: string) {
+  const [first] = normalize(path).split(sep);
+  return isAbsolute(path) === false && first !== '..';
+}
 
 export const ContactItem = z.strictObject({
   icon: z.enum(ICONS),

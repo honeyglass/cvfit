@@ -29,25 +29,34 @@ export type Result<Data> = { data: Data; error: null } | { data: null; error: Re
 
 export const done = <Data>(data: Data): Result<Data> => ({ data, error: null });
 
+/** The code of an issue only the person can solve, such as a full disk; it makes a refusal `ask`. */
+export const SYSTEM_REFUSED = 'SYSTEM_REFUSED';
+
 /**
- * A result refused as `fix`: the caller corrects its input and calls again.
+ * A result refused as `fix`, so the caller corrects its input and calls again; as `ask` when an
+ * issue is one only the person can solve.
  *
  * @param step - where it failed, in lowercase words, such as 'block move'
  * @param issues - every issue found, so one call shows them all
  * @param cause - the original error, when another one led to the refusal
+ * @param state - what the failure left; nothing written unless a caller says otherwise
  * @returns the refused result
  */
 export const rejected = (
   step: string,
   issues: Issue[],
   cause?: unknown,
+  state = 'Nothing was written.',
 ): { data: null; error: Rejection } => {
+  const isForPerson = issues.some(issue => issue.code === SYSTEM_REFUSED);
   const refusal: Refusal = {
-    kind: 'fix',
+    kind: isForPerson ? 'ask' : 'fix',
     step,
     reason: `the input has ${issues.length} issue(s)`,
-    next: 'fix every listed issue and call again',
-    state: 'Nothing was written.',
+    next: isForPerson
+      ? 'stop, tell the person every listed issue, and call again once they solved it'
+      : 'fix every listed issue and call again',
+    state,
     cause,
   };
   return { data: null, error: new Rejection(refusal, issues) };

@@ -43,7 +43,8 @@ export function schemaIssues(error: z.ZodError, prefix: PropertyKey[], name: str
     code: 'SCHEMA',
     path: [...prefix, ...issue.path].join('.'),
     message: issue.message,
-    hint: `Run "oriko schema ${name}" for the accepted shape`,
+    hint: 'Run the command for the accepted shape',
+    command: `oriko schema ${name}`,
   }));
 }
 

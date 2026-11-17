@@ -9,17 +9,15 @@
  *
  * @example process.exitCode = await run(process.argv.slice(2), io);
  */
-import { relative, resolve } from 'node:path';
-import { parseArgs } from 'node:util';
+import { resolve } from 'node:path';
 import { $try, causeText, refusal, shown, trySync$ } from '@honeyglass/utils/ts';
 import { z } from 'zod';
 import { Rejection, done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
 import { COLUMN, EXIT, ICONS, KINDS, LIMITS, STYLES } from '../core/limits.ts';
 import { check, schemaIssues, unknownBlock } from '../data/check.ts';
-import { Block, Master, NewCv, Profile } from '../data/cv.schema.ts';
-import { COMMANDS, apply } from '../edit/apply.ts';
-import { INPUT } from '../edit/edit.schema.ts';
+import { Block, Master, Profile } from '../data/cv.schema.ts';
+import { apply } from '../edit/apply.ts';
 import { place } from '../layout/place.ts';
 import type { Plan } from '../layout/place.ts';
 import { render } from '../render/docx.ts';
@@ -32,10 +30,24 @@ import {
   photoBytes,
   readJson,
   tooLarge,
-  writeAtomic,
+  writeAll,
 } from './files.ts';
-import { chosenCv, cvNames, profileNames, profilePath } from './home.ts';
-import { createCv } from './init.ts';
+import { optionText, readArgs } from './args.ts';
+import type { Values } from './args.ts';
+import {
+  COMMANDS,
+  EVERYWHERE,
+  NEW_NAME,
+  OPTIONS,
+  SHAPES,
+  isListed,
+  missingHint,
+} from './commands.ts';
+import type { Command, CommandName, ListedOption, OptionName } from './commands.ts';
+import { chosenCv, cvNames, heldCvs, homeIssues, profileNames, profilePath } from './home.ts';
+import { createCv, cvNameMissing } from './init.ts';
+import { nextSteps } from './next.ts';
+import type { Step } from './next.ts';
 import { setPhoto } from './photo.ts';
 
 export type Io = {
@@ -49,31 +61,13 @@ export type Io = {
 };
 
 type Fields = Record<string, unknown>;
-type Call = { io: Io; home: string; values: ReturnType<typeof parsed>['values']; words: string[] };
-
-const SCHEMAS = { master: Master, profile: Profile, block: Block, init: NewCv, ...INPUT };
-const OTHER_COMMANDS = [
-  'schema',
-  'cvs',
-  'init',
-  'show',
-  'profiles',
-  'plan',
-  'preview',
-  'build',
-  'photo set',
-];
-const OPTIONS = {
-  home: 'the data folder with cvs/NAME.json and profiles/NAME.json; ~/.oriko when left out',
-  cv: 'the name of one CV; needed only when the data folder holds several and no profile names one',
-  profile: 'the name of one profile; it names its CV in its field cv',
-  out: 'the .docx to write, for build; a path inside the working directory',
-  json: 'the input of an edit command; without it the input comes from stdin',
-  block: 'the id of one block to show in full, for show',
-  'dry-run': 'check and answer, but write no file',
-  style:
-    'the look of the .docx, for build: classic, or terminal like the preview; classic when left out',
-  output: 'json or text; json when stdout is no terminal',
+type Call = {
+  io: Io;
+  home: string;
+  values: Values;
+  /** The words after the command; every word when the call names none. */
+  rest: string[];
+  command?: CommandName;
 };
 
 /**
@@ -84,7 +78,7 @@ const OPTIONS = {
 export async function run(argv: string[], io: Io) {
   const { data, error } = await $try(() => answered(argv, io));
   if (error !== null) return crashed(error, io);
-  io.write(data.asText ? text(data.result) : json(data.result));
+  io.write(data.asText ? text(data.result, io.isTTY) : json(data.result));
   return data.result.error === null ? EXIT.ok : EXIT.expected;
 }
 
@@ -112,11 +106,15 @@ function refused(error: Rejection) {
   return { ok: false, kind, step, reason, next, state, issues: error.issues };
 }
 
-function text(result: Result<Fields>) {
-  if (result.error === null)
-    return typeof result.data.preview === 'string'
-      ? result.data.preview
-      : `${JSON.stringify(result.data, null, 2)}\n`;
+// Text for a person: the answer, and at a terminal its next steps below it. Piped text stays bare.
+function text(result: Result<Fields>, isTTY: boolean) {
+  if (result.error === null) {
+    const { next, ...data } = result.data;
+    const body =
+      typeof data.preview === 'string' ? data.preview : `${JSON.stringify(data, null, 2)}\n`;
+    const lines = isTTY && Array.isArray(next) ? next.filter(isStep).map(nextLine) : [];
+    return lines.length === 0 ? body : `${body}${lines.join('\n')}\n`;
+  }
   const issues = result.error.issues.map(
     issue =>
       `- ${issue.code} at ${shown(issue.path)}: ${shown(issue.message)}. ${issue.hint}.` +
@@ -125,72 +123,98 @@ function text(result: Result<Fields>) {
   return `${[refusal(result.error.refusal), ...issues].join('\n')}\n`;
 }
 
-const ARGS = {
-  home: { type: 'string' },
-  cv: { type: 'string' },
-  profile: { type: 'string' },
-  out: { type: 'string' },
-  json: { type: 'string' },
-  block: { type: 'string' },
-  output: { type: 'string' },
-  'dry-run': { type: 'boolean' },
-  style: { type: 'string' },
-} as const;
-const VALUED = Object.entries(ARGS)
-  .filter(([, spec]) => spec.type === 'string')
-  .map(([name]) => name);
-const OUTPUTS = ['json', 'text'] as const;
-/** The options whose values a list holds; every other option takes a free value, such as a path. */
-const LISTED = ['cv', 'profile', 'block', 'style', 'output'];
-/** What a free value is, for an option given without one. */
-const FREE_VALUES: Record<string, string> = {
-  home: 'Add the data folder that holds cvs/ and profiles/, or leave out --home for ~/.oriko',
-  out: 'Add the path of the .docx file to write, inside the working directory',
-  json: 'Run the command for the input shape, then pass it as one JSON object',
-};
+const isStep = (value: unknown): value is Step =>
+  typeof value === 'object' && value !== null && 'does' in value;
 
-function parsed(argv: string[]) {
-  return parseArgs({ args: argv, allowPositionals: true, strict: true, options: ARGS });
+function nextLine(step: Step) {
+  if (step.command === undefined) return `Next: ${step.does}`;
+  const needs = step.needs?.map(need => (need === 'file' ? '<file>' : `--${need}`)).join(', ');
+  return needs === undefined ? `Next: ${step.command}` : `Next: ${step.command} (needs ${needs})`;
 }
+
+const OUTPUTS = ['json', 'text'] as const;
 
 async function answered(argv: string[], io: Io) {
-  const { rest, empty } = withoutEmptyOptions(argv);
-  const args = trySync$(() => parsed(rest));
-  if (args.error !== null)
-    return { result: rejected('oriko', [unknownOption(args.error)], args.error), asText: io.isTTY };
-  const { values, positionals } = args.data;
-  const isKnownOutput =
-    values.output === undefined || OUTPUTS.some(output => output === values.output);
-  if (isKnownOutput === false)
-    return { result: rejected('oriko', [unknownOutput(values.output ?? '')]), asText: io.isTTY };
-  const asText = values.output === undefined ? io.isTTY : values.output === 'text';
+  const args = readArgs(argv);
+  const { values } = args;
+  const isKnownOutput = values.output === undefined || isOutput(values.output);
+  const asText = isKnownOutput && values.output !== undefined ? values.output === 'text' : io.isTTY;
   const home = values.home === undefined ? io.home : resolve(io.cwd, values.home);
-  const call = { io, home, values, words: positionals };
-  const result = empty.length === 0 ? await dispatched(call) : await emptied(call, empty);
-  return { result: await withCommands(call, result), asText };
+  const found = commandOf(args.words);
+  const call = { io, home, values, rest: found.rest, command: found.name };
+  // An empty --home is refused below; until then no folder, not even the default one, is opened.
+  const isHomeEmpty = args.empty.includes('home');
+  const issues = [
+    ...commandIssues(found, args.given),
+    ...args.issues,
+    ...(isHomeEmpty ? [] : await homeIssues(home)),
+    ...(isKnownOutput ? [] : [unknownOutput(values.output ?? '')]),
+  ];
+  if (issues.length > 0)
+    return { result: await withCommands(call, rejected('oriko', issues)), asText };
+  const result = args.empty.length === 0 ? await dispatched(call) : await emptied(call, args.empty);
+  return { result: await withCommands(call, withNext(call, result)), asText };
 }
 
-// An option that takes a value but has none: last, before the next option, or written as --name=.
-function withoutEmptyOptions(argv: string[]) {
-  const rest: string[] = [];
-  const empty: string[] = [];
-  for (const [index, arg] of argv.entries()) {
-    const name = VALUED.find(option => arg === `--${option}` || arg === `--${option}=`);
-    const next = argv[index + 1];
-    const hasValue =
-      arg.endsWith('=') === false && next !== undefined && next.startsWith('--') === false;
-    if (name === undefined || hasValue) rest.push(arg);
-    else empty.push(name);
+const isOutput = (output: string) => OUTPUTS.some(known => known === output);
+
+type Found = { name: CommandName | undefined; rest: string[] };
+
+// The command whose words lead the call one by one, such as 'block' and 'add' for 'block add'.
+function commandOf(words: string[]): Found {
+  const name = Object.keys(COMMANDS)
+    .filter(isCommandName)
+    .find(known => known.split(' ').every((part, index) => words[index] === part));
+  if (name === undefined) return { name, rest: words };
+  return { name, rest: words.slice(name.split(' ').length) };
+}
+
+// A command takes only its own options and words; anything more is named, never dropped.
+// Without a command, only oriko alone and a group alone pass, with the options of every command.
+function commandIssues(found: Found, given: OptionName[]): Issue[] {
+  const options = [...new Set(given)];
+  if (found.name === undefined) {
+    const [group, ...more] = found.rest;
+    const isListing = group === undefined || (more.length === 0 && actionsOf(group).length > 0);
+    if (isListing === false) return [unknownCommand(found.rest)];
+    const listing = group === undefined ? 'oriko schema' : `oriko ${group}`;
+    return options
+      .filter(option => EVERYWHERE.includes(option) === false)
+      .map(option => optionNotAllowed(option, 'oriko without a command', listing));
   }
-  return { rest, empty };
+  const name = found.name;
+  const command: Command = COMMANDS[name];
+  const allowed: OptionName[] = [...command.options, ...EVERYWHERE];
+  const words = command.joinsWords === true ? [] : found.rest.slice(command.words?.length ?? 0);
+  return [
+    ...options
+      .filter(option => allowed.includes(option) === false)
+      .map(option => optionNotAllowed(option, `The command ${name}`, `oriko schema ${name}`)),
+    ...words.map(word => unexpectedArgument(word, name)),
+  ];
 }
 
-const unknownOption = (error: Error): Issue => ({
-  code: 'UNKNOWN_OPTION',
-  path: /'--?([^'\s=]+)/.exec(error.message)?.[1] ?? '',
-  message: 'The arguments name an option or a value this program does not know',
-  hint: 'Run the command and use one of the options it lists',
-  command: 'oriko schema',
+// The actions of a group, such as 'block add' for 'block'; none for a word that is no group.
+const actionsOf = (group: string) =>
+  Object.keys(COMMANDS).filter(name => {
+    const [first, action] = name.split(' ');
+    return first === group && action !== undefined;
+  });
+
+const optionNotAllowed = (option: string, who: string, listing: string): Issue => ({
+  code: 'OPTION_NOT_ALLOWED',
+  path: option,
+  message: `${who} takes no --${option}`,
+  hint: 'Run the command and use only the options it lists',
+  command: listing,
+});
+
+const unexpectedArgument = (word: string, command: string): Issue => ({
+  code: 'UNEXPECTED_ARGUMENT',
+  path: word,
+  message: `The command ${command} takes no word ${shown(word)}`,
+  hint: 'Run the command and pass only the words and options it lists',
+  command: `oriko schema ${command}`,
 });
 
 const unknownOutput = (output: string): Issue => ({
@@ -200,31 +224,64 @@ const unknownOutput = (output: string): Issue => ({
   hint: `Use one of: ${OUTPUTS.join(', ')}`,
 });
 
-// Options without a value: a list answers its values; a free value is refused by its name.
-async function emptied(call: Call, empty: string[]): Promise<Result<Fields>> {
-  const free = empty.filter(option => LISTED.includes(option) === false);
-  if (free.length > 0)
-    return rejected(
-      'oriko',
-      free.map(option => missingValue(option, call.words)),
-    );
-  const [option = ''] = empty;
-  return valuesOf(call, option);
+// Options without a value: one list answers its values; a free value, a new name, or a second
+// list is refused, so no option passes unanswered.
+async function emptied(call: Call, empty: OptionName[]): Promise<Result<Fields>> {
+  const fresh: OptionName[] = call.command === undefined ? [] : (freshOf(call.command) ?? []);
+  const lists = empty.filter(isListed).filter(option => fresh.includes(option) === false);
+  const free = empty.filter(option => lists.some(listed => listed === option) === false);
+  const [only] = lists;
+  const issues = [
+    ...free.map(option =>
+      fresh.includes(option) ? newNameMissing(option) : missingValue(option, call.command),
+    ),
+    ...(lists.length > 1 ? lists.map(oneListAtATime) : []),
+  ];
+  if (issues.length > 0 || only === undefined) return rejected('oriko', issues);
+  return valuesOf(call, only);
 }
 
-async function valuesOf(call: Call, option: string): Promise<Result<Fields>> {
+const oneListAtATime = (option: string): Issue => ({
+  code: 'MISSING_VALUE',
+  path: option,
+  message: `The option --${option} has no value, and another option has none either`,
+  hint: 'Leave one option without a value at a time, and give the others a value',
+});
+
+const freshOf = (name: CommandName) => {
+  const command: Command = COMMANDS[name];
+  return command.fresh;
+};
+
+const newNameMissing = (option: string): Issue => ({
+  code: 'MISSING_VALUE',
+  path: option,
+  message: `The option --${option} has no value`,
+  hint: NEW_NAME,
+  command: `oriko show --${option}`,
+});
+
+// One case per listed option; a new one fails the type check until it has its case.
+async function valuesOf(call: Call, option: ListedOption): Promise<Result<Fields>> {
   switch (option) {
     case 'cv':
-      return done({ option, values: await cvNames(call.home) });
+      return done({ option, values: await cvValues(call) });
     case 'profile':
       return done({ option, values: await profileNames(call.home) });
     case 'style':
       return done({ option, values: [...STYLES] });
     case 'output':
       return done({ option, values: [...OUTPUTS] });
-    default:
+    case 'block':
       return blockValues(call);
   }
+}
+
+// With a profile, only the CV it names passes, so the list holds only that one.
+async function cvValues(call: Call) {
+  const names = await cvNames(call.home);
+  const fromProfile = await profileCv(call);
+  return fromProfile !== undefined && names.includes(fromProfile) ? [fromProfile] : names;
 }
 
 // The blocks of the CV this call names, in the outline show answers, so a caller picks an id.
@@ -236,14 +293,14 @@ async function blockValues(call: Call): Promise<Result<Fields>> {
   return done({ option: 'block', cv: cv.data.name, values: master.data.blocks.map(outline) });
 }
 
-function missingValue(option: string, words: string[]): Issue {
+function missingValue(option: OptionName, command: CommandName | undefined): Issue {
   const issue = {
     code: 'MISSING_VALUE',
     path: option,
     message: `The option --${option} has no value`,
-    hint: FREE_VALUES[option] ?? `Add a value to --${option}`,
+    hint: missingHint(option),
   };
-  return option === 'json' ? { ...issue, command: schemaCommand(words.join(' ')) } : issue;
+  return option === 'json' ? { ...issue, command: schemaCommand(command ?? '') } : issue;
 }
 
 const schemaCommand = (command: string) =>
@@ -260,7 +317,7 @@ const schemaCommand = (command: string) =>
 async function withCommands(call: Call, result: Result<Fields>): Promise<Result<Fields>> {
   if (result.error === null) return result;
   const blockCommand = await blockListCommand(call, result.error.issues);
-  const home = call.values.home === undefined ? '' : ` --home ${shellWord(call.values.home)}`;
+  const home = homeArg(call);
   const issues = result.error.issues.map(issue => {
     const command =
       issue.code === 'UNKNOWN_BLOCK' ? (issue.command ?? blockCommand) : issue.command;
@@ -269,15 +326,38 @@ async function withCommands(call: Call, result: Result<Fields>): Promise<Result<
   return { data: null, error: new Rejection(result.error.refusal, issues) };
 }
 
+// A success gets the steps that follow it, with this call's CV and data folder in each command.
+function withNext(call: Call, result: Result<Fields>): Result<Fields> {
+  if (result.error !== null) return result;
+  const steps = nextSteps({
+    command: call.command,
+    selector: selectorOf(call),
+    data: result.data,
+    isDryRun: call.values['dry-run'] === true,
+  });
+  if (steps.length === 0) return result;
+  const home = homeArg(call);
+  const next = steps.map(step =>
+    step.command === undefined ? step : { ...step, command: `${step.command}${home}` },
+  );
+  return done({ ...result.data, next });
+}
+
+// Every selector of the call, never a pick: a profile without a CV needs the --cv beside it.
+function selectorOf(call: Call) {
+  const { profile, cv } = call.values;
+  const ofProfile = profile === undefined ? '' : optionText('profile', profile);
+  return cv === undefined ? ofProfile : `${ofProfile}${optionText('cv', cv)}`;
+}
+
+const homeArg = (call: Call) =>
+  call.values.home === undefined ? '' : optionText('home', call.values.home);
+
 async function blockListCommand(call: Call, issues: Issue[]) {
   if (issues.some(issue => issue.code === 'UNKNOWN_BLOCK') === false) return undefined;
   const cv = await chosenCv(call.home, call.values.cv, await profileCv(call));
-  return cv.error === null ? `oriko show --cv ${cv.data.name} --block` : undefined;
+  return cv.error === null ? `oriko show${optionText('cv', cv.data.name)} --block` : undefined;
 }
-
-// A word the shell passes on as it is: plain characters stay, anything else goes in single quotes.
-const shellWord = (word: string) =>
-  /^[\w./~-]+$/.test(word) ? word : `'${word.replaceAll("'", `'\\''`)}'`;
 
 // The CV the profile of this call names, so a list follows the CV the command itself would use.
 async function profileCv(call: Call) {
@@ -287,10 +367,11 @@ async function profileCv(call: Call) {
 }
 
 async function dispatched(call: Call): Promise<Result<Fields>> {
-  const [first = '', ...rest] = call.words;
-  switch (first) {
+  switch (call.command) {
+    case undefined:
+      return unrouted(call);
     case 'schema':
-      return schema(rest.join(' '));
+      return schema(call.rest.join(' '));
     case 'cvs':
       return cvs(call);
     case 'init':
@@ -303,61 +384,88 @@ async function dispatched(call: Call): Promise<Result<Fields>> {
       return plan(call);
     case 'preview':
       return previewed(call);
-    case 'photo':
-      return photo(call, rest);
+    case 'photo set':
+      return photo(call, call.rest[0]);
     case 'build':
       return build(call);
-    case 'block':
-    case 'item':
-    case 'cv':
-    case 'contact':
-      return edit(call, call.words.join(' '));
     default:
-      return rejected('oriko', [unknownCommand(call.words.join(' '))]);
+      return edit(call, call.command);
   }
 }
 
-const unknownCommand = (command: string): Issue => ({
-  code: 'UNKNOWN_COMMAND',
-  path: '',
-  message: `There is no command ${shown(command)}`,
-  hint: 'Run the command and use one of the commands it lists',
-  command: 'oriko schema',
-});
+// A call without a command, which commandIssues let through: the start, or a group alone.
+async function unrouted(call: Call): Promise<Result<Fields>> {
+  const [group] = call.rest;
+  if (group === undefined) return start(call);
+  return done({ command: group, values: actionsOf(group) });
+}
 
-const isSchemaName = (name: string): name is keyof typeof SCHEMAS => Object.hasOwn(SCHEMAS, name);
+// Where a caller stands: the data folder with its CVs and profiles, empty lists when it has none.
+async function start(call: Call): Promise<Result<Fields>> {
+  return done({
+    home: call.home,
+    cvs: await cvNames(call.home),
+    profiles: await profileNames(call.home),
+  });
+}
 
-// Without a name: everything a caller needs to find its way. With one: the accepted input.
+// A known group with a wrong action points to the group's list, anything else to the full one.
+function unknownCommand(words: string[]): Issue {
+  const [group = ''] = words;
+  return {
+    code: 'UNKNOWN_COMMAND',
+    path: 'command',
+    message: `There is no command ${shown(words.join(' '))}`,
+    hint: 'Run the command and use one of the commands it lists',
+    command: actionsOf(group).length > 0 ? `oriko ${group}` : 'oriko schema',
+  };
+}
+
+const isCommandName = (name: string): name is CommandName => Object.hasOwn(COMMANDS, name);
+const isShapeName = (name: string): name is keyof typeof SHAPES => Object.hasOwn(SHAPES, name);
+const isSchemaName = (name: string) => isCommandName(name) || isShapeName(name);
+
+// Without a name: everything a caller needs to find its way. With one: a command or a shape.
 function schema(name: string): Result<Fields> {
   if (name === '') {
-    const commands = [...OTHER_COMMANDS, ...COMMANDS];
+    const options = Object.fromEntries(
+      Object.entries(OPTIONS).map(([key, spec]) => [key, spec.text]),
+    );
     return done({
-      commands,
-      options: OPTIONS,
-      schemas: Object.keys(SCHEMAS),
+      commands: Object.keys(COMMANDS),
+      options,
+      schemas: Object.keys(SHAPES),
       kinds: KINDS,
       icons: ICONS,
       limits: LIMITS,
     });
   }
-  if (isSchemaName(name) === false) {
-    const issue = {
-      ...unknownCommand(name),
-      hint: 'Run the command and use one of the schemas it lists',
-    };
-    return rejected('schema', [issue]);
-  }
-  return done({ name, input: z.toJSONSchema(SCHEMAS[name]) });
+  if (isShapeName(name)) return done({ name, input: z.toJSONSchema(SHAPES[name]) });
+  if (isCommandName(name) === false) return rejected('schema', [unknownSchema(name)]);
+  const command: Command = COMMANDS[name];
+  const options = Object.fromEntries(
+    [...command.options, ...EVERYWHERE].map(option => [option, OPTIONS[option].text]),
+  );
+  const input = command.input === undefined ? null : z.toJSONSchema(command.input);
+  return done({ name, does: command.does, options, words: command.words ?? [], input });
 }
 
+const unknownSchema = (name: string): Issue => ({
+  code: 'UNKNOWN_COMMAND',
+  path: 'name',
+  message: `No command or shape is called ${shown(name)}`,
+  hint: 'Run the command and use one of the commands or schemas it lists',
+  command: 'oriko schema',
+});
+
 async function show(call: Call): Promise<Result<Fields>> {
-  const cv = await chosenCv(call.home, call.values.cv);
+  const cv = await chosenCv(call.home, call.values.cv, await profileCv(call));
   if (cv.error !== null) return cv;
   const master = await masterOf(cv.data.path, 'show');
   if (master.error !== null) return master;
   const { blocks, pages } = master.data;
   const id = call.values.block;
-  if (id === undefined) return done({ pages, blocks: blocks.map(outline) });
+  if (id === undefined) return done({ cv: cv.data.name, pages, blocks: blocks.map(outline) });
   const block = blocks.find(candidate => candidate.id === id);
   if (block === undefined) return rejected('show', [unknownBlock(id, 'block')]);
   return done({ block });
@@ -409,10 +517,10 @@ const cvOf = (profile: unknown) => {
 
 // Every CV with what a caller needs to pick one: its language, its person, and whether it fits.
 async function cvs(call: Call): Promise<Result<Fields>> {
-  const names = await cvNames(call.home);
-  if (names.length === 0) return chosenCv(call.home);
+  const names = await heldCvs(call.home);
+  if (names.error !== null) return names;
   const listed = [];
-  for (const name of names) {
+  for (const name of names.data) {
     const cv = await checked({ ...call, values: { ...call.values, cv: name } }, undefined);
     const placed = cv.error === null ? place(cv.data) : cv;
     if (cv.error !== null || placed.error !== null) {
@@ -435,21 +543,24 @@ async function cvs(call: Call): Promise<Result<Fields>> {
   return done({ cvs: listed });
 }
 
+// Without a name and an input, both are named in one answer.
 async function init(call: Call): Promise<Result<Fields>> {
   const input = await payload(call, 'init');
-  if (input.error !== null) return input;
+  const name = call.values.cv === undefined ? [cvNameMissing()] : [];
+  if (input.error !== null) return rejected('init', [...name, ...input.error.issues]);
   const isDryRun = call.values['dry-run'] === true;
   return createCv({ home: call.home, name: call.values.cv, input: input.data, isDryRun });
 }
 
 // Every profile with what a caller needs to pick one: its CV, whether it builds, and on how many pages.
 async function profiles(call: Call): Promise<Result<Fields>> {
-  const names = await cvNames(call.home);
-  if (names.length === 0) return chosenCv(call.home);
+  const cvs = await heldCvs(call.home);
+  if (cvs.error !== null) return cvs;
+  const only = cvs.data.length === 1 ? cvs.data[0] : undefined;
   const listed = [];
   for (const name of await profileNames(call.home)) {
     const profile = await profileOf(call.home, name);
-    const cv = cvOf(profile.data) ?? (names.length === 1 ? names[0] : undefined);
+    const cv = cvOf(profile.data) ?? only;
     const built = await checked(call, name);
     const placed = built.error === null ? place(built.data) : built;
     const issues = placed.error?.issues.map(issue => issue.code);
@@ -470,9 +581,7 @@ async function previewed(call: Call): Promise<Result<Fields>> {
   return done({ preview: preview(cv.data, placed.data) });
 }
 
-async function photo(call: Call, words: string[]): Promise<Result<Fields>> {
-  const [action, source] = words;
-  if (action !== 'set') return rejected('oriko', [unknownCommand(call.words.join(' '))]);
+async function photo(call: Call, source: string | undefined): Promise<Result<Fields>> {
   const isDryRun = call.values['dry-run'] === true;
   return setPhoto({
     home: call.home,
@@ -502,9 +611,11 @@ async function build(call: Call): Promise<Result<Fields>> {
   const docx = await rendered(call.home, cv.data, placed.data, style);
   if (docx.error !== null) return docx;
   const isDryRun = call.values['dry-run'] === true;
-  if (isDryRun === false) await writeAtomic(out.data, docx.data);
+  const files = [{ path: out.data.path, content: docx.data }];
+  const written = isDryRun ? done(undefined) : await writeAll(files, 'out');
+  if (written.error !== null) return written;
   return done({
-    out: relative(call.io.cwd, out.data),
+    out: out.data.name,
     style,
     bytes: docx.data.length,
     pages: placed.data.pages.length,
@@ -537,8 +648,10 @@ async function edit(call: Call, command: string): Promise<Result<Fields>> {
   const edited = apply(master.data, command, input.data);
   if (edited.error !== null) return edited;
   const isDryRun = call.values['dry-run'] === true;
-  if (isDryRun === false)
-    await writeAtomic(cv.data.path, `${JSON.stringify(edited.data, null, 2)}\n`);
+  const content = `${JSON.stringify(edited.data, null, 2)}\n`;
+  const files = [{ path: cv.data.path, content }];
+  const written = isDryRun ? done(undefined) : await writeAll(files, 'home');
+  if (written.error !== null) return written;
   return done({ command, written: isDryRun === false, ...fit(edited.data) });
 }
 

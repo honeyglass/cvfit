@@ -21,6 +21,8 @@ The rules marked ➕ oriko are new: the author of oriko added them from building
 | Plan before the file | `plan` shows which block lands on which page | fixes an overflow before building | ➕ oriko |
 | Hints that run | a refusal names the command that lists the fitting values | runs it and picks a real value | ➕ oriko |
 | Options that list | an option without a value lists the values it accepts | finds names and ids in one call | ➕ oriko |
+| Next steps | every success names its next commands and what each still needs | always knows where to go on | ➕ oriko |
+| Nothing passes silently | an unknown command, option or word is refused, a group alone lists its actions | never acts on a typo | ➕ oriko |
 
 ## Commands
 
@@ -42,6 +44,36 @@ one accepts.
 
 When another program reads the output instead of a terminal, `preview` answers JSON with the
 sheets in its field `preview`. Add `--output text` to get the plain sheets there too.
+
+`oriko` alone answers where to start: the data folder, its CVs and its profiles. A group without
+its action lists the actions, such as `oriko block` for `block add`, `block update`, `block remove`
+and `block move`. A command takes only its own options and words; anything else is refused, with
+every mistake of the call in one answer.
+
+Every success names what can follow in `next`, with what each step still needs. At a terminal the
+steps print as `Next:` lines below the answer; piped text leaves them out, and JSON always holds
+them:
+
+```json
+{
+  "ok": true,
+  "pages": [],
+  "next": [
+    {
+      "does": "draws the pages in the terminal",
+      "command": "oriko preview --profile go-e"
+    },
+    {
+      "does": "writes the Word file",
+      "command": "oriko build --profile go-e",
+      "needs": ["out"]
+    }
+  ]
+}
+```
+
+oriko only names a step and never follows one. A step without `command`, such as the upload to
+Google Docs after `build`, is for the person.
 
 An option without a value lists the values it accepts:
 
@@ -72,7 +104,8 @@ A refusal the agent reads and acts on:
 }
 ```
 
-`"ok": false` means oriko refused. `"kind": "fix"` says the agent can fix the input itself. Each
+`"ok": false` means oriko refused. `"kind": "fix"` says the agent can fix the input itself;
+`"kind": "ask"` says only the person can solve it, such as a full disk, so the agent stops. Each
 issue has a `code` the agent can check, a `path` to the wrong value, a `message` for people and a
 `hint` on what to change.
 

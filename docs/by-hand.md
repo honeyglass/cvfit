@@ -1,6 +1,7 @@
 # ✍️ By hand
 
-The agent runs these commands for you. By hand, they look like this.
+The agent runs these commands for you. By hand, they look like this. Start with `oriko` alone: it
+shows where you stand, and every answer names the commands that can follow.
 
 Create a CV and fill it:
 
