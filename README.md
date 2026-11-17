@@ -157,19 +157,7 @@ file to managers and the terminal file to developers:
 oriko build --profile go-e-senior-backend --style terminal --out go-e-terminal.docx
 ```
 
-<details>
-<summary><b>What the marks mean</b></summary>
-
-| Mark | Meaning |
-| :--- | :--- |
-| `╭───────┐` with `●   ●` | where your photo goes; the terminal shows Oriko, the oriko logo, the classic file shows the photo |
-| `UPPER CASE` | a section heading, such as Professional Experience |
-| `●` and `│` | a job: its marker and its timeline; the dates stand right of the title |
-| `›` | a bullet point of a job |
-| `●●●●○` | a skill level, from 0 to 5 dots |
-| `■■■□□` | how full the column is; at 100 % the next block moves to the next page |
-
-</details>
+What each mark of the preview means: [the terminal preview page](docs/terminal-preview.md).
 
 When your CV needs more pages than allowed, the preview names the blocks that do not fit and says
 what to change:
@@ -242,6 +230,16 @@ Upload `backend-job.docx` to Google Docs and save it there with File, Download, 
 - **Agents**: the skill is written for Claude Code. Any other agent that can run a command, such
   as Codex or Gemini CLI, can use the CLI through `oriko schema`.
 
+## 📖 Docs
+
+- [**Examples**](docs/examples.md)
+- [**Sample data**](docs/sample-data.md)
+- [**CLI**](docs/cli.md)
+- [**Terminal preview**](docs/terminal-preview.md)
+- [**Good to know**](docs/good-to-know.md)
+- [**Security**](SECURITY.md)
+- [**Agent skill**](.claude/skills/oriko/SKILL.md)
+
 ## 🛠️ Development
 
 ```sh
@@ -260,12 +258,3 @@ under the same license.
 The name oriko and the Oriko character are not covered by this license. That includes the
 files in [`brand/`](brand/) and the Oriko drawing the preview shows; all rights to them stay
 with the author. A changed version of oriko needs another name and logo.
-
-## 📖 Docs
-
-- [**Examples**](docs/examples.md)
-- [**Sample data**](docs/sample-data.md)
-- [**CLI**](docs/cli.md)
-- [**Good to know**](docs/good-to-know.md)
-- [**Security**](SECURITY.md)
-- [**Agent skill**](.claude/skills/oriko/SKILL.md)
