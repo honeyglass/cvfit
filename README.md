@@ -54,6 +54,19 @@ agent it finds. For the skill it runs the [skills CLI](https://www.skills.sh/) b
 Run the line again to update both.
 
 <details>
+<summary><b>With the PDF, without Google Docs</b></summary>
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/honeyglass/oriko/main/install.sh | sh -s -- --pdf
+```
+
+oriko always writes the Word file for Google Docs. With [LibreOffice](https://www.libreoffice.org)
+it writes the PDF too, the page Google Docs would make: `oriko build --out cv.pdf`. `--pdf`
+installs LibreOffice with brew, apt or dnf; without it, the script names the command to run.
+
+</details>
+
+<details>
 <summary><b>Command and skill separately</b></summary>
 
 ```bash

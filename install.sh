@@ -3,11 +3,12 @@
 # @brief Installs oriko, its command and its agent skill; run it again to update.
 # @description Clones oriko into ~/.local/share/oriko, installs its dependencies with the pnpm
 # that package.json pins and links the command oriko into ~/.local/bin. The skill comes from the
-# skills CLI behind skills.sh; --no-skill leaves it out. The script never replaces a file it did
-# not write.
+# skills CLI behind skills.sh; --no-skill leaves it out. A PDF needs LibreOffice: the script says
+# how to get it, and --pdf installs it too. The script never replaces a file it did not write.
 #
 # @example curl -fsSL https://raw.githubusercontent.com/honeyglass/oriko/main/install.sh | sh
 # @example curl -fsSL https://raw.githubusercontent.com/honeyglass/oriko/main/install.sh | sh -s -- --no-skill
+# @example curl -fsSL https://raw.githubusercontent.com/honeyglass/oriko/main/install.sh | sh -s -- --pdf
 set -eu
 
 # ORIKO_REPOSITORY points the script at another copy, as the install test does with its checkout.
@@ -19,7 +20,14 @@ SKILLS_CLI='skills@1.8.1'
 
 # The whole script sits in functions, and main runs last: a download cut short runs nothing.
 main() {
-  with_skill=$(skill_wanted "$@")
+  with_skill=yes with_pdf=no
+  for option in "$@"; do
+    case "$option" in
+      --no-skill) with_skill=no ;;
+      --pdf) with_pdf=yes ;;
+      *) fail "unknown option: $option; the options are --no-skill and --pdf." ;;
+    esac
+  done
   need_node
   need_command git
   fetch_oriko
@@ -28,6 +36,7 @@ main() {
   "$BIN_DIR/oriko" schema >/dev/null || fail "oriko does not start; see the output above. Nothing else was changed."
   say "installed in $DIR"
   if [ "$with_skill" = yes ]; then install_skill; fi
+  pdf_support "$with_pdf"
   path_hint
 }
 
@@ -35,15 +44,6 @@ say() { printf 'oriko: %s\n' "$*"; }
 fail() {
   printf 'oriko: %s\n' "$*" >&2
   exit 1
-}
-
-# No option installs the skill too; --no-skill leaves it out; anything else is refused.
-skill_wanted() {
-  case "$*" in
-    '') echo yes ;;
-    --no-skill) echo no ;;
-    *) fail "unknown option: $*; the only option is --no-skill." ;;
-  esac
 }
 
 need_command() {
@@ -103,6 +103,47 @@ link() {
   mkdir -p "$(dirname "$name")"
   ln -s "$target" "$name"
   say "$what: $name"
+}
+
+# oriko knows where LibreOffice keeps its program on each system, so the script asks oriko; an
+# answer it cannot give counts as no LibreOffice.
+has_libreoffice() {
+  node --input-type=module -e "
+    import { existsSync } from 'node:fs';
+    import { pathToFileURL } from 'node:url';
+    const pdf = pathToFileURL(process.argv[1] + '/render/pdf.ts').href;
+    const { sofficePaths } = await import(pdf);
+    process.exit(sofficePaths().some(path => existsSync(path)) ? 0 : 1);" "$DIR" 2>/dev/null
+}
+
+# A .docx needs nothing more; a PDF needs LibreOffice, which only --pdf installs, as it is large.
+pdf_support() {
+  if has_libreoffice; then
+    say 'LibreOffice found: oriko build --out cv.pdf writes the PDF'
+    return
+  fi
+  command=$(libreoffice_command)
+  if [ -z "$command" ]; then
+    say 'a PDF needs LibreOffice: get it from https://www.libreoffice.org/download'
+    return
+  fi
+  if [ "$1" = no ]; then
+    say "a PDF needs LibreOffice: $command, or run this script again with --pdf"
+    return
+  fi
+  say "installing LibreOffice: $command"
+  sh -c "$command" || fail "LibreOffice could not be installed; the command oriko works and writes the .docx."
+}
+
+# The command of the system's package manager; empty when the script knows none.
+libreoffice_command() {
+  if [ "$(uname -s)" = Darwin ] && command -v brew >/dev/null 2>&1; then
+    echo 'brew install --cask libreoffice'
+  elif command -v apt-get >/dev/null 2>&1; then
+    echo 'sudo apt-get install -y libreoffice-writer'
+  elif command -v dnf >/dev/null 2>&1; then
+    echo 'sudo dnf install -y libreoffice-writer'
+  fi
 }
 
 path_hint() {
