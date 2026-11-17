@@ -73,11 +73,15 @@ jobs:
       - run: sh tests/e2e/install.e2e.sh
 
   # The quickstart line of the README as a user runs it, against what GitHub serves for main.
-  # Only after a push to main, once the other jobs passed, as GitHub serves only main.
+  # Only after a push to main, once the other jobs passed, as GitHub serves only main. The two
+  # variables keep the skills CLI the script runs out of the install counts of skills.sh.
   quickstart:
     if: github.event_name == 'push'
     needs: [checks, install]
     runs-on: ubuntu-latest
+    env:
+      DISABLE_TELEMETRY: '1'
+      DO_NOT_TRACK: '1'
     steps:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
