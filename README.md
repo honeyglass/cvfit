@@ -159,22 +159,6 @@ oriko build --profile go-e-senior-backend --style terminal --out go-e-terminal.d
 
 What each mark of the preview means: [the terminal preview page](docs/terminal-preview.md).
 
-When your CV needs more pages than allowed, the preview names the blocks that do not fit and says
-what to change:
-
-```text
-Refused (fix) at place: the input has 2 issue(s).
-Next: fix every listed issue and call again.
-Nothing was written.
-- PAGE_OVERFLOW at pages: "These blocks of the left column land after page 1: campus". Hide or shorten blocks of the left column, remove a page pin, or raise "pages".
-```
-
-The first line says that oriko refused, that the input can be fixed (`fix`), and at which step
-(`place`, the page planning). Each line that starts with `-` names one problem and what to change.
-
-When another program reads the output instead of a terminal, `preview` answers JSON with the
-sheets in its field `preview`. Add `--output text` to get the plain sheets there too.
-
 ## 🗂️ Your data
 
 Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points oriko at another one.
