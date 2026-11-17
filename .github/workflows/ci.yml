@@ -85,3 +85,28 @@ jobs:
           package-manager-cache: false
       - run: curl -fsSL https://raw.githubusercontent.com/honeyglass/oriko/main/install.sh | sh
       - run: ~/.local/bin/oriko schema
+
+  # The skills CLI behind skills.sh finds the skill of this commit, after lint and tests passed.
+  # --list installs nothing, and the two variables keep the run out of the install counts that
+  # skills.sh ranks by. The CLI is pinned to a version at least three days old. The skill is
+  # copied to a folder without oriko in its path, so only the skill's own name can match.
+  skill:
+    needs: [checks]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - shell: bash
+        env:
+          DISABLE_TELEMETRY: '1'
+          DO_NOT_TRACK: '1'
+        run: |
+          mkdir -p "$RUNNER_TEMP/source"
+          cp -R .claude "$RUNNER_TEMP/source/"
+          npx --yes skills@1.8.1 add "$RUNNER_TEMP/source" --list | tee "$RUNNER_TEMP/list.txt"
+          grep -qw oriko "$RUNNER_TEMP/list.txt"
