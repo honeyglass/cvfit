@@ -133,7 +133,10 @@ The rules marked ➕ oriko are new: the author of oriko added them from building
 **See your CV before the file exists.** `oriko preview` draws every page in the terminal, the left
 column beside the right one, as in the finished document:
 
-<img src="examples/showcase/go-e-senior-backend/terminal-excerpt.png" width="100%" alt="The top of page 1 of Jane Doe's CV as the terminal preview draws it">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="examples/showcase/go-e-senior-backend/terminal-excerpt-dark.png">
+  <img src="examples/showcase/go-e-senior-backend/terminal-excerpt.png" width="100%" alt="The top of page 1 of Jane Doe's CV as the terminal preview draws it">
+</picture>
 
 <details>
 <summary><b>The same preview as text</b></summary>
