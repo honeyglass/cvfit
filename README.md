@@ -53,14 +53,18 @@ The script installs the command `oriko` and then the agent skill, for Claude Cod
 agent it finds. For the skill it runs the [skills CLI](https://www.skills.sh/) behind skills.sh.
 Run the line again to update both.
 
-### Command and skill separately
+<details>
+<summary><b>Command and skill separately</b></summary>
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/honeyglass/oriko/main/install.sh | sh -s -- --no-skill
 npx skills add honeyglass/oriko -g -y
 ```
 
-### Manual installation
+</details>
+
+<details>
+<summary><b>Manual installation</b></summary>
 
 ```sh
 git clone https://github.com/honeyglass/oriko.git
@@ -68,6 +72,8 @@ cd oriko
 pnpm install --frozen-lockfile
 node bin/oriko.ts schema
 ```
+
+</details>
 
 ## 🤖 Working with oriko and an agent
 
