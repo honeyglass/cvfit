@@ -94,7 +94,8 @@ It has two paths. To fit a CV to a posting, the agent reads the posting, inspect
 your CV, drafts a version, checks it, builds it and reports. To write a CV, it sorts your facts,
 writes them, checks them and hands over; with no CV at all, it first asks you a few short
 questions. The agent moves only along the listed steps. When oriko refuses a draft, the agent goes back
-one step and fixes it, at most three times; then it stops and asks you.
+one step and fixes it, at most three times; then it stops and asks you. Every step and its rules
+stand in [the skill](.claude/skills/oriko/SKILL.md).
 
 ### The CLI: Agent DX rules
 
