@@ -37,8 +37,11 @@ const Answer = z.looseObject({
     .optional(),
 });
 
-/** The data folder, the working directory, and the network, which by default reaches nothing. */
-export type Space = { home: string; cwd: string; web?: Web };
+/**
+ * The data folder, the working directory, the network, which by default reaches nothing, and the
+ * paths of LibreOffice's program, by default none.
+ */
+export type Space = { home: string; cwd: string; web?: Web; soffice?: string[] };
 
 export const workspace = (): Space => {
   const home = mkdtempSync(join(tmpdir(), 'oriko-home-'));
@@ -72,12 +75,13 @@ export const piped = async (space: Space, argv: string[]) =>
   (await ran(space, argv, null, false)).out;
 
 async function ran(space: Space, argv: string[], stdin: string | null, isTTY: boolean) {
-  const { home, cwd, web = fakeWeb({}, {}).web } = space;
+  const { home, cwd, web = fakeWeb({}, {}).web, soffice = [] } = space;
   let out = '';
   const exit = await run(argv, {
     home,
     cwd,
     web,
+    soffice,
     isTTY,
     stdin: async () => stdin,
     write: text => (out += text),

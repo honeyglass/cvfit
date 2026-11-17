@@ -20,6 +20,8 @@ import { z } from 'zod';
 import { NEW_CV, call, workspace } from '../utils/cli.ts';
 import type { Space } from '../utils/cli.ts';
 import { docx, pdf } from '../utils/documents.ts';
+import { sofficePaths } from '../../render/pdf.ts';
+import { fakeSoffice } from '../utils/soffice.ts';
 import { fakeWeb } from '../utils/web.ts';
 import { FIXTURE_URL, photo } from '../utils/fixture.ts';
 
@@ -115,6 +117,30 @@ test('build writes the .docx, and with --dry-run it writes nothing', async () =>
   assert.equal(readFileSync(join(space.cwd, 'term.docx')).subarray(0, 2).toString(), 'PK');
 });
 
+test('build writes a .pdf through LibreOffice, and asks the person when it is missing', async () => {
+  const space = workspace();
+  const scripts = mkdtempSync(join(tmpdir(), 'oriko-soffice-'));
+  const missing = await call(space, ['build', '--out', 'cv.pdf']);
+  assert.deepEqual(
+    [missing.exit, missing.answer.kind, missing.codes],
+    [1, 'ask', ['NOT_INSTALLED']],
+  );
+  const failing = { ...space, soffice: ['/nowhere/soffice', fakeSoffice(scripts, 'fails')] };
+  const failed = await call(failing, ['build', '--out', 'cv.pdf']);
+  assert.deepEqual([failed.answer.kind, failed.codes], ['ask', ['SYSTEM_REFUSED']]);
+  assert.equal(existsSync(join(space.cwd, 'cv.pdf')), false);
+  const working = { ...space, soffice: [fakeSoffice(scripts, 'writes')] };
+  const built = await call(working, ['build', '--out', 'cv.pdf', '--style', 'terminal']);
+  assert.deepEqual([built.exit, built.answer.bytes, built.answer.next], [0, 13, undefined]);
+  assert.equal(readFileSync(join(space.cwd, 'cv.pdf'), 'utf8'), '%PDF-1.7 fake');
+  const word = await call(space, ['build', '--out', 'cv.docx']);
+  assert.equal(Array.isArray(word.answer.next) && word.answer.next.length, 1);
+  assert.equal(
+    sofficePaths().every(path => /soffice|libreoffice/.test(path)),
+    true,
+  );
+});
+
 test('photo set stores the picture as a square PNG for a CV, or for one profile', async () => {
   const space = workspace();
   const source = tall(space.cwd);
@@ -180,11 +206,23 @@ test('every packaged example CV and profile fits and builds', async () => {
     );
   }
   for (const { name } of List.parse(profiles)) {
-    assert.equal(
-      (await call(space, ['build', '--profile', name, '--out', `${name}.docx`])).exit,
-      0,
-      name,
-    );
+    for (const file of [`${name}.docx`, `${name}-terminal.docx`]) {
+      const style = file.endsWith('-terminal.docx') ? 'terminal' : 'classic';
+      const built = await call(space, [
+        'build',
+        '--profile',
+        name,
+        '--style',
+        style,
+        '--out',
+        file,
+      ]);
+      assert.equal(built.exit, 0, file);
+      // The showcase PDFs come from Google Docs, which set these very files; the PDF through
+      // LibreOffice is measured against them.
+      const showcase = new URL(`../../examples/showcase/${name}/${file}`, import.meta.url);
+      assert.deepEqual(readFileSync(join(space.cwd, file)), readFileSync(showcase), file);
+    }
   }
 });
 

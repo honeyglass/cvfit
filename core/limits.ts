@@ -3,7 +3,7 @@
  *
  * COLUMN, KINDS: every block kind and the column it lives in.
  * ICONS: the icons a contact line may use.
- * STYLES: the looks build can give the .docx.
+ * STYLES: the looks build can give the file.
  * LIMITS: the largest sizes the input may have.
  * EXIT: the exit codes of the cli.
  *
@@ -29,5 +29,7 @@ export const LIMITS = {
   redirects: 5,
   /** The whole download, from the first connect to the last byte. */
   downloadSeconds: 20,
+  /** One run of LibreOffice; its first run on a system sets up its profile and takes longest. */
+  pdfSeconds: 120,
 } as const;
 export const EXIT = { ok: 0, expected: 1, fatal: 2 } as const;

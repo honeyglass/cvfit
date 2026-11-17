@@ -21,7 +21,9 @@ import { apply } from '../edit/apply.ts';
 import { place } from '../layout/place.ts';
 import type { Plan } from '../layout/place.ts';
 import { render } from '../render/docx.ts';
+import type { Engine } from '../render/docx.ts';
 import { renderTerminal } from '../render/terminal.ts';
+import { toPdf } from '../render/pdf.ts';
 import { preview } from '../preview/text.ts';
 import {
   invalidJson,
@@ -60,6 +62,8 @@ export type Io = {
   isTTY: boolean;
   /** The network a download goes through. */
   web: Web;
+  /** The paths LibreOffice's program may have, for a PDF; the first one found runs. */
+  soffice: string[];
   /** The text piped in, or null when nothing is piped. */
   stdin: () => Promise<string | null>;
   write: (text: string) => void;
@@ -648,27 +652,38 @@ async function build(call: Call): Promise<Result<Fields>> {
   if (cv.error !== null) return cv;
   const placed = place(cv.data);
   if (placed.error !== null) return placed;
-  const docx = await rendered(call.home, cv.data, placed.data, style);
+  const isPdf = out.data.name.endsWith('.pdf');
+  const engine = isPdf ? 'libreoffice' : 'google';
+  const docx = await rendered(call.home, cv.data, placed.data, style, engine);
   if (docx.error !== null) return docx;
+  const file = isPdf ? await toPdf(docx.data, call.io.soffice) : docx;
+  if (file.error !== null) return file;
   const isDryRun = call.values['dry-run'] === true;
-  const files = [{ path: out.data.path, content: docx.data }];
+  const files = [{ path: out.data.path, content: file.data }];
   const written = isDryRun ? done(undefined) : await writeAll(files, 'out');
   if (written.error !== null) return written;
   return done({
     out: out.data.name,
     style,
-    bytes: docx.data.length,
+    bytes: file.data.length,
     pages: placed.data.pages.length,
     written: isDryRun === false,
   });
 }
 
-// Only the classic look shows the photo, so only it reads the photo file.
-async function rendered(home: string, cv: Master, plan: Plan, style: (typeof STYLES)[number]) {
+// Only the classic look shows the photo, so only it reads the photo file. The terminal look sets
+// alike in Google Docs and LibreOffice, so only the classic one takes the engine.
+async function rendered(
+  home: string,
+  cv: Master,
+  plan: Plan,
+  style: (typeof STYLES)[number],
+  engine: Engine,
+) {
   if (style === 'terminal') return renderTerminal(cv, plan);
   const picture = await photoBytes(home, cv.person.photo);
   if (picture.error !== null) return picture;
-  return render(cv, plan, picture.data);
+  return render(cv, plan, picture.data, engine);
 }
 
 const unknownStyle = (style: string): Issue => ({
