@@ -2,13 +2,15 @@
 
 The commands for the version of your CV for one job posting.
 
-A profile does not copy your CV. It only says what differs for one posting: which blocks to hide,
-in which order to show them, and which bullets to shorten or reword. This folder stores a profile
-after checking it against its master CV, shows a stored profile with the posting it was made for,
-and lists every profile with whether it fits its pages.
+A profile does not copy your CV. It only says what differs for one posting, such as which blocks
+to hide, in which order to show them, and which bullets to shorten or reword. In a list block,
+such as the tools, a profile may only keep and reorder the master's items. This folder stores a
+profile after checking it against its master CV, shows a stored profile with the posting it was
+made for, and lists every profile with whether it fits its pages.
 
-Because a profile only holds the differences, a later change to the master reaches every
-profile on its own.
+A new block in the master, and every field a profile leaves alone, reach every profile on their
+own. A field the profile sets, such as a job's bullets, keeps the profile's version. A profile is
+refused once it names a block or a list item the master no longer holds.
 
 ## Modules
 
@@ -28,7 +30,7 @@ oriko profile show --profile acme
 oriko profiles
 ```
 
-`oriko schema profile set` shows every field a profile takes.
+`oriko schema profile set` shows the input it takes.
 
 ## Connections
 

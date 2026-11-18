@@ -3,9 +3,9 @@
 Turns a document into clean text: a job posting, your notes, or an old CV.
 
 The document can be a PDF, a Word file, a web page or plain text, as a file or a link. This
-folder reads it, keeps only text that shows as itself, and hands that text to the agent, which
+folder reads it, turns hidden characters into spaces, and hands the text to the agent, which
 tailors the CV from it. A posting is kept beside its profile, so you can always see what a
-version was made for.
+version was made for. Notes are kept beside their CV; an old CV is not kept.
 
 A download only goes to a public address over https, and every file and download has a size
 limit, because a document from outside can be anything.
@@ -17,9 +17,9 @@ limit, because a document from outside can be anything.
   its reader.
 - `pdf.ts`: reads the text out of a PDF file.
 - `docx.ts`: reads the text out of a Word file, and stops when it unpacks more than the limit.
-- `html.ts`: turns a web page into Markdown, and prefers the job posting the page states as
-  JSON-LD.
-- `clean.ts`: turns every character that does not show as itself into a space.
+- `html.ts`: turns a web page into Markdown, and prefers the job data that many job pages embed
+  for search engines (JSON-LD).
+- `clean.ts`: turns every character that would not show on screen into a space.
 - `web.ts`: downloads a link over https, and checks every redirect on the way.
 - `address.ts`: tells whether an address is public, so a download never reaches a private network.
 - `issues.ts`: the problems `oriko read` reports, each with a hint on what to do next.
@@ -42,7 +42,8 @@ Each call answers the text as JSON; [the command list](../docs/cli.md) says wher
   reading and writing files within a size limit, the rule for a profile name, and picking the CV
   that notes belong to.
 - **Used by:** [cli/](../cli/README.md) runs `oriko read` through it and lists its limits in
-  `oriko schema`; [bin/](../bin/README.md) hands it the real network calls.
+  `oriko schema`; [bin/](../bin/README.md) takes the real network calls from it and passes them
+  to cli/.
 
 ---
 

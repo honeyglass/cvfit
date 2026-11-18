@@ -1,11 +1,12 @@
 # assets/
 
-The pictures and fonts that go into every CV oriko builds.
+The pictures of the classic style, and the fonts LibreOffice gets for a PDF.
 
 The small icons mark the contact lines and the jobs, and the placeholder stands in for the photo
-until you set your own. The fonts in `fonts/` are the exact versions Google Docs uses; LibreOffice
-gets them for a PDF, so both set lines and pages the same way. Where each font comes from and how
-it was cut: [fonts/README.md](fonts/README.md).
+until you set your own. The fonts in `fonts/` are the ones Google Docs uses, or a stand-in with the
+same widths, so LibreOffice sets lines and pages the same way. Where each font comes from:
+[fonts/README.md](fonts/README.md); where the PDF still differs:
+[Compatibility](../README.md#-compatibility).
 
 ## Contents
 
@@ -25,6 +26,7 @@ This contact line from `examples/cvs/jane-doe.json` gets `phone.png` in front of
 
 ## Connections
 
+- **Uses:** nothing outside itself.
 - **Used by:** [classic/](../classic/README.md) puts the icons into the Word file,
   [cv/](../cv/README.md) copies the placeholder for a new CV, and [pdf/](../pdf/README.md) hands
   `fonts/` to LibreOffice.

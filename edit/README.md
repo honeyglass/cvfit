@@ -2,12 +2,13 @@
 
 The commands that change a master CV, one small step at a time.
 
-Instead of editing the JSON file by hand, a person or an agent adds, changes, removes or moves
-one thing per call: a block such as a job, an item inside a block such as a bullet or a skill,
-the person, or a contact line. Each change is checked before it is written, and the answer says
-whether the CV still fits its pages.
+Instead of editing the JSON file by hand, a person or an agent changes one thing per call: a
+block such as a job, an item inside a block such as a bullet or a skill, a contact line, or the
+CV's own fields such as its language, pages and person. Each change is checked before it is
+written, and the answer says whether the CV still fits its pages.
 
-Small, checked steps keep the master valid at all times, so a mistake is caught where it happens.
+Small, checked steps catch a mistake where it happens. A change that makes the CV too long is
+still written, so the next step can fix it.
 
 ## Modules
 
@@ -16,8 +17,8 @@ Small, checked steps keep the master valid at all times, so a mistake is caught 
 - `apply.ts`: makes one change to a CV, such as to a block, an item, the person or a contact line,
   and refuses a change that would break the CV.
 - `edit.schema.ts`: describes the input each edit command takes.
-- `issues.ts`: the refusals for an unknown command, a move without a place or with a wrong anchor,
-  and an index past the end of a list.
+- `issues.ts`: the refusals for an unknown command, a move without a place, a wrong anchor, and an
+  index past the end of a list.
 
 ## Example
 

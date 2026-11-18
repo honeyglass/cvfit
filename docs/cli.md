@@ -21,7 +21,7 @@ The rules marked ➕ oriko are new: the author of oriko added them from building
 | Plan before the file | `plan` shows which block lands on which page | fixes an overflow before building | ➕ oriko |
 | Hints that run | a refusal names the command that lists the fitting values | runs it and picks a real value | ➕ oriko |
 | Options that list | an option without a value lists the values it accepts | finds names and ids in one call | ➕ oriko |
-| Next steps | every success names its next commands and what each still needs | always knows where to go on | ➕ oriko |
+| Next steps | a success names its next commands, when there are any, and what each still needs | always knows where to go on | ➕ oriko |
 | Nothing passes silently | an unknown command, option or word is refused, a group alone lists its actions | never acts on a typo | ➕ oriko |
 
 ## Commands
@@ -62,9 +62,9 @@ its action lists the actions, such as `oriko block` for `block add`, `block upda
 and `block move`. A command takes only its own options and words; anything else is refused, with
 every mistake of the call in one answer.
 
-Every success names what can follow in `next`, with what each step still needs. At a terminal the
-steps print as `Next:` lines below the answer; piped text leaves them out, and JSON always holds
-them:
+A success names what can follow in `next`, when anything can, with what each step still needs. At
+a terminal the steps print as `Next:` lines below the answer; piped text leaves them out, and JSON
+always holds them:
 
 ```json
 {

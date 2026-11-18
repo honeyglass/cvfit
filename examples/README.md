@@ -3,11 +3,11 @@
 A complete data folder with made-up people, to try oriko without a CV of your own.
 
 `cvs/` and `profiles/` are laid out like your own `~/.oriko`, so every command runs against them
-with `--home examples`. `showcase/` holds what one agent run made from each example: the job
-posting, the agent's report, the preview, and the built files in both looks.
+with `--home examples`. `showcase/` holds one agent run per example: the job posting, the
+agent's report, the preview, and the built files in both styles.
 
-The showcase files are also the references the tests compare the builds of the examples against. Run through
-the examples: [Examples](../docs/examples.md).
+The tests compare the builds of the examples with the showcase files. A tour of the examples:
+[Examples](../docs/examples.md).
 
 ## Contents
 
@@ -18,7 +18,7 @@ the examples: [Examples](../docs/examples.md).
   - `report.md`: the agent's report on what it changed and why.
   - `preview.txt`: the terminal preview of every page.
   - `<profile>.docx` and `<profile>-terminal.docx`: the Word files in the classic and the
-    terminal look.
+    terminal style.
   - `<profile>.pdf` and `<profile>-terminal.pdf`: the PDFs Google Docs made from those Word files.
   - `page-1.png` and `terminal-page-1.png`, one per page: pictures of the pages of those PDFs.
   - `google.json`: the sha256 of each Word file its PDF was made from.
@@ -44,7 +44,10 @@ for an installed oriko.
     `showcase/`.
   - [tools/](../tools/README.md) renews the Google PDFs and page pictures with
     `pnpm baselines:update`.
-  - The [README](../README.md) and [Examples](../docs/examples.md) show the showcase files.
+  - The [README](../README.md) and [Examples](../docs/examples.md) show the showcase files;
+    [Sample data](../docs/sample-data.md) and [Baselines](../docs/baselines.md) describe the
+    folder.
+  - The example of [assets/](../assets/README.md) quotes a contact line of `cvs/jane-doe.json`.
 
 ---
 

@@ -3,9 +3,9 @@
 Turns a Word file into a PDF, through LibreOffice on your own computer.
 
 oriko writes .docx files. When you ask for a PDF, this folder hands the file to LibreOffice
-with the fonts from `assets/fonts/`, so the PDF uses the same fonts as Google Docs and breaks
-lines and pages in the same places. Without LibreOffice, the answer says how to install it, or
-to save the .docx as PDF in Google Docs instead.
+with the fonts from `assets/fonts/`, so lines and pages break where Google Docs breaks them.
+Where the PDF still differs: [Compatibility](../README.md#-compatibility). Without LibreOffice,
+the answer says how to install it, or to save the .docx as PDF in Google Docs instead.
 
 ## Modules
 
@@ -24,10 +24,11 @@ A file name that ends in `.pdf` sends the Word file through this folder.
 
 ## Connections
 
-- **Uses:** [core/](../core/README.md) for answers and error codes, and the fonts in
-  [assets/fonts/](../assets/fonts/README.md).
-- **Used by:** [cli/](../cli/README.md) for `build` and `oriko schema`, and [bin/](../bin/README.md)
-  for the places LibreOffice may be installed.
+- **Uses:** [core/](../core/README.md) for the shape of a result and the error codes, and the
+  fonts in [assets/fonts/](../assets/fonts/README.md).
+- **Used by:** [cli/](../cli/README.md) for `build` and `oriko schema`, [bin/](../bin/README.md)
+  for the places LibreOffice may be installed, and [install.sh](../install.sh) to find out
+  whether LibreOffice is installed.
 
 ---
 

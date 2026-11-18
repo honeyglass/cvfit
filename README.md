@@ -158,10 +158,10 @@ from Justin Poehnelt's article
 implementation. [The CLI page](docs/cli.md) lists every rule oriko follows, its commands, and a
 refusal as the agent reads it.
 
-oriko navigates on its own: `oriko` alone shows where to start, every success names the next
-commands, a refusal names the command that fixes it, and an option without a value lists the
-values it accepts. A person needs no manual, and the agent acts on what oriko answers, never on a
-guess.
+oriko navigates on its own: `oriko` alone shows where to start, a success names the next
+commands when there are any, a refusal names the command that fixes it, and an option without a
+value lists the values it accepts. A person needs no manual, and the agent acts on what oriko
+answers, never on a guess.
 
 <details>
 <summary><b>Agent DX rules</b></summary>
@@ -183,7 +183,7 @@ The rules marked ➕ oriko are new: the author of oriko added them from building
 | Plan before the file | `plan` shows which block lands on which page | fixes an overflow before building | ➕ oriko |
 | Hints that run | a refusal names the command that lists the fitting values | runs it and picks a real value | ➕ oriko |
 | Options that list | an option without a value lists the values it accepts | finds names and ids in one call | ➕ oriko |
-| Next steps | every success names its next commands and what each still needs | always knows where to go on | ➕ oriko |
+| Next steps | a success names its next commands, when there are any, and what each still needs | always knows where to go on | ➕ oriko |
 | Nothing passes silently | an unknown command, option or word is refused, a group alone lists its actions | never acts on a typo | ➕ oriko |
 
 </details>
