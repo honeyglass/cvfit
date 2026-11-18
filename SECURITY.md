@@ -6,6 +6,9 @@ token. These are the rules this repository follows, and each one also stands as 
 comment at the line where it acts: in a workflow, in `pnpm-workspace.yaml` or in
 `.github/dependabot.yml`.
 
+Serkan Sipahi collected these rules over 2026, from January to November, and built the supply
+check below from them.
+
 > [!IMPORTANT]
 > **Every CI run starts with the supply check of
 > [honeyglass/actions](https://github.com/honeyglass/actions/tree/main/supply-check).**
