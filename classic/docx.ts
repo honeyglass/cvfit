@@ -40,6 +40,7 @@ import {
 import type { IParagraphOptions, IRunOptions, ITableCellOptions, ParagraphChild } from 'docx';
 import { done, rejected } from '../core/errors.ts';
 import type { Result } from '../core/errors.ts';
+import * as issue from './issues.ts';
 import { CV_LIMITS, ICONS } from '../core/cv.limits.ts';
 import type { Block, Master } from '../core/cv.schema.ts';
 import { spacedRole } from '../core/measure.ts';
@@ -125,17 +126,10 @@ export async function render(
   engine: Engine = 'google',
 ): Promise<Result<Uint8Array>> {
   const round = trySync$(() => circlePhoto(photo));
-  if (round.error !== null) return rejected('render', [photoUnreadable()], round.error);
+  if (round.error !== null) return rejected('render', [issue.photoUnreadable()], round.error);
   const images = { photo: round.data, ...packagedImages() };
   return done(await stable(await Packer.toBuffer(document(cv, plan, images, LOOKS[engine]))));
 }
-
-export const photoUnreadable = () => ({
-  code: 'PHOTO_UNREADABLE',
-  path: 'person.photo',
-  message: 'The photo is neither a PNG nor a JPEG picture',
-  hint: 'Use a PNG or JPEG file, for example with "oriko photo set <file>"',
-});
 
 function packagedImages() {
   const icon = (name: string) => readFileSync(join(ASSETS, `${name}.png`));

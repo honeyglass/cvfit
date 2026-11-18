@@ -11,11 +11,11 @@
 import { join, resolve } from 'node:path';
 import { trySync$ } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
-import type { Issue, Result } from '../core/errors.ts';
+import type { Result } from '../core/errors.ts';
+import * as issue from './issues.ts';
 import * as coreIssue from '../core/issues.ts';
 import { FILE_LIMITS } from '../core/files.limits.ts';
 import { Master, Profile } from '../core/cv.schema.ts';
-import { photoUnreadable } from './docx.ts';
 import { squarePhoto } from './images.ts';
 import { readBounded, readJson, writeAll } from '../core/files.ts';
 import { chosenCv, profilePath } from '../core/home.ts';
@@ -36,7 +36,7 @@ type Owner = { path: string; photo: string; content: unknown };
  */
 export async function setPhoto(request: Request): Promise<Result<Record<string, unknown>>> {
   const { home, cwd, source, cv, profile, isDryRun } = request;
-  if (source === undefined) return rejected('photo set', [missingPicture()]);
+  if (source === undefined) return rejected('photo set', [issue.missingPicture()]);
   const owner = profile === undefined ? await cvOwner(home, cv) : await profileOwner(home, profile);
   if (owner.error !== null) return owner;
   const picture = await squared(resolve(cwd, source));
@@ -53,13 +53,6 @@ export async function setPhoto(request: Request): Promise<Result<Record<string, 
   if (written.error !== null) return written;
   return done({ command: 'photo set', photo, written: true });
 }
-
-const missingPicture = (): Issue => ({
-  code: 'MISSING_INPUT',
-  path: 'file',
-  message: 'The command names no picture',
-  hint: 'Pass the path of a PNG or JPEG file: oriko photo set <file>',
-});
 
 // The CV with its photo set to cvs/NAME.png, the photo its profiles share.
 async function cvOwner(home: string, explicit: string | undefined): Promise<Result<Owner>> {
@@ -100,6 +93,6 @@ async function squared(path: string): Promise<Result<Uint8Array>> {
   if (bytes.error !== null) return bytes;
   const square = trySync$(() => squarePhoto(bytes.data));
   if (square.error !== null)
-    return rejected('photo set', [{ ...photoUnreadable(), path: 'file' }], square.error);
+    return rejected('photo set', [{ ...issue.photoUnreadable(), path: 'file' }], square.error);
   return done(square.data);
 }
