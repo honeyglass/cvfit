@@ -8,7 +8,8 @@
 import { join } from 'node:path';
 import { shown, trySync$ } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
-import type { Issue, Result } from '../core/errors.ts';
+import type { Result } from '../core/errors.ts';
+import * as issue from './issues.ts';
 import * as coreIssue from '../core/issues.ts';
 import { Profile } from '../core/cv.schema.ts';
 import { existingText } from '../core/files.ts';
@@ -29,7 +30,7 @@ export async function showProfile(home: string, name: string | undefined): Promi
   const posting = await existingText(join(home, 'profiles', `${checkedName.data}.posting.md`));
   if (posting.error !== null) return posting;
   if (profile.data === null && posting.data === null)
-    return rejected('profile show', [unknownProfile(checkedName.data)]);
+    return rejected('profile show', [issue.unknownProfile(checkedName.data)]);
   return done({ name: checkedName.data, profile: profile.data, posting: posting.data });
 }
 
@@ -50,11 +51,3 @@ async function storedProfile(path: string): Promise<Result<Profile | null>> {
     return rejected('profile show', coreIssue.schemaIssues(profile.error, [], 'profile'));
   return done(profile.data);
 }
-
-const unknownProfile = (name: string): Issue => ({
-  code: 'UNKNOWN_PROFILE',
-  path: 'profile',
-  message: `The data folder has no profile ${shown(name)}, nor a posting read for it`,
-  hint: 'Run the command and use one of the profile names it lists',
-  command: 'oriko plan --profile',
-});

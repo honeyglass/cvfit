@@ -10,14 +10,14 @@
  * @example const answer = await setProfile({ home, name: 'acme', input, isReplace: false, isDryRun: true });
  */
 import { join } from 'node:path';
-import { shown, trySync$ } from '@honeyglass/utils/ts';
+import { trySync$ } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
-import type { Issue, Result } from '../core/errors.ts';
+import type { Result } from '../core/errors.ts';
+import * as issue from './issues.ts';
 import * as coreIssue from '../core/issues.ts';
 import { check } from '../core/check.ts';
 import { Profile } from '../core/cv.schema.ts';
 import { place } from '../core/place.ts';
-import { optionText } from '../core/options.ts';
 import { existingText, readJson, writeAll } from '../core/files.ts';
 import { chosenCv } from '../core/home.ts';
 import { profileName } from './name.ts';
@@ -48,7 +48,7 @@ export async function setProfile(request: Request): Promise<Result<Fields>> {
   const existing = await existingText(path);
   if (existing.error !== null) return existing;
   if (existing.data !== null && request.isReplace === false)
-    return rejected('profile set', [profileExists(name.data)]);
+    return rejected('profile set', [issue.profileExists(name.data)]);
   const content = `${JSON.stringify(request.input, null, 2)}\n`;
   const isWriting = request.isDryRun === false && existing.data !== content;
   const written = isWriting ? await writeAll([{ path, content }], 'home') : done(undefined);
@@ -111,11 +111,3 @@ function changesOf(before: unknown, after: unknown) {
     removed: sorted([...old.keys()].filter(key => fresh.has(key) === false)),
   };
 }
-
-const profileExists = (name: string): Issue => ({
-  code: 'PROFILE_EXISTS',
-  path: 'profile',
-  message: `The profile ${shown(name)} is already stored`,
-  hint: 'Run the command to see it; add --replace to overwrite it, or pass another --profile',
-  command: `oriko profile show${optionText('profile', name)}`,
-});
