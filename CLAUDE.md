@@ -21,6 +21,13 @@ rules and fails on a forbidden import; every new top-level folder with code coun
 - A folder's constants sit in its limits.ts; core/ names them by topic, such as cv.limits.ts.
 - A folder's issues sit in its issues.ts; callers import it as a namespace and call issue.name(). An issue two folders raise goes to core/issues.ts.
 
+## Folder READMEs
+
+Every top-level folder has a README.md that tells a person, in plain words, what the folder is for
+and how it fits the rest; it names roles, not every file. When a change alters what a folder does,
+which parts it has, or how it connects to other folders, update that folder's README in the same
+commit. A new top-level folder gets one too.
+
 ## Checks
 
 Run pnpm test, pnpm typecheck and pnpm run format:check before a commit.
