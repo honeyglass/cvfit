@@ -21,6 +21,7 @@ const run = promisify(execFile);
 
 const DOCX = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 const GOOGLE_DOC = 'application/vnd.google-apps.document';
+const PDF = 'export.pdf';
 
 /**
  * @param program - the path of the gws program, from gwsProgram()
@@ -31,11 +32,10 @@ const GOOGLE_DOC = 'application/vnd.google-apps.document';
 export async function googlePdf(program: string, docx: string) {
   const id = await uploaded(program, docx);
   const folder = await mkdtemp(join(tmpdir(), 'oriko-google-'));
-  const pdf = join(folder, 'export.pdf');
-  const exportArgs = ['export', '--params', params(id, 'application/pdf'), '--output', pdf];
-  const exported = await $try(files(program, exportArgs));
+  const exportArgs = ['export', '--params', params(id, 'application/pdf'), '--output', PDF];
+  const exported = await $try(files(program, exportArgs, folder));
   await files(program, ['update', '--params', params(id), '--json', '{"trashed":true}']);
-  const bytes = exported.error === null ? await readFile(pdf) : null;
+  const bytes = exported.error === null ? await readFile(join(folder, PDF)) : null;
   await rm(folder, { recursive: true, force: true });
   if (bytes === null) throw exported.error;
   return bytes;
@@ -53,9 +53,11 @@ async function uploaded(program: string, docx: string) {
 
 const params = (fileId: string, mimeType?: string) => JSON.stringify({ fileId, mimeType });
 
-// One Drive files call; an export writes its binary answer to the path after --output.
-async function files(program: string, args: string[]) {
-  const answer = await $try(run(program, ['drive', 'files', ...args], { maxBuffer: 10_000_000 }));
+// One Drive files call. gws writes an --output file only inside the folder it runs in, so an
+// export runs in its own temporary folder.
+async function files(program: string, args: string[], cwd?: string) {
+  const options = { maxBuffer: 10_000_000, cwd };
+  const answer = await $try(run(program, ['drive', 'files', ...args], options));
   if (answer.error !== null) throw gwsRefused(`gws drive files ${args[0]} failed`, answer.error);
   return answer.data.stdout;
 }
