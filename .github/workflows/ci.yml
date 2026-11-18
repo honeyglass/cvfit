@@ -24,6 +24,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
+        # 24 is the oldest Node oriko supports; lts/* is always the newest LTS.
+        node: ['24', 'lts/*']
     runs-on: ${{ matrix.os }}
     steps:
       # Pinned to a commit, not to a tag. A tag can be moved to another commit by
@@ -43,6 +45,12 @@ jobs:
       # through Corepack, which refuses a pnpm whose sha512 differs from the one in
       # package.json, and leaves both on for the steps below.
       - uses: honeyglass/actions/supply-check@d775cff14274bc10b5efcf9ad1826455f1ecde18
+      # The supply check ran on Node 24; the checks below run on the Node of this runner.
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ matrix.node }}
+          package-manager-cache: false
+      - run: node --version && pnpm --version
       - run: pnpm install --frozen-lockfile
       # Right after the install, before the steps below run code from node_modules: a link
       # there that dangles or leads out of the checkout fails the job.
