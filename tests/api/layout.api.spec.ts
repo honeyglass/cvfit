@@ -1,61 +1,107 @@
 import assert from 'node:assert/strict';
-import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join, relative, resolve, sep } from 'node:path';
+import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { codeOf } from '../../tools/readmes/code.ts';
+import type { Code } from '../../tools/readmes/code.ts';
 
 const ROOT = fileURLToPath(new URL('../..', import.meta.url));
 
 /** The folders with rules of their own; every other top-level folder with code is a feature. */
 const SHELL = new Set(['bin', 'cli', 'tests', 'tools']);
-const SKIPPED = new Set(['node_modules', '.git']);
 
-// Each relative import of a .ts file in one top-level folder that leaves the allowed folders.
-function crossings(root: string, folder: string, allowed: Set<string>) {
-  const found: string[] = [];
-  const files = readdirSync(join(root, folder), { recursive: true, encoding: 'utf8' });
-  for (const file of files.filter(name => name.endsWith('.ts'))) {
-    const path = join(root, folder, file);
-    for (const [, spec = ''] of readFileSync(path, 'utf8').matchAll(/from\s+'(\.\.?\/[^']+)'/g)) {
-      const reached = relative(root, resolve(dirname(path), spec)).split(sep)[0] ?? '';
-      if (allowed.has(reached) === false) found.push(`${folder}/${file} imports ${spec}`);
-    }
-  }
-  return found;
+// Each import from one top-level folder that leaves the allowed folders.
+function crossings(code: Code, folder: string, allowed: Set<string>) {
+  return code.edges
+    .filter(edge => edge.from === folder && allowed.has(edge.to) === false)
+    .map(edge => `${folder}/${edge.file} imports ${edge.spec}`);
 }
 
 // Every top-level folder that holds a .ts file and has no rule of its own.
-function features(root: string) {
-  return readdirSync(root, { withFileTypes: true })
-    .filter(entry => entry.isDirectory())
-    .map(entry => entry.name)
-    .filter(name => SHELL.has(name) === false && name !== 'core' && SKIPPED.has(name) === false)
-    .filter(name =>
-      readdirSync(join(root, name), { recursive: true }).some(f => `${f}`.endsWith('.ts')),
-    )
-    .sort();
+function features(code: Code) {
+  return code.folders
+    .filter(name => SHELL.has(name) === false && name !== 'core')
+    .filter(name => (code.files.get(name) ?? []).some(file => file.endsWith('.ts')));
 }
 
+// Each import of a maintainer tool from outside tests, so no tool ends up in what users run.
+function toolImports(code: Code) {
+  return code.edges
+    .filter(edge => edge.to === 'tools' && edge.from !== 'tests')
+    .map(edge => `${edge.from}/${edge.file} imports ${edge.spec}`);
+}
+
+// A repository in a temporary folder, from a map of paths to file contents.
+function repository(files: Record<string, string>) {
+  const root = mkdtempSync(join(tmpdir(), 'oriko-layout-'));
+  for (const [path, text] of Object.entries(files)) {
+    mkdirSync(join(root, path, '..'), { recursive: true });
+    writeFileSync(join(root, path), text);
+  }
+  return root;
+}
+
+const code = codeOf(ROOT);
+
+test('reads every import of the repository', () => {
+  assert.deepEqual(code.issues, []);
+});
+
 test('a feature imports only core and itself', () => {
-  const found = features(ROOT).flatMap(name => crossings(ROOT, name, new Set(['core', name])));
+  const found = features(code).flatMap(name => crossings(code, name, new Set(['core', name])));
   assert.deepEqual(found, []);
 });
 
 test('core imports only core', () => {
-  assert.deepEqual(crossings(ROOT, 'core', new Set(['core'])), []);
+  assert.deepEqual(crossings(code, 'core', new Set(['core'])), []);
+});
+
+test('only tests import from tools', () => {
+  assert.deepEqual(toolImports(code), []);
 });
 
 test('names a feature that imports another feature, and counts a new folder as a feature', () => {
-  const root = mkdtempSync(join(tmpdir(), 'oriko-layout-'));
-  for (const name of ['core', 'classic', 'brand-new']) mkdirSync(join(root, name));
-  writeFileSync(join(root, 'core', 'errors.ts'), 'export const x = 1;\n');
-  writeFileSync(join(root, 'classic', 'docx.ts'), "import { x } from '../core/errors.ts';\n");
-  writeFileSync(join(root, 'brand-new', 'a.ts'), "import { y } from '../classic/docx.ts';\n");
-  assert.deepEqual(features(root), ['brand-new', 'classic']);
-  assert.deepEqual(crossings(root, 'brand-new', new Set(['core', 'brand-new'])), [
+  const root = repository({
+    'core/errors.ts': 'export const x = 1;\n',
+    'classic/docx.ts': "import { x } from '../core/errors.ts';\n",
+    'brand-new/a.ts': "import { y } from '../classic/docx.ts';\n",
+  });
+  const found = codeOf(root);
+  assert.deepEqual(features(found), ['brand-new', 'classic']);
+  assert.deepEqual(crossings(found, 'brand-new', new Set(['core', 'brand-new'])), [
     'brand-new/a.ts imports ../classic/docx.ts',
   ]);
-  assert.deepEqual(crossings(root, 'classic', new Set(['core', 'classic'])), []);
+  assert.deepEqual(crossings(found, 'classic', new Set(['core', 'classic'])), []);
+  rmSync(root, { recursive: true });
+});
+
+test('names the cli when it imports a maintainer tool', () => {
+  const root = repository({ 'cli/run.ts': "import { readmes } from '../tools/readmes/x.ts';\n" });
+  assert.deepEqual(toolImports(codeOf(root)), ['cli/run.ts imports ../tools/readmes/x.ts']);
+  rmSync(root, { recursive: true });
+});
+
+test('sees every import form, and names an import() it cannot follow', () => {
+  const root = repository({
+    'a/a.ts': [
+      "import type { T } from '../core/types.ts';",
+      'export * from "../core/x.ts";',
+      "import '../side/effect.ts';",
+      "const lazy = await import('../lazy/load.ts');",
+      "type U = import('../types/t.ts').T;",
+      'const named = await import(lazy.name);',
+    ].join('\n'),
+  });
+  const found = codeOf(root);
+  assert.deepEqual(
+    found.edges.map(edge => edge.to),
+    ['core', 'core', 'side', 'lazy', 'types'],
+  );
+  assert.deepEqual(
+    found.issues.map(issue => [issue.code, issue.path]),
+    [['DYNAMIC_IMPORT', 'a/a.ts']],
+  );
   rmSync(root, { recursive: true });
 });
