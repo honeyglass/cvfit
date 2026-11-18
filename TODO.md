@@ -11,7 +11,7 @@ Open work on oriko, the CLI and its skill.
 ## Structure
 
 - [ ] #13 Cut the folders by feature instead of by layer, as the Fable plan of 2026-11-18 proposes: core/ holds only what several features share (errors, CV schema and check, page plan, files, data folder), the looks become classic/, terminal/ and pdf/, the commands move to cv/, profile/, edit/ and read/, cli/run.ts splits into the shell's files, baselines/ moves to tools/baselines/; bin/oriko.ts stays, behavior stays, tests green after every commit (added 2026-11-18)
-      'core/limits.ts', 'core/credits.ts', 'cli/run.ts', 'install.sh'
+      'core/limits.ts', 'cli/run.ts', 'install.sh'
 - [ ] #14 Collect the issues of each folder in its own issues.ts, the way each Go package has its errors.go: every issue a function in camelCase, a code as an UPPER_CASE constant only where another file compares it, and callers import the file as a namespace, so every call reads issue.tooManyRedirects(); the shared Issue shape and rejected() stay in core/errors.ts (added 2026-11-18)
 
 ## CV score

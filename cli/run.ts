@@ -14,7 +14,7 @@ import { $try, causeText, refusal, shown, trySync$ } from '@honeyglass/utils/ts'
 import { z } from 'zod';
 import { Rejection, done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
-import { withCredits } from '../core/credits.ts';
+import { withCredits } from '../terminal/credits.ts';
 import { COLUMN, EXIT, ICONS, KINDS, LIMITS, STYLES } from '../core/limits.ts';
 import { check, schemaIssues, unknownBlock } from '../core/check.ts';
 import { Block, Master, Profile } from '../core/cv.schema.ts';
@@ -23,9 +23,9 @@ import { place } from '../core/place.ts';
 import type { Plan } from '../core/place.ts';
 import { render } from '../render/docx.ts';
 import type { Engine } from '../render/docx.ts';
-import { renderTerminal } from '../render/terminal.ts';
+import { renderTerminal } from '../terminal/docx.ts';
 import { toPdf } from '../render/pdf.ts';
-import { preview } from '../preview/text.ts';
+import { preview } from '../terminal/sheets.ts';
 import {
   invalidJson,
   missingOption,

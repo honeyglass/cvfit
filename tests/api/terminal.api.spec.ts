@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import JSZip from 'jszip';
-import { withCredits } from '../../core/credits.ts';
+import { withCredits } from '../../terminal/credits.ts';
 import { place } from '../../core/place.ts';
-import { preview } from '../../preview/text.ts';
-import { renderTerminal } from '../../render/terminal.ts';
+import { preview } from '../../terminal/sheets.ts';
+import { renderTerminal } from '../../terminal/docx.ts';
 import { fixture, unwrap } from '../utils/fixture.ts';
 
 const plan = () => unwrap(place(fixture()));

@@ -17,8 +17,8 @@ import type { Result } from '../core/errors.ts';
 import type { Master } from '../core/cv.schema.ts';
 import type { Plan } from '../core/place.ts';
 import { HEIGHT, WIDTH } from '../core/metrics.ts';
-import { REPOSITORY } from '../core/credits.ts';
-import { repositoryLines, sheets } from '../preview/text.ts';
+import { REPOSITORY } from './credits.ts';
+import { repositoryLines, sheets } from './sheets.ts';
 import { stable } from '../core/zip.ts';
 
 const FONT = 'Fira Code';

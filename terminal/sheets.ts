@@ -11,7 +11,7 @@
  *
  * @example io.write(preview(cv, plan));
  */
-import { REPOSITORY } from '../core/credits.ts';
+import { REPOSITORY } from './credits.ts';
 import { LIMITS } from '../core/limits.ts';
 import type { Block, Master } from '../core/cv.schema.ts';
 import type { Column, Placed, Plan } from '../core/place.ts';

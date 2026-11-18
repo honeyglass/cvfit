@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { withCredits } from '../../core/credits.ts';
+import { withCredits } from '../../terminal/credits.ts';
 import { place } from '../../core/place.ts';
-import { preview } from '../../preview/text.ts';
+import { preview } from '../../terminal/sheets.ts';
 import { fixture, unwrap } from '../utils/fixture.ts';
 
 const text = preview(fixture(), unwrap(place(fixture())));
