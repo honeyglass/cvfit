@@ -12,11 +12,11 @@ import { join } from 'node:path';
 import { shown } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
-import { check, schemaIssues } from '../core/check.ts';
+import * as coreIssue from '../core/issues.ts';
+import { check } from '../core/check.ts';
 import { Id, NewCv } from '../core/cv.schema.ts';
 import type { Master } from '../core/cv.schema.ts';
-import { missingOption, writeAll } from '../core/files.ts';
-import { NEW_NAME } from '../core/options.ts';
+import { writeAll } from '../core/files.ts';
 import { cvNames } from '../core/home.ts';
 
 const PLACEHOLDER = join(import.meta.dirname, '..', 'assets', 'placeholder.png');
@@ -29,12 +29,14 @@ type Request = { home: string; name: string | undefined; input: unknown; isDryRu
  */
 export async function createCv(request: Request): Promise<Result<Record<string, unknown>>> {
   const { home, input, isDryRun } = request;
-  if (request.name === undefined) return rejected('init', [cvNameMissing()]);
+  if (request.name === undefined) return rejected('init', [coreIssue.cvNameMissing()]);
   const name = Id.safeParse(request.name);
-  if (name.success === false) return rejected('init', schemaIssues(name.error, ['cv'], 'init'));
+  if (name.success === false)
+    return rejected('init', coreIssue.schemaIssues(name.error, ['cv'], 'init'));
   if ((await cvNames(home)).includes(name.data)) return rejected('init', [cvExists(name.data)]);
   const fields = NewCv.safeParse(input);
-  if (fields.success === false) return rejected('init', schemaIssues(fields.error, [], 'init'));
+  if (fields.success === false)
+    return rejected('init', coreIssue.schemaIssues(fields.error, [], 'init'));
   const master = emptyCv(name.data, fields.data);
   const checked = check(master);
   if (checked.error !== null) return checked;
@@ -66,12 +68,6 @@ function emptyCv(
     blocks: [],
   };
 }
-
-/** The issue of an init without --cv; the command lists the names already taken. */
-export const cvNameMissing = (): Issue => ({
-  ...missingOption('cv', 'the name of the new CV', NEW_NAME),
-  command: 'oriko show --cv',
-});
 
 const cvExists = (name: string): Issue => ({
   code: 'CV_EXISTS',

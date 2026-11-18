@@ -9,9 +9,9 @@ import { join } from 'node:path';
 import { shown, trySync$ } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
-import { schemaIssues } from '../core/check.ts';
+import * as coreIssue from '../core/issues.ts';
 import { Profile } from '../core/cv.schema.ts';
-import { existingText, invalidJson } from '../core/files.ts';
+import { existingText } from '../core/files.ts';
 import { profileName } from './name.ts';
 
 type Fields = Record<string, unknown>;
@@ -40,10 +40,14 @@ async function storedProfile(path: string): Promise<Result<Profile | null>> {
   const raw = text.data;
   const value = trySync$((): unknown => JSON.parse(raw));
   if (value.error !== null)
-    return rejected('profile show', [invalidJson(`The file ${shown(path)}`)], value.error);
+    return rejected(
+      'profile show',
+      [coreIssue.invalidJson(`The file ${shown(path)}`)],
+      value.error,
+    );
   const profile = Profile.safeParse(value.data);
   if (profile.success === false)
-    return rejected('profile show', schemaIssues(profile.error, [], 'profile'));
+    return rejected('profile show', coreIssue.schemaIssues(profile.error, [], 'profile'));
   return done(profile.data);
 }
 

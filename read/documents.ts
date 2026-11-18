@@ -13,15 +13,15 @@ import { join, resolve } from 'node:path';
 import { shown } from '@honeyglass/utils/ts';
 import { Rejection, done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
+import * as coreIssue from '../core/issues.ts';
 import { FILE_LIMITS } from '../core/files.limits.ts';
-import { schemaIssues } from '../core/check.ts';
 import { Id } from '../core/cv.schema.ts';
 import { cleanText } from './clean.ts';
 import { textOf } from './text.ts';
 import type { Kind } from './text.ts';
 import { download } from './web.ts';
 import type { Web } from './web.ts';
-import { existingText, missingOption, readBounded, tooLarge, writeAll } from '../core/files.ts';
+import { existingText, readBounded, writeAll } from '../core/files.ts';
 import type { NewFile } from '../core/files.ts';
 import { chosenCv } from '../core/home.ts';
 import type { CvFile } from '../core/home.ts';
@@ -94,7 +94,7 @@ async function targetOf(request: Request): Promise<Result<Target>> {
 function profileIssues(profile: string | undefined): Issue[] {
   if (profile === undefined) return [profileMissing()];
   const name = Id.safeParse(profile);
-  return name.success ? [] : schemaIssues(name.error, ['profile'], 'read');
+  return name.success ? [] : coreIssue.schemaIssues(name.error, ['profile'], 'read');
 }
 
 // A source with a scheme is downloaded, anything else is a file; each issue names its source.
@@ -169,7 +169,7 @@ async function notesFile(notes: Document[], path: string): Promise<Result<NewFil
   const before = existing.data?.trim() ?? '';
   const content = (before === '' ? sections : [`${before}\n`, ...sections]).join('\n');
   if (Buffer.byteLength(content) > FILE_LIMITS.readBytes)
-    return rejected('read', [tooLarge('notes', FILE_LIMITS.readBytes)]);
+    return rejected('read', [coreIssue.tooLarge('notes', FILE_LIMITS.readBytes)]);
   return done({ path, content });
 }
 
@@ -192,7 +192,7 @@ const missingInput = (): Issue => ({
 });
 
 const profileMissing = (): Issue => ({
-  ...missingOption(
+  ...coreIssue.missingOption(
     'profile',
     'the profile the posting belongs to',
     'Run the command for the existing profiles, or pass a new name in lower-case words joined by hyphens',

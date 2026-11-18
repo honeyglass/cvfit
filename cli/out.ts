@@ -12,15 +12,8 @@ import { basename, dirname, join, relative, resolve } from 'node:path';
 import { $try, shown } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
-import {
-  isMissing,
-  leaves,
-  missingOption,
-  notAFile,
-  notAFolder,
-  pathIssue,
-  pathOutside,
-} from '../core/files.ts';
+import * as coreIssue from '../core/issues.ts';
+import { isMissing, leaves, pathIssue } from '../core/files.ts';
 
 /**
  * @param cwd - the working directory
@@ -32,7 +25,9 @@ export async function outputPath(
   out: string | undefined,
 ): Promise<Result<{ path: string; name: string }>> {
   if (out === undefined)
-    return rejected('build', [missingOption('out', 'the path of the .docx or .pdf to write')]);
+    return rejected('build', [
+      coreIssue.missingOption('out', 'the path of the .docx or .pdf to write'),
+    ]);
   if (OUTPUTS.some(extension => out.endsWith(extension)) === false)
     return rejected('build', [wrongExtension(out)]);
   const path = resolve(cwd, out);
@@ -41,7 +36,7 @@ export async function outputPath(
     return rejected('build', [folderIssue(parent.error, dirname(path))], parent.error);
   const real = await realpath(cwd);
   const isInside = parent.data === real || leaves(real, parent.data) === false;
-  if (isInside === false) return rejected('build', [pathOutside('out', out, cwd)]);
+  if (isInside === false) return rejected('build', [coreIssue.pathOutside('out', out, cwd)]);
   // The write goes into the folder the check resolved, never again through the path as given.
   const target = join(parent.data, basename(path));
   const kinds = await outputKinds(parent.data, target);
@@ -58,10 +53,13 @@ const folderIssue = (error: Error, folder: string) =>
 async function outputKinds(parent: string, path: string): Promise<Result<undefined>> {
   const folder = await $try(stat(parent));
   if (folder.error !== null) return rejected('build', [pathIssue(folder.error, parent, 'out')]);
-  if (folder.data.isDirectory() === false) return rejected('build', [notAFolder(parent, 'out')]);
+  if (folder.data.isDirectory() === false)
+    return rejected('build', [coreIssue.notAFolder(parent, 'out')]);
   const file = await $try(lstat(path));
   if (file.error === null)
-    return file.data.isDirectory() ? rejected('build', [notAFile(path, 'out')]) : done(undefined);
+    return file.data.isDirectory()
+      ? rejected('build', [coreIssue.notAFile(path, 'out')])
+      : done(undefined);
   return isMissing(file.error)
     ? done(undefined)
     : rejected('build', [pathIssue(file.error, path, 'out')]);

@@ -9,8 +9,8 @@
  */
 import { done, rejected } from '../core/errors.ts';
 import type { Result } from '../core/errors.ts';
+import * as coreIssue from '../core/issues.ts';
 import { COLUMN } from '../core/cv.limits.ts';
-import { schemaIssues, unknownBlock } from '../core/check.ts';
 import { Master } from '../core/cv.schema.ts';
 import type { Block } from '../core/cv.schema.ts';
 import { readJson } from '../core/files.ts';
@@ -39,7 +39,7 @@ export async function showCv(
   const { blocks, pages } = master.data;
   if (id === undefined) return done({ cv: cv.data.name, pages, blocks: blocks.map(outline) });
   const block = blocks.find(candidate => candidate.id === id);
-  if (block === undefined) return rejected('show', [unknownBlock(id, 'block')]);
+  if (block === undefined) return rejected('show', [coreIssue.unknownBlock(id, 'block')]);
   return done({ block });
 }
 
@@ -47,7 +47,8 @@ export async function masterOf(path: string, step: string): Promise<Result<Maste
   const raw = await readJson(path, 'cv');
   if (raw.error !== null) return raw;
   const master = Master.safeParse(raw.data);
-  if (master.success === false) return rejected(step, schemaIssues(master.error, [], 'master'));
+  if (master.success === false)
+    return rejected(step, coreIssue.schemaIssues(master.error, [], 'master'));
   return done(master.data);
 }
 

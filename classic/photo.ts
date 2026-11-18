@@ -12,8 +12,8 @@ import { join, resolve } from 'node:path';
 import { trySync$ } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
+import * as coreIssue from '../core/issues.ts';
 import { FILE_LIMITS } from '../core/files.limits.ts';
-import { schemaIssues } from '../core/check.ts';
 import { Master, Profile } from '../core/cv.schema.ts';
 import { photoUnreadable } from './docx.ts';
 import { squarePhoto } from './images.ts';
@@ -69,7 +69,7 @@ async function cvOwner(home: string, explicit: string | undefined): Promise<Resu
   if (raw.error !== null) return raw;
   const master = Master.safeParse(raw.data);
   if (master.success === false)
-    return rejected('photo set', schemaIssues(master.error, [], 'master'));
+    return rejected('photo set', coreIssue.schemaIssues(master.error, [], 'master'));
   const photo = `cvs/${cv.data.name}.png`;
   return done({
     path: cv.data.path,
@@ -86,7 +86,7 @@ async function profileOwner(home: string, name: string): Promise<Result<Owner>> 
   if (raw.error !== null) return raw;
   const profile = Profile.safeParse(raw.data);
   if (profile.success === false)
-    return rejected('photo set', schemaIssues(profile.error, [], 'profile'));
+    return rejected('photo set', coreIssue.schemaIssues(profile.error, [], 'profile'));
   const photo = `profiles/${name}.png`;
   return done({
     path: path.data,

@@ -2,14 +2,12 @@
  * The gate for a master file and a profile: nothing else in the package reads unchecked data.
  *
  * check: the CV to build, with the profile applied and the hidden blocks left out.
- * schemaIssues: the issues of a failed schema check, each with its path.
  *
  * @example const cv = check(JSON.parse(masterText), JSON.parse(profileText));
  */
-import { shown } from '@honeyglass/utils/ts';
-import type { z } from 'zod';
 import { done, rejected } from './errors.ts';
 import type { Issue, Result } from './errors.ts';
+import * as issue from './issues.ts';
 import { COLUMN } from './cv.limits.ts';
 import { Block, Master, PATCH, Profile } from './cv.schema.ts';
 
@@ -22,7 +20,8 @@ import { Block, Master, PATCH, Profile } from './cv.schema.ts';
  */
 export function check(master: unknown, profile?: unknown): Result<Master> {
   const parsed = Master.safeParse(master);
-  if (parsed.success === false) return rejected('check', schemaIssues(parsed.error, [], 'master'));
+  if (parsed.success === false)
+    return rejected('check', issue.schemaIssues(parsed.error, [], 'master'));
   const duplicates = duplicateIds(parsed.data.blocks);
   if (duplicates.length > 0) return rejected('check', duplicates);
   const resolved = applyProfile(parsed.data, profile);
@@ -32,51 +31,21 @@ export function check(master: unknown, profile?: unknown): Result<Master> {
   return resolved;
 }
 
-/**
- * @param error - the error of a failed safeParse
- * @param prefix - the path of the checked value inside the input
- * @param name - the schema to point the caller to
- * @returns one issue per schema issue
- */
-export function schemaIssues(error: z.ZodError, prefix: PropertyKey[], name: string): Issue[] {
-  return error.issues.map(issue => ({
-    code: 'SCHEMA',
-    path: [...prefix, ...issue.path].join('.'),
-    message: issue.message,
-    hint: 'Run the command for the accepted shape',
-    command: `oriko schema ${name}`,
-  }));
-}
-
 function duplicateIds(blocks: Block[]) {
   const seen = new Set<string>();
   const issues: Issue[] = [];
   for (const block of blocks) {
-    if (seen.has(block.id)) issues.push(duplicateId(block.id));
+    if (seen.has(block.id)) issues.push(issue.duplicateId(block.id));
     seen.add(block.id);
   }
   return issues;
 }
 
-export const duplicateId = (id: string): Issue => ({
-  code: 'DUPLICATE_ID',
-  path: `blocks.${id}`,
-  message: `Two blocks have the id ${shown(id)}`,
-  hint: 'Give every block its own id',
-});
-
-// The cli adds the command that lists the block ids, as only it knows the name of the CV.
-export const unknownBlock = (id: string, path: string): Issue => ({
-  code: 'UNKNOWN_BLOCK',
-  path,
-  message: `No block has the id ${shown(id)}`,
-  hint: 'Run the command and use one of the block ids it lists',
-});
-
 function applyProfile(master: Master, value: unknown): Result<Master> {
   if (value === undefined) return done(withoutHidden(master, master.blocks));
   const parsed = Profile.safeParse(value);
-  if (parsed.success === false) return rejected('check', schemaIssues(parsed.error, [], 'profile'));
+  if (parsed.success === false)
+    return rejected('check', issue.schemaIssues(parsed.error, [], 'profile'));
   const profile = parsed.data;
   const issues = unknownIds(master, profile);
   const blocks = master.blocks.map(block => patched(block, profile.blocks?.[block.id], issues));
@@ -89,10 +58,10 @@ function unknownIds(master: Master, profile: Profile) {
   const known = new Set(master.blocks.map(block => block.id));
   const issues: Issue[] = [];
   for (const id of Object.keys(profile.blocks ?? {})) {
-    if (known.has(id) === false) issues.push(unknownBlock(id, `blocks.${id}`));
+    if (known.has(id) === false) issues.push(issue.unknownBlock(id, `blocks.${id}`));
   }
   for (const [index, id] of (profile.order ?? []).entries()) {
-    if (known.has(id) === false) issues.push(unknownBlock(id, `order.${index}`));
+    if (known.has(id) === false) issues.push(issue.unknownBlock(id, `order.${index}`));
   }
   return issues;
 }
@@ -109,13 +78,13 @@ export function patched(block: Block, patch: unknown, issues: Issue[]) {
   if (patch === undefined) return block;
   const fields = PATCH[block.kind].safeParse(patch);
   if (fields.success === false) {
-    issues.push(...schemaIssues(fields.error, ['blocks', block.id], 'block'));
+    issues.push(...issue.schemaIssues(fields.error, ['blocks', block.id], 'block'));
     return block;
   }
   const kept = Object.entries({ ...block, ...fields.data }).filter(([, value]) => value !== null);
   const merged = Block.safeParse(Object.fromEntries(kept));
   if (merged.success) return merged.data;
-  issues.push(...schemaIssues(merged.error, ['blocks', block.id], 'block'));
+  issues.push(...issue.schemaIssues(merged.error, ['blocks', block.id], 'block'));
   return block;
 }
 
@@ -137,14 +106,7 @@ function untitledBesideSection(blocks: Block[]) {
     const neighbours = [right[index - 1], right[index + 1]];
     const shared = neighbours.some(neighbour => neighbour?.section === block.section);
     const isUntitled = block.kind !== 'job' && block.title === undefined;
-    if (isUntitled && shared) issues.push(untitledNotAlone(block.id));
+    if (isUntitled && shared) issues.push(issue.untitledNotAlone(block.id));
   }
   return issues;
 }
-
-const untitledNotAlone = (id: string): Issue => ({
-  code: 'UNTITLED_NOT_ALONE',
-  path: `blocks.${id}`,
-  message: `The block ${shown(id)} has no title but shares its section with a block next to it`,
-  hint: 'Give the block a title, or make it the only block of its section',
-});

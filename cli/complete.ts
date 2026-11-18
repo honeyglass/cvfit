@@ -9,6 +9,7 @@
  */
 import { Rejection, done } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
+import * as coreIssue from '../core/issues.ts';
 import { optionText } from '../core/options.ts';
 import { chosenCv } from '../core/home.ts';
 import { nextSteps } from './next.ts';
@@ -33,7 +34,7 @@ export async function withCommands(call: Call, result: Result<Fields>): Promise<
   const home = homeArg(call);
   const issues = result.error.issues.map(issue => {
     const command =
-      issue.code === 'UNKNOWN_BLOCK' ? (issue.command ?? blockCommand) : issue.command;
+      issue.code === coreIssue.UNKNOWN_BLOCK ? (issue.command ?? blockCommand) : issue.command;
     return command === undefined ? issue : { ...issue, command: `${command}${home}` };
   });
   return { data: null, error: new Rejection(result.error.refusal, issues) };
@@ -67,7 +68,7 @@ const homeArg = (call: Call) =>
   call.values.home === undefined ? '' : optionText('home', call.values.home);
 
 async function blockListCommand(call: Call, issues: Issue[]) {
-  if (issues.some(issue => issue.code === 'UNKNOWN_BLOCK') === false) return undefined;
+  if (issues.some(issue => issue.code === coreIssue.UNKNOWN_BLOCK) === false) return undefined;
   const cv = await chosenCv(
     call.home,
     call.values.cv,

@@ -13,10 +13,11 @@
  */
 import { readdir, stat } from 'node:fs/promises';
 import { join } from 'node:path';
-import { $try, shown } from '@honeyglass/utils/ts';
+import { $try } from '@honeyglass/utils/ts';
 import { done, rejected } from './errors.ts';
 import type { Issue, Result } from './errors.ts';
-import { isMissing, notAFolder, pathIssue } from './files.ts';
+import { isMissing, pathIssue } from './files.ts';
+import * as issue from './issues.ts';
 
 const SUFFIX = '.json';
 const NO_FILES: string[] = [];
@@ -52,14 +53,16 @@ export async function chosenCv(
 ): Promise<Result<CvFile>> {
   const isMismatch =
     explicit !== undefined && fromProfile !== undefined && explicit !== fromProfile;
-  if (isMismatch) return rejected('home', [cvMismatch(explicit, fromProfile)]);
+  if (isMismatch) return rejected('home', [issue.cvMismatch(explicit, fromProfile)]);
   const cvs = await heldCvs(home);
   if (cvs.error !== null) return cvs;
   const names = cvs.data;
   const name = explicit ?? fromProfile ?? (names.length === 1 ? names[0] : undefined);
-  if (name === undefined) return rejected('home', [cvRequired()]);
+  if (name === undefined) return rejected('home', [issue.cvRequired()]);
   if (names.includes(name)) return done({ name, path: join(home, 'cvs', `${name}${SUFFIX}`) });
-  return rejected('home', [explicit === undefined ? unknownCvOfProfile(name) : unknownCv(name)]);
+  return rejected('home', [
+    explicit === undefined ? issue.unknownCvOfProfile(name) : issue.unknownCv(name),
+  ]);
 }
 
 /**
@@ -71,7 +74,7 @@ export async function profilePath(home: string, name: string): Promise<Result<st
   const cvs = await heldCvs(home);
   if (cvs.error !== null) return cvs;
   const names = await profileNames(home);
-  if (names.includes(name) === false) return rejected('home', [unknownProfile(name, names)]);
+  if (names.includes(name) === false) return rejected('home', [issue.unknownProfile(name, names)]);
   return done(join(home, 'profiles', `${name}${SUFFIX}`));
 }
 
@@ -86,16 +89,9 @@ export async function heldCvs(home: string): Promise<Result<string[]>> {
   return names.length === 0 ? rejected('home', [await noCv(home)]) : done(names);
 }
 
-// A missing folder and an empty one are both no CV; the message says which it is.
-async function noCv(home: string): Promise<Issue> {
+async function noCv(home: string) {
   const exists = (await $try(stat(home), { or: null, expected: isMissing })) !== null;
-  return {
-    code: 'NO_CV',
-    path: 'home',
-    message: `The data folder ${shown(home)} ${exists ? 'holds no CV' : 'does not exist'}`,
-    hint: 'Check --home, or run the command for the input of a new CV',
-    command: 'oriko schema init',
-  };
+  return issue.noCv(home, exists);
 }
 
 /**
@@ -109,7 +105,7 @@ export async function homeIssues(home: string): Promise<Issue[]> {
   const info = await $try(stat(home));
   if (info.error !== null)
     return isMissing(info.error) ? [] : [pathIssue(info.error, home, 'home')];
-  if (info.data.isDirectory() === false) return [notAFolder(home, 'home')];
+  if (info.data.isDirectory() === false) return [issue.notAFolder(home, 'home')];
   return [...(await listIssues(join(home, 'cvs'))), ...(await listIssues(join(home, 'profiles')))];
 }
 
@@ -117,56 +113,4 @@ async function listIssues(folder: string) {
   const listed = await $try(readdir(folder));
   if (listed.error === null || isMissing(listed.error)) return [];
   return [pathIssue(listed.error, folder, 'home')];
-}
-
-// --cv without a value lists the CVs, so the command answers every name the caller may pass.
-const LIST_CVS = 'oriko show --cv';
-
-const cvRequired = (): Issue => ({
-  code: 'CV_REQUIRED',
-  path: 'cv',
-  message: 'The data folder holds several CVs and the call names none',
-  hint: 'Run the command, then pass --cv with one of the CV names it lists',
-  command: LIST_CVS,
-});
-
-const unknownCvOfProfile = (name: string): Issue => ({
-  code: 'UNKNOWN_CV',
-  path: 'profile.cv',
-  message: `The profile names the CV ${shown(name)}, which the data folder does not hold`,
-  hint: 'Run the command and set the field cv of the profile to one of the CV names it lists',
-  command: LIST_CVS,
-});
-
-const unknownCv = (name: string): Issue => ({
-  code: 'UNKNOWN_CV',
-  path: 'cv',
-  message: `The data folder has no CV ${shown(name)}`,
-  hint: 'Run the command and use one of the CV names it lists',
-  command: LIST_CVS,
-});
-
-const cvMismatch = (explicit: string, fromProfile: string): Issue => ({
-  code: 'CV_MISMATCH',
-  path: 'cv',
-  message: `--cv names ${shown(explicit)}, but the profile belongs to ${shown(fromProfile)}`,
-  hint: 'Leave out --cv, or change the field cv of the profile',
-});
-
-function unknownProfile(name: string, names: string[]): Issue {
-  const message = `The data folder has no profile ${shown(name)}`;
-  if (names.length === 0)
-    return {
-      code: 'UNKNOWN_PROFILE',
-      path: 'profile',
-      message,
-      hint: 'Add a profile as profiles/NAME.json to the data folder',
-    };
-  return {
-    code: 'UNKNOWN_PROFILE',
-    path: 'profile',
-    message,
-    hint: 'Run the command and use one of the profile names it lists',
-    command: 'oriko plan --profile',
-  };
 }

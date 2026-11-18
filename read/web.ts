@@ -19,8 +19,9 @@ import { brotliDecompressSync, gunzipSync, inflateSync } from 'node:zlib';
 import { $try, shown, trySync$ } from '@honeyglass/utils/ts';
 import { NETWORK_FAILED, SERVER_BUSY, done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
+import * as coreIssue from '../core/issues.ts';
 import { FILE_LIMITS } from '../core/files.limits.ts';
-import { pipedBytes, tooLarge } from '../core/files.ts';
+import { pipedBytes } from '../core/files.ts';
 import { isPublic } from './address.ts';
 import { READ_LIMITS } from './limits.ts';
 
@@ -120,11 +121,11 @@ async function bodyOf(answer: Answer, option: string): Promise<Result<Buffer>> {
   const body = await $try(pipedBytes(answer.body, FILE_LIMITS.readBytes));
   if (body.error !== null) return rejected('read', [bodyFailed(option, body.error)], body.error);
   if (body.data.length > FILE_LIMITS.readBytes)
-    return rejected('read', [tooLarge(option, FILE_LIMITS.readBytes)]);
+    return rejected('read', [coreIssue.tooLarge(option, FILE_LIMITS.readBytes)]);
   const unpacked = trySync$(() => unpack(body.data));
   if (unpacked.error === null) return done(unpacked.data);
   const isTooLarge = 'code' in unpacked.error && unpacked.error.code === 'ERR_BUFFER_TOO_LARGE';
-  if (isTooLarge) return rejected('read', [tooLarge(option, FILE_LIMITS.readBytes)]);
+  if (isTooLarge) return rejected('read', [coreIssue.tooLarge(option, FILE_LIMITS.readBytes)]);
   return rejected('read', [notUnpacked(option, encoding)], unpacked.error);
 }
 

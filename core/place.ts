@@ -11,9 +11,9 @@
  */
 import { done, rejected } from './errors.ts';
 import type { Issue, Result } from './errors.ts';
+import * as issue from './issues.ts';
 import { COLUMN } from './cv.limits.ts';
 import type { Block, Master } from './cv.schema.ts';
-import { shown } from '@honeyglass/utils/ts';
 import { blockHeight, contactHeight, roleLines } from './measure.ts';
 import { COLUMN_HEIGHT, LEFT_START, LINE, SPACE, pt } from './metrics.ts';
 
@@ -128,14 +128,7 @@ function heightWith(heading: Heading | null, block: Block) {
 // The name block has a fixed height, so a second role line would fall below it.
 function roleTooLong(role: string): Issue[] {
   if (roleLines(role) === 1) return [];
-  return [
-    {
-      code: 'ROLE_TOO_LONG',
-      path: 'person.role',
-      message: `The role ${shown(role)} takes more than one line beside the photo`,
-      hint: 'Shorten the role, in the master or with "person.role" in the profile',
-    },
-  ];
+  return [issue.roleTooLong(role)];
 }
 
 function tooTall(spots: Spot[]) {
@@ -143,12 +136,7 @@ function tooTall(spots: Spot[]) {
   for (const spot of spots) {
     if (spot.bottom <= COLUMN_HEIGHT) continue;
     const over = Math.ceil(spot.bottom - COLUMN_HEIGHT);
-    issues.push({
-      code: 'BLOCK_TOO_TALL',
-      path: `blocks.${spot.id}`,
-      message: `The block ${spot.id} is about ${over} pt higher than a page holds`,
-      hint: 'Shorten the block, for example by removing items',
-    });
+    issues.push(issue.blockTooTall(spot.id, over));
   }
   return issues;
 }
@@ -156,14 +144,7 @@ function tooTall(spots: Spot[]) {
 function overflow(cv: Master, spots: Spot[], side: Side): Issue[] {
   const late = spots.filter(spot => spot.page >= cv.pages).map(spot => spot.id);
   if (late.length === 0) return [];
-  return [
-    {
-      code: 'PAGE_OVERFLOW',
-      path: 'pages',
-      message: `These blocks of the ${side} column land after page ${cv.pages}: ${late.join(', ')}`,
-      hint: `Hide or shorten blocks of the ${side} column, remove a page pin, or raise "pages"`,
-    },
-  ];
+  return [issue.pageOverflow(side, cv.pages, late)];
 }
 
 function columnOf(cv: Master, spots: Spot[], side: Side, page: number): Column {

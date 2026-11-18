@@ -12,8 +12,9 @@
 import { shown } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
+import * as coreIssue from '../core/issues.ts';
 import { COLUMN } from '../core/cv.limits.ts';
-import { check, patched, schemaIssues, unknownBlock } from '../core/check.ts';
+import { check, patched } from '../core/check.ts';
 import { Block, ContactItem, ITEM, ITEM_PATCH, Master } from '../core/cv.schema.ts';
 import { INPUT } from './edit.schema.ts';
 
@@ -49,7 +50,8 @@ const isCommand = (name: string): name is Command => Object.hasOwn(HANDLERS, nam
 export function apply(master: unknown, command: string, input: unknown): Result<Master> {
   if (isCommand(command) === false) return rejected('edit', [unknownCommand(command)]);
   const parsed = Master.safeParse(master);
-  if (parsed.success === false) return rejected(command, schemaIssues(parsed.error, [], 'master'));
+  if (parsed.success === false)
+    return rejected(command, coreIssue.schemaIssues(parsed.error, [], 'master'));
   const edited = HANDLERS[command](parsed.data, input);
   if (edited.error !== null) return edited;
   const checked = check(edited.data);
@@ -67,7 +69,7 @@ const unknownCommand = (command: string): Issue => ({
 function addBlock(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['block add'].safeParse(input);
   if (parsed.success === false)
-    return rejected('block add', schemaIssues(parsed.error, [], 'block add'));
+    return rejected('block add', coreIssue.schemaIssues(parsed.error, [], 'block add'));
   const { block, before, after } = parsed.data;
   const issues = anchorIssues(master, block, before, after);
   if (issues.length > 0) return rejected('block add', issues);
@@ -77,9 +79,10 @@ function addBlock(master: Master, input: unknown): Result<Master> {
 function updateBlock(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['block update'].safeParse(input);
   if (parsed.success === false)
-    return rejected('block update', schemaIssues(parsed.error, [], 'block update'));
+    return rejected('block update', coreIssue.schemaIssues(parsed.error, [], 'block update'));
   const block = master.blocks.find(candidate => candidate.id === parsed.data.id);
-  if (block === undefined) return rejected('block update', [unknownBlock(parsed.data.id, 'id')]);
+  if (block === undefined)
+    return rejected('block update', [coreIssue.unknownBlock(parsed.data.id, 'id')]);
   const issues: Issue[] = [];
   const changed = patched(block, parsed.data.set, issues);
   if (issues.length > 0) return rejected('block update', issues);
@@ -89,20 +92,20 @@ function updateBlock(master: Master, input: unknown): Result<Master> {
 function removeBlock(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['block remove'].safeParse(input);
   if (parsed.success === false)
-    return rejected('block remove', schemaIssues(parsed.error, [], 'block remove'));
+    return rejected('block remove', coreIssue.schemaIssues(parsed.error, [], 'block remove'));
   const { id } = parsed.data;
   const exists = master.blocks.some(block => block.id === id);
-  if (exists === false) return rejected('block remove', [unknownBlock(id, 'id')]);
+  if (exists === false) return rejected('block remove', [coreIssue.unknownBlock(id, 'id')]);
   return done({ ...master, blocks: master.blocks.filter(block => block.id !== id) });
 }
 
 function moveBlock(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['block move'].safeParse(input);
   if (parsed.success === false)
-    return rejected('block move', schemaIssues(parsed.error, [], 'block move'));
+    return rejected('block move', coreIssue.schemaIssues(parsed.error, [], 'block move'));
   const { id, before, after, page } = parsed.data;
   const block = master.blocks.find(candidate => candidate.id === id);
-  if (block === undefined) return rejected('block move', [unknownBlock(id, 'id')]);
+  if (block === undefined) return rejected('block move', [coreIssue.unknownBlock(id, 'id')]);
   const hasNothing = before === undefined && after === undefined && page === undefined;
   if (hasNothing) return rejected('block move', [nothingToDo()]);
   const issues = anchorIssues(master, block, before, after);
@@ -150,7 +153,7 @@ function anchorIssues(
   if (id === undefined) return [];
   const path = before === undefined ? 'after' : 'before';
   const anchor = master.blocks.find(candidate => candidate.id === id);
-  if (anchor === undefined) return [unknownBlock(id, path)];
+  if (anchor === undefined) return [coreIssue.unknownBlock(id, path)];
   const column = COLUMN[block.kind];
   if (COLUMN[anchor.kind] === column) return [];
   const sameColumn = master.blocks.filter(
@@ -182,12 +185,13 @@ function inserted(
 function addItem(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['item add'].safeParse(input);
   if (parsed.success === false)
-    return rejected('item add', schemaIssues(parsed.error, [], 'item add'));
+    return rejected('item add', coreIssue.schemaIssues(parsed.error, [], 'item add'));
   const block = master.blocks.find(candidate => candidate.id === parsed.data.block);
-  if (block === undefined) return rejected('item add', [unknownBlock(parsed.data.block, 'block')]);
+  if (block === undefined)
+    return rejected('item add', [coreIssue.unknownBlock(parsed.data.block, 'block')]);
   const value = ITEM[block.kind].safeParse(parsed.data.value);
   if (value.success === false)
-    return rejected('item add', schemaIssues(value.error, ['value'], 'item'));
+    return rejected('item add', coreIssue.schemaIssues(value.error, ['value'], 'item'));
   const items = added(itemsOf(block), value.data, parsed.data.index, 'item add');
   if (items.error !== null) return items;
   return withItems(master, block, items.data, 'item add');
@@ -196,13 +200,13 @@ function addItem(master: Master, input: unknown): Result<Master> {
 function updateItem(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['item update'].safeParse(input);
   if (parsed.success === false)
-    return rejected('item update', schemaIssues(parsed.error, [], 'item update'));
+    return rejected('item update', coreIssue.schemaIssues(parsed.error, [], 'item update'));
   const block = master.blocks.find(candidate => candidate.id === parsed.data.block);
   if (block === undefined)
-    return rejected('item update', [unknownBlock(parsed.data.block, 'block')]);
+    return rejected('item update', [coreIssue.unknownBlock(parsed.data.block, 'block')]);
   const value = ITEM_PATCH[block.kind].safeParse(parsed.data.value);
   if (value.success === false)
-    return rejected('item update', schemaIssues(value.error, ['value'], 'item'));
+    return rejected('item update', coreIssue.schemaIssues(value.error, ['value'], 'item'));
   const items = updated(itemsOf(block), parsed.data.index, value.data, 'item update');
   if (items.error !== null) return items;
   return withItems(master, block, items.data, 'item update');
@@ -211,10 +215,10 @@ function updateItem(master: Master, input: unknown): Result<Master> {
 function removeItem(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['item remove'].safeParse(input);
   if (parsed.success === false)
-    return rejected('item remove', schemaIssues(parsed.error, [], 'item remove'));
+    return rejected('item remove', coreIssue.schemaIssues(parsed.error, [], 'item remove'));
   const block = master.blocks.find(candidate => candidate.id === parsed.data.block);
   if (block === undefined)
-    return rejected('item remove', [unknownBlock(parsed.data.block, 'block')]);
+    return rejected('item remove', [coreIssue.unknownBlock(parsed.data.block, 'block')]);
   const items = removed(itemsOf(block), parsed.data.index, 'item remove');
   if (items.error !== null) return items;
   return withItems(master, block, items.data, 'item remove');
@@ -223,9 +227,10 @@ function removeItem(master: Master, input: unknown): Result<Master> {
 function moveItem(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['item move'].safeParse(input);
   if (parsed.success === false)
-    return rejected('item move', schemaIssues(parsed.error, [], 'item move'));
+    return rejected('item move', coreIssue.schemaIssues(parsed.error, [], 'item move'));
   const block = master.blocks.find(candidate => candidate.id === parsed.data.block);
-  if (block === undefined) return rejected('item move', [unknownBlock(parsed.data.block, 'block')]);
+  if (block === undefined)
+    return rejected('item move', [coreIssue.unknownBlock(parsed.data.block, 'block')]);
   const items = moved(itemsOf(block), parsed.data.index, parsed.data.to, 'item move');
   if (items.error !== null) return items;
   return withItems(master, block, items.data, 'item move');
@@ -238,7 +243,7 @@ function withItems(master: Master, block: Block, items: unknown[], step: string)
   const candidate = block.kind === 'job' ? { ...block, bullets: items } : { ...block, items };
   const parsed = Block.safeParse(candidate);
   if (parsed.success === false)
-    return rejected(step, schemaIssues(parsed.error, ['blocks', block.id], 'block'));
+    return rejected(step, coreIssue.schemaIssues(parsed.error, ['blocks', block.id], 'block'));
   return done(replaced(master, parsed.data));
 }
 
@@ -246,7 +251,7 @@ function withItems(master: Master, block: Block, items: unknown[], step: string)
 function updateCv(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['cv update'].safeParse(input);
   if (parsed.success === false)
-    return rejected('cv update', schemaIssues(parsed.error, [], 'cv update'));
+    return rejected('cv update', coreIssue.schemaIssues(parsed.error, [], 'cv update'));
   const { person, contact, ...rest } = parsed.data;
   return done({
     ...master,
@@ -259,10 +264,10 @@ function updateCv(master: Master, input: unknown): Result<Master> {
 function addContact(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['contact add'].safeParse(input);
   if (parsed.success === false)
-    return rejected('contact add', schemaIssues(parsed.error, [], 'contact add'));
+    return rejected('contact add', coreIssue.schemaIssues(parsed.error, [], 'contact add'));
   const value = ContactItem.safeParse(parsed.data.value);
   if (value.success === false)
-    return rejected('contact add', schemaIssues(value.error, ['value'], 'contact'));
+    return rejected('contact add', coreIssue.schemaIssues(value.error, ['value'], 'contact'));
   const items = added(master.contact.items, value.data, parsed.data.index, 'contact add');
   if (items.error !== null) return items;
   return withContact(master, items.data, 'contact add');
@@ -271,10 +276,10 @@ function addContact(master: Master, input: unknown): Result<Master> {
 function updateContact(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['contact update'].safeParse(input);
   if (parsed.success === false)
-    return rejected('contact update', schemaIssues(parsed.error, [], 'contact update'));
+    return rejected('contact update', coreIssue.schemaIssues(parsed.error, [], 'contact update'));
   const value = ContactItem.partial().safeParse(parsed.data.value);
   if (value.success === false)
-    return rejected('contact update', schemaIssues(value.error, ['value'], 'contact'));
+    return rejected('contact update', coreIssue.schemaIssues(value.error, ['value'], 'contact'));
   const items = updated(master.contact.items, parsed.data.index, value.data, 'contact update');
   if (items.error !== null) return items;
   return withContact(master, items.data, 'contact update');
@@ -283,7 +288,7 @@ function updateContact(master: Master, input: unknown): Result<Master> {
 function removeContact(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['contact remove'].safeParse(input);
   if (parsed.success === false)
-    return rejected('contact remove', schemaIssues(parsed.error, [], 'contact remove'));
+    return rejected('contact remove', coreIssue.schemaIssues(parsed.error, [], 'contact remove'));
   const items = removed(master.contact.items, parsed.data.index, 'contact remove');
   if (items.error !== null) return items;
   return withContact(master, items.data, 'contact remove');
@@ -292,7 +297,7 @@ function removeContact(master: Master, input: unknown): Result<Master> {
 function moveContact(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['contact move'].safeParse(input);
   if (parsed.success === false)
-    return rejected('contact move', schemaIssues(parsed.error, [], 'contact move'));
+    return rejected('contact move', coreIssue.schemaIssues(parsed.error, [], 'contact move'));
   const items = moved(master.contact.items, parsed.data.index, parsed.data.to, 'contact move');
   if (items.error !== null) return items;
   return withContact(master, items.data, 'contact move');
@@ -301,7 +306,8 @@ function moveContact(master: Master, input: unknown): Result<Master> {
 // The new lines are unchecked, so the master passes its schema again before it is answered.
 function withContact(master: Master, items: unknown[], step: string): Result<Master> {
   const parsed = Master.safeParse({ ...master, contact: { ...master.contact, items } });
-  if (parsed.success === false) return rejected(step, schemaIssues(parsed.error, [], 'master'));
+  if (parsed.success === false)
+    return rejected(step, coreIssue.schemaIssues(parsed.error, [], 'master'));
   return done(parsed.data);
 }
 

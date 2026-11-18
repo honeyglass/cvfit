@@ -13,7 +13,8 @@ import { join } from 'node:path';
 import { shown, trySync$ } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
-import { check, schemaIssues } from '../core/check.ts';
+import * as coreIssue from '../core/issues.ts';
+import { check } from '../core/check.ts';
 import { Profile } from '../core/cv.schema.ts';
 import { place } from '../core/place.ts';
 import { optionText } from '../core/options.ts';
@@ -39,7 +40,7 @@ export async function setProfile(request: Request): Promise<Result<Fields>> {
   if (name.error !== null) return name;
   const profile = Profile.safeParse(request.input);
   if (profile.success === false)
-    return rejected('profile set', schemaIssues(profile.error, [], 'profile'));
+    return rejected('profile set', coreIssue.schemaIssues(profile.error, [], 'profile'));
   const fits = await checkedFit(request.home, profile.data);
   if (fits.error !== null) return fits;
   const stored = `profiles/${name.data}.json`;

@@ -5,10 +5,9 @@
  * readBounded, pipedBytes, pipedText: a file or a pipe, never more than a limit.
  * existingText: the text a stored file holds, or null when there is none yet.
  * pathIssue: any refusal of the system on a path, as an issue for the caller.
- * isMissing, fileNotFound, notAFile, notAFolder, tooLarge, invalidJson, missingOption: the
- * expected failures of a file, as issues.
+ * isMissing: whether an error says that a path does not exist.
  * photoBytes: the photo a master file or a profile names, from the data folder only.
- * leaves, pathOutside: whether a path leaves its folder, and the issue for one that does.
+ * leaves: whether a path leaves its folder.
  * writeAll, NewFile: the files of one command, all written whole or none, never through a link.
  *
  * A master file or a profile may come from an agent that read a job posting. A path inside it
@@ -21,11 +20,10 @@ import { mkdir, open, realpath, rename, rm, writeFile } from 'node:fs/promises';
 import type { FileHandle } from 'node:fs/promises';
 import { dirname, isAbsolute, relative, resolve } from 'node:path';
 import { $try, anyError, shown, trySync$ } from '@honeyglass/utils/ts';
-import { SYSTEM_REFUSED, done, rejected } from './errors.ts';
+import { done, rejected } from './errors.ts';
 import type { Issue, Result } from './errors.ts';
+import * as issue from './issues.ts';
 import { FILE_LIMITS } from './files.limits.ts';
-import { missingHint } from './options.ts';
-import type { OptionName } from './options.ts';
 
 export const isMissing = (error: Error) => 'code' in error && error.code === 'ENOENT';
 
@@ -44,21 +42,9 @@ const isSystemError = (error: Error): error is Error & { code: string } =>
  */
 export function pathIssue(error: Error, path: string, option: string): Issue {
   if (isSystemError(error) === false) throw error;
-  if (isMissing(error)) return fileNotFound(path, option);
-  const message = `The system refused ${shown(path)}: ${error.code}`;
-  if (PATH_CODES.has(error.code))
-    return {
-      code: 'PATH_REFUSED',
-      path: option,
-      message,
-      hint: 'Check the path and that you may read and write there',
-    };
-  return {
-    code: SYSTEM_REFUSED,
-    path: option,
-    message,
-    hint: 'Tell the person what the system answered, such as a full disk, and call again once solved',
-  };
+  if (isMissing(error)) return issue.fileNotFound(path, option);
+  if (PATH_CODES.has(error.code)) return issue.pathRefused(path, option, error.code);
+  return issue.systemRefused(path, option, error.code);
 }
 
 // A definition from POSIX's error numbers: the codes another path or its access rights fix. Any
@@ -84,7 +70,7 @@ export async function readJson(path: string, option: string): Promise<Result<unk
   if (bytes.error !== null) return bytes;
   const value = trySync$((): unknown => JSON.parse(bytes.data.toString('utf8')));
   if (value.error !== null)
-    return rejected('file', [invalidJson(`The file ${shown(path)}`)], value.error);
+    return rejected('file', [issue.invalidJson(`The file ${shown(path)}`)], value.error);
   return done(value.data);
 }
 
@@ -116,9 +102,10 @@ type Bound = { path: string; limit: number; option: string };
 
 async function regularBytes(handle: FileHandle, bound: Bound): Promise<Result<Buffer>> {
   const info = await handle.stat();
-  if (info.isFile() === false) return rejected('file', [notAFile(bound.path, bound.option)]);
+  if (info.isFile() === false) return rejected('file', [issue.notAFile(bound.path, bound.option)]);
   const bytes = await readAtMost(handle, bound.limit + 1);
-  if (bytes.length > bound.limit) return rejected('file', [tooLarge(bound.option, bound.limit)]);
+  if (bytes.length > bound.limit)
+    return rejected('file', [issue.tooLarge(bound.option, bound.limit)]);
   return done(bytes);
 }
 
@@ -162,44 +149,9 @@ export const pipedText = async (stream: AsyncIterable<unknown>, limit: number) =
 export async function existingText(path: string): Promise<Result<string | null>> {
   const bytes = await readBounded(path, FILE_LIMITS.readBytes, 'home');
   if (bytes.error === null) return done(bytes.data.toString('utf8'));
-  const isMissing = bytes.error.issues.every(issue => issue.code === 'FILE_NOT_FOUND');
+  const isMissing = bytes.error.issues.every(found => found.code === issue.FILE_NOT_FOUND);
   return isMissing ? done(null) : bytes;
 }
-
-export const fileNotFound = (path: string, option: string): Issue => ({
-  code: 'FILE_NOT_FOUND',
-  path: option,
-  message: `There is no file ${shown(path)}`,
-  hint: 'Check the path, or pass the full path of the file',
-});
-
-export const notAFile = (path: string, option: string): Issue => ({
-  code: 'NOT_A_FILE',
-  path: option,
-  message: `${shown(path)} is no file`,
-  hint: 'Pass the path of a file, not of a folder',
-});
-
-export const notAFolder = (path: string, option: string): Issue => ({
-  code: 'NOT_A_FOLDER',
-  path: option,
-  message: `${shown(path)} is no folder`,
-  hint: 'Pass the path of a folder, not of a file',
-});
-
-export const tooLarge = (path: string, limit: number = FILE_LIMITS.inputBytes): Issue => ({
-  code: 'INPUT_TOO_LARGE',
-  path,
-  message: `The input is larger than ${limit} bytes`,
-  hint: `Send at most ${limit} bytes; a CV is a few thousand, a photo a few million`,
-});
-
-export const invalidJson = (what: string): Issue => ({
-  code: 'INVALID_JSON',
-  path: '',
-  message: `${what} is not valid JSON`,
-  hint: 'Send one valid JSON value',
-});
 
 /**
  * @param folder - the data folder
@@ -212,7 +164,7 @@ export async function photoBytes(folder: string, photo: string): Promise<Result<
   if (real.error !== null)
     return rejected('file', [pathIssue(real.error, path, 'person.photo')], real.error);
   if (leaves(await realpath(folder), real.data))
-    return rejected('file', [pathOutside('person.photo', photo, folder)]);
+    return rejected('file', [issue.pathOutside('person.photo', photo, folder)]);
   return readBounded(real.data, FILE_LIMITS.photoBytes, 'person.photo');
 }
 
@@ -221,31 +173,6 @@ export function leaves(folder: string, path: string) {
   const fromFolder = relative(folder, path);
   return fromFolder === '' || fromFolder.startsWith('..') || isAbsolute(fromFolder);
 }
-
-export const pathOutside = (option: string, path: string, folder: string): Issue => ({
-  code: 'PATH_OUTSIDE',
-  path: option,
-  message: `The path ${shown(path)} leaves the folder ${shown(folder)}`,
-  hint: 'Use a path inside that folder, without a link that leads out of it',
-});
-
-/**
- * @param option - the option the command needs
- * @param what - what its value is
- * @param hint - what to add; the option's own text when it has one, so a missing and an empty
- *   option name the same step
- * @returns the issue
- */
-export const missingOption = (
-  option: OptionName,
-  what: string,
-  hint = missingHint(option),
-): Issue => ({
-  code: 'MISSING_OPTION',
-  path: option,
-  message: `The command needs --${option}, ${what}`,
-  hint,
-});
 
 export type NewFile = { path: string; content: string | Uint8Array };
 
