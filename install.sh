@@ -111,7 +111,7 @@ has_libreoffice() {
   node --input-type=module -e "
     import { existsSync } from 'node:fs';
     import { pathToFileURL } from 'node:url';
-    const pdf = pathToFileURL(process.argv[1] + '/render/pdf.ts').href;
+    const pdf = pathToFileURL(process.argv[1] + '/pdf/convert.ts').href;
     const { sofficePaths } = await import(pdf);
     process.exit(sofficePaths().some(path => existsSync(path)) ? 0 : 1);" "$DIR" 2>/dev/null
 }

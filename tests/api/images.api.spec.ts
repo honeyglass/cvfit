@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import jpeg from 'jpeg-js';
 import { PNG } from 'pngjs';
-import { squarePhoto } from '../../render/images.ts';
+import { squarePhoto } from '../../classic/images.ts';
 
 const RED = [255, 0, 0, 255];
 const BLUE = [0, 0, 255, 255];

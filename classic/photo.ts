@@ -15,8 +15,8 @@ import type { Issue, Result } from '../core/errors.ts';
 import { LIMITS } from '../core/limits.ts';
 import { schemaIssues } from '../core/check.ts';
 import { Master, Profile } from '../core/cv.schema.ts';
-import { photoUnreadable } from '../render/docx.ts';
-import { squarePhoto } from '../render/images.ts';
+import { photoUnreadable } from './docx.ts';
+import { squarePhoto } from './images.ts';
 import { readBounded, readJson, writeAll } from '../core/files.ts';
 import { chosenCv, profilePath } from '../core/home.ts';
 

@@ -9,7 +9,7 @@ import { join } from 'node:path';
 import { LIMITS } from '../core/limits.ts';
 import { pipedText } from '../core/files.ts';
 import { run } from '../cli/run.ts';
-import { sofficePaths } from '../render/pdf.ts';
+import { sofficePaths } from '../pdf/convert.ts';
 import { NODE_WEB } from '../read/web.ts';
 
 process.exitCode = await run(process.argv.slice(2), {

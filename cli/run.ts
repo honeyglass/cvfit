@@ -21,10 +21,10 @@ import { Block, Master, Profile } from '../core/cv.schema.ts';
 import { apply } from '../edit/apply.ts';
 import { place } from '../core/place.ts';
 import type { Plan } from '../core/place.ts';
-import { render } from '../render/docx.ts';
-import type { Engine } from '../render/docx.ts';
+import { render } from '../classic/docx.ts';
+import type { Engine } from '../classic/docx.ts';
 import { renderTerminal } from '../terminal/docx.ts';
-import { toPdf } from '../render/pdf.ts';
+import { toPdf } from '../pdf/convert.ts';
 import { preview } from '../terminal/sheets.ts';
 import {
   invalidJson,
@@ -45,7 +45,7 @@ import { chosenCv, cvNames, heldCvs, homeIssues, profileNames, profilePath } fro
 import { createCv, cvNameMissing } from './init.ts';
 import { nextSteps } from './next.ts';
 import type { Step } from './next.ts';
-import { setPhoto } from './photo.ts';
+import { setPhoto } from '../classic/photo.ts';
 import { readDocuments } from './read.ts';
 import { setProfile, showProfile } from './profile.ts';
 import type { Web } from '../read/web.ts';

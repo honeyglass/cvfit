@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { sofficePaths } from '../../render/pdf.ts';
+import { sofficePaths } from '../../pdf/convert.ts';
 import { call, workspace } from '../utils/cli.ts';
 import { textLines } from '../utils/pdflines.ts';
 

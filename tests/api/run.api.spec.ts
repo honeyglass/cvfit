@@ -20,7 +20,7 @@ import { z } from 'zod';
 import { NEW_CV, call, workspace } from '../utils/cli.ts';
 import type { Space } from '../utils/cli.ts';
 import { docx, pdf } from '../utils/documents.ts';
-import { sofficePaths } from '../../render/pdf.ts';
+import { sofficePaths } from '../../pdf/convert.ts';
 import { fakeSoffice } from '../utils/soffice.ts';
 import { fakeWeb } from '../utils/web.ts';
 import { FIXTURE_URL, photo } from '../utils/fixture.ts';

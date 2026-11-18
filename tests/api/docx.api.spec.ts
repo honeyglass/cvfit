@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import JSZip from 'jszip';
 import { place } from '../../core/place.ts';
-import { render } from '../../render/docx.ts';
+import { render } from '../../classic/docx.ts';
 import { fixture, photo, unwrap } from '../utils/fixture.ts';
 
 const build = async () => unwrap(await render(fixture(), unwrap(place(fixture())), photo()));
