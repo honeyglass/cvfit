@@ -11,5 +11,5 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["bin", "core", "data", "edit", "layout", "render", "cli", "tests"]
+  "include": ["baselines", "bin", "core", "data", "edit", "layout", "render", "cli", "tests"]
 }

@@ -22,7 +22,9 @@ comment at the line where it acts: in a workflow, in `pnpm-workspace.yaml` or in
   by anyone who gains write access to the repository, and every workflow that names that
   tag then runs their code on its next run. That is how `tj-actions/changed-files` was
   compromised in March 2025. A commit id addresses the content and cannot be moved, and
-  unlike a copy it shows where the code comes from.
+  unlike a copy it shows where the code comes from. A program that comes as a release
+  archive, such as gws for `pnpm baselines:update`, is held by the sha256 of that archive
+  instead, checked before every run.
 - **`permissions: contents: read` stands at the top of every workflow.** A token that
   cannot write cannot push, tag or publish a release.
 - **`pull_request`, never `pull_request_target`.** The second one runs in the context

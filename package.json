@@ -12,7 +12,9 @@
     "test": "node --test --experimental-test-coverage --test-coverage-exclude='tests/**' --test-coverage-lines=95 --test-coverage-branches=85 --test-coverage-functions=95 'tests/api/*.api.spec.ts' 'tests/internals/*.internals.spec.ts'",
     "typecheck": "tsc -p . --noEmit",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "baselines:update": "node baselines/update.ts",
+    "baselines:gws": "node baselines/gws.ts"
   },
   "engines": {
     "node": ">=24"
