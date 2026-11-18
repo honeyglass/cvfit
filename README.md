@@ -303,6 +303,10 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
 
 ## 🛠️ Development
 
+oriko is developed on Node 26, the newest LTS, and runs for its users on Node 24 and up.
+[flake.nix](flake.nix) brings Node 26 and pnpm: `nix develop`, or with direnv once `direnv allow`,
+and every `cd` into the folder loads them.
+
 ```sh
 pnpm test             # api and internals tests, fails below 95 % coverage
 pnpm run typecheck

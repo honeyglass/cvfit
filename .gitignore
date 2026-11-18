@@ -5,3 +5,5 @@ node_modules/
 !examples/showcase/**/*.docx
 !examples/showcase/**/*.pdf
 *.tmp
+# written by direnv when it loads flake.nix
+.direnv/
