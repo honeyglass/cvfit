@@ -14,8 +14,8 @@ import { chosenCv, cvNames, profileNames } from '../core/home.ts';
 import { COMMANDS, OUTPUTS } from './commands.ts';
 import type { Command, CommandName } from './commands.ts';
 import { schemaCommand } from './complete.ts';
-import { profileCv } from './cv.ts';
-import { masterOf, outline } from './dispatch.ts';
+import { profileCv } from '../core/load.ts';
+import { masterOf, outline } from '../cv/show.ts';
 import type { Call, Fields } from './types.ts';
 
 // Options without a value: one list answers its values; a free value, a new name, or a second
@@ -74,13 +74,17 @@ async function valuesOf(call: Call, option: ListedOption): Promise<Result<Fields
 // With a profile, only the CV it names passes, so the list holds only that one.
 async function cvValues(call: Call) {
   const names = await cvNames(call.home);
-  const fromProfile = await profileCv(call);
+  const fromProfile = await profileCv(call.home, call.values.profile);
   return fromProfile !== undefined && names.includes(fromProfile) ? [fromProfile] : names;
 }
 
 // The blocks of the CV this call names, in the outline show answers, so a caller picks an id.
 async function blockValues(call: Call): Promise<Result<Fields>> {
-  const cv = await chosenCv(call.home, call.values.cv, await profileCv(call));
+  const cv = await chosenCv(
+    call.home,
+    call.values.cv,
+    await profileCv(call.home, call.values.profile),
+  );
   if (cv.error !== null) return cv;
   const master = await masterOf(cv.data.path, 'show');
   if (master.error !== null) return master;

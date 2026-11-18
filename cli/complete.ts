@@ -12,7 +12,7 @@ import type { Issue, Result } from '../core/errors.ts';
 import { optionText } from '../core/options.ts';
 import { chosenCv } from '../core/home.ts';
 import { nextSteps } from './next.ts';
-import { profileCv } from './cv.ts';
+import { profileCv } from '../core/load.ts';
 import { isSchemaName } from './route.ts';
 import type { Call, Fields } from './types.ts';
 
@@ -68,6 +68,10 @@ const homeArg = (call: Call) =>
 
 async function blockListCommand(call: Call, issues: Issue[]) {
   if (issues.some(issue => issue.code === 'UNKNOWN_BLOCK') === false) return undefined;
-  const cv = await chosenCv(call.home, call.values.cv, await profileCv(call));
+  const cv = await chosenCv(
+    call.home,
+    call.values.cv,
+    await profileCv(call.home, call.values.profile),
+  );
   return cv.error === null ? `oriko show${optionText('cv', cv.data.name)} --block` : undefined;
 }

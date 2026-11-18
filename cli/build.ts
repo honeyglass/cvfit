@@ -20,12 +20,12 @@ import { renderTerminal } from '../terminal/docx.ts';
 import { toPdf } from '../pdf/convert.ts';
 import { preview } from '../terminal/sheets.ts';
 import { photoBytes, writeAll } from '../core/files.ts';
-import { checked } from './cv.ts';
+import { checked } from '../core/load.ts';
 import { outputPath } from './out.ts';
 import type { Call, Fields } from './types.ts';
 
 export async function previewed(call: Call): Promise<Result<Fields>> {
-  const cv = await checked(call);
+  const cv = await checked(call.home, call.values.cv, call.values.profile);
   if (cv.error !== null) return cv;
   const sheet = planned(cv.data, call.values.credits === true);
   if (sheet.placed.error !== null) return sheet.placed;
@@ -53,7 +53,7 @@ export async function build(call: Call): Promise<Result<Fields>> {
   if (hasCredits && style !== 'terminal') return rejected('build', [creditsNeedTerminal()]);
   const out = await outputPath(call.io.cwd, call.values.out);
   if (out.error !== null) return out;
-  const cv = await checked(call);
+  const cv = await checked(call.home, call.values.cv, call.values.profile);
   if (cv.error !== null) return cv;
   const sheet = planned(cv.data, hasCredits);
   const placed = sheet.placed;
