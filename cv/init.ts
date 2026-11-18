@@ -9,9 +9,9 @@
  */
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { shown } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
-import type { Issue, Result } from '../core/errors.ts';
+import type { Result } from '../core/errors.ts';
+import * as issue from './issues.ts';
 import * as coreIssue from '../core/issues.ts';
 import { check } from '../core/check.ts';
 import { Id, NewCv } from '../core/cv.schema.ts';
@@ -33,7 +33,8 @@ export async function createCv(request: Request): Promise<Result<Record<string, 
   const name = Id.safeParse(request.name);
   if (name.success === false)
     return rejected('init', coreIssue.schemaIssues(name.error, ['cv'], 'init'));
-  if ((await cvNames(home)).includes(name.data)) return rejected('init', [cvExists(name.data)]);
+  if ((await cvNames(home)).includes(name.data))
+    return rejected('init', [issue.cvExists(name.data)]);
   const fields = NewCv.safeParse(input);
   if (fields.success === false)
     return rejected('init', coreIssue.schemaIssues(fields.error, [], 'init'));
@@ -68,10 +69,3 @@ function emptyCv(
     blocks: [],
   };
 }
-
-const cvExists = (name: string): Issue => ({
-  code: 'CV_EXISTS',
-  path: 'cv',
-  message: `The data folder already holds a CV ${shown(name)}`,
-  hint: 'Choose another name, or change that CV with cv update and the block commands',
-});
