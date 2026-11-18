@@ -5,6 +5,7 @@
  * COMMANDS, CommandName, Command: every command with what it does, its options, words and input.
  * SHAPES: the shapes a caller writes that no command takes whole, such as a profile or an item.
  * OUTPUTS, isOutput: the forms an answer comes in, and whether a name is one of them.
+ * STYLES: the looks build can give the file.
  *
  * A command takes only the options it lists, plus EVERYWHERE; any other is the caller's mistake.
  *
@@ -111,3 +112,5 @@ export const SHAPES = {
 export const OUTPUTS = ['json', 'text'] as const;
 
 export const isOutput = (output: string) => OUTPUTS.some(known => known === output);
+
+export const STYLES = ['classic', 'terminal'] as const;

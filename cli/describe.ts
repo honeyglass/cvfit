@@ -9,12 +9,18 @@ import { shown } from '@honeyglass/utils/ts';
 import { z } from 'zod';
 import { done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
-import { ICONS, KINDS, LIMITS } from '../core/limits.ts';
+import { CV_LIMITS, ICONS, KINDS } from '../core/cv.limits.ts';
+import { FILE_LIMITS } from '../core/files.limits.ts';
 import { OPTIONS } from '../core/options.ts';
+import { READ_LIMITS } from '../read/limits.ts';
+import { PDF_LIMITS } from '../pdf/limits.ts';
 import { COMMANDS, EVERYWHERE, SHAPES } from './commands.ts';
 import type { Command } from './commands.ts';
 import { isCommandName, isShapeName } from './route.ts';
 import type { Fields } from './types.ts';
+
+// One object for the caller, in the key order schema has always shown.
+const LIMITS = { ...CV_LIMITS, ...FILE_LIMITS, ...READ_LIMITS, ...PDF_LIMITS };
 
 // Without a name: everything a caller needs to find its way. With one: a command or a shape.
 export function schema(name: string): Result<Fields> {

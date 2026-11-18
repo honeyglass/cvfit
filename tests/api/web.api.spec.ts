@@ -3,7 +3,8 @@
 import assert from 'node:assert/strict';
 import { gzipSync } from 'node:zlib';
 import { test } from 'node:test';
-import { LIMITS } from '../../core/limits.ts';
+import { FILE_LIMITS } from '../../core/files.limits.ts';
+import { READ_LIMITS } from '../../read/limits.ts';
 import { isPublic } from '../../read/address.ts';
 import { download } from '../../read/web.ts';
 import { codes } from '../utils/fixture.ts';
@@ -79,7 +80,7 @@ test('sends a request only to a public address a name resolves to', async () => 
 // Every redirect passes the same check as the first request, and only a few are followed.
 test('checks every redirect as the first request, and follows at most a few', async () => {
   const hops = Object.fromEntries(
-    Array.from({ length: LIMITS.redirects + 1 }, (_, index) => [
+    Array.from({ length: READ_LIMITS.redirects + 1 }, (_, index) => [
       `https://jobs.example/${index}`,
       { status: 302, location: `/${index + 1}` },
     ]),
@@ -128,7 +129,7 @@ test('stops a body at the limit, packed or not, and takes only listed encodings'
       'https://jobs.example/bomb': {
         status: 200,
         encoding: 'gzip',
-        body: gzipSync(Buffer.alloc(LIMITS.readBytes + 1, 'a')),
+        body: gzipSync(Buffer.alloc(FILE_LIMITS.readBytes + 1, 'a')),
       },
       'https://jobs.example/packed': { status: 200, encoding: 'gzip', body: gzipSync('Posting') },
       'https://jobs.example/odd': { status: 200, encoding: 'x-unknown', body: 'Posting' },

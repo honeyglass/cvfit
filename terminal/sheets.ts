@@ -12,13 +12,13 @@
  * @example io.write(preview(cv, plan));
  */
 import { REPOSITORY } from './credits.ts';
-import { LIMITS } from '../core/limits.ts';
+import { CV_LIMITS } from '../core/cv.limits.ts';
 import type { Block, Master } from '../core/cv.schema.ts';
 import type { Column, Placed, Plan } from '../core/place.ts';
 
 const LEFT = 52;
 const RIGHT = 25;
-const DOTS = LIMITS.level + 1;
+const DOTS = CV_LIMITS.level + 1;
 /** The cells of a fill bar; one cell is a tenth of a column. */
 const BAR = 10;
 /** Where the photo stands: Oriko, the mascot of the logo, since the terminal shows no picture. */
@@ -222,4 +222,4 @@ function content(block: Exclude<Block, { kind: 'job' }>, width: number) {
   }
 }
 
-const dots = (level: number) => '●'.repeat(level) + '○'.repeat(LIMITS.level - level);
+const dots = (level: number) => '●'.repeat(level) + '○'.repeat(CV_LIMITS.level - level);

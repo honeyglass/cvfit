@@ -10,7 +10,7 @@
  */
 import { $try } from '@honeyglass/utils/ts';
 import JSZip from 'jszip';
-import { LIMITS } from '../core/limits.ts';
+import { READ_LIMITS } from './limits.ts';
 
 const DOCUMENT = 'word/document.xml';
 
@@ -26,7 +26,7 @@ export async function docxText(bytes: Buffer): Promise<DocxText> {
   if (archive.error !== null) return { text: null, problem: 'broken' };
   const entry = archive.data.file(DOCUMENT);
   if (entry === null) return { text: null, problem: 'no-word' };
-  const xml = await $try(unpacked(entry, LIMITS.documentBytes));
+  const xml = await $try(unpacked(entry, READ_LIMITS.documentBytes));
   if (xml.error !== null) return { text: null, problem: 'broken' };
   if (xml.data === null) return { text: null, problem: 'too-large' };
   return { text: paragraphs(xml.data), problem: null };

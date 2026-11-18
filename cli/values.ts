@@ -7,11 +7,10 @@
  */
 import { done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
-import { STYLES } from '../core/limits.ts';
 import { NEW_NAME, isListed, missingHint } from '../core/options.ts';
 import type { ListedOption, OptionName } from '../core/options.ts';
 import { chosenCv, cvNames, profileNames } from '../core/home.ts';
-import { COMMANDS, OUTPUTS } from './commands.ts';
+import { COMMANDS, OUTPUTS, STYLES } from './commands.ts';
 import type { Command, CommandName } from './commands.ts';
 import { schemaCommand } from './complete.ts';
 import { profileCv } from '../core/load.ts';

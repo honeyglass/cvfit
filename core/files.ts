@@ -23,7 +23,7 @@ import { dirname, isAbsolute, relative, resolve } from 'node:path';
 import { $try, anyError, shown, trySync$ } from '@honeyglass/utils/ts';
 import { SYSTEM_REFUSED, done, rejected } from './errors.ts';
 import type { Issue, Result } from './errors.ts';
-import { LIMITS } from './limits.ts';
+import { FILE_LIMITS } from './files.limits.ts';
 import { missingHint } from './options.ts';
 import type { OptionName } from './options.ts';
 
@@ -80,7 +80,7 @@ const PATH_CODES = new Set([
  * @returns the parsed value, unchecked
  */
 export async function readJson(path: string, option: string): Promise<Result<unknown>> {
-  const bytes = await readBounded(path, LIMITS.inputBytes, option);
+  const bytes = await readBounded(path, FILE_LIMITS.inputBytes, option);
   if (bytes.error !== null) return bytes;
   const value = trySync$((): unknown => JSON.parse(bytes.data.toString('utf8')));
   if (value.error !== null)
@@ -160,7 +160,7 @@ export const pipedText = async (stream: AsyncIterable<unknown>, limit: number) =
 
 // The text a stored file holds; null when there is none yet.
 export async function existingText(path: string): Promise<Result<string | null>> {
-  const bytes = await readBounded(path, LIMITS.readBytes, 'home');
+  const bytes = await readBounded(path, FILE_LIMITS.readBytes, 'home');
   if (bytes.error === null) return done(bytes.data.toString('utf8'));
   const isMissing = bytes.error.issues.every(issue => issue.code === 'FILE_NOT_FOUND');
   return isMissing ? done(null) : bytes;
@@ -187,7 +187,7 @@ export const notAFolder = (path: string, option: string): Issue => ({
   hint: 'Pass the path of a folder, not of a file',
 });
 
-export const tooLarge = (path: string, limit: number = LIMITS.inputBytes): Issue => ({
+export const tooLarge = (path: string, limit: number = FILE_LIMITS.inputBytes): Issue => ({
   code: 'INPUT_TOO_LARGE',
   path,
   message: `The input is larger than ${limit} bytes`,
@@ -213,7 +213,7 @@ export async function photoBytes(folder: string, photo: string): Promise<Result<
     return rejected('file', [pathIssue(real.error, path, 'person.photo')], real.error);
   if (leaves(await realpath(folder), real.data))
     return rejected('file', [pathOutside('person.photo', photo, folder)]);
-  return readBounded(real.data, LIMITS.photoBytes, 'person.photo');
+  return readBounded(real.data, FILE_LIMITS.photoBytes, 'person.photo');
 }
 
 // True for the folder itself too: the check is for a file in the folder, never for the folder.

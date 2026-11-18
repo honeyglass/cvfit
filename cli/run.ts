@@ -13,7 +13,6 @@ import { resolve } from 'node:path';
 import { $try, causeText, shown } from '@honeyglass/utils/ts';
 import { rejected } from '../core/errors.ts';
 import type { Issue } from '../core/errors.ts';
-import { EXIT } from '../core/limits.ts';
 import { homeIssues } from '../core/home.ts';
 import { readArgs } from './args.ts';
 import { OUTPUTS, isOutput } from './commands.ts';
@@ -25,6 +24,8 @@ import { emptied } from './values.ts';
 import type { Io } from './types.ts';
 
 export type { Io } from './types.ts';
+
+const EXIT = { ok: 0, expected: 1, fatal: 2 } as const;
 
 /**
  * @param argv - the arguments after the program name

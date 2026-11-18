@@ -6,7 +6,7 @@
  */
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import { LIMITS } from '../core/limits.ts';
+import { FILE_LIMITS } from '../core/files.limits.ts';
 import { pipedText } from '../core/files.ts';
 import { run } from '../cli/run.ts';
 import { sofficePaths } from '../pdf/convert.ts';
@@ -19,6 +19,6 @@ process.exitCode = await run(process.argv.slice(2), {
   soffice: sofficePaths(),
   isTTY: process.stdout.isTTY === true,
   stdin: async () =>
-    process.stdin.isTTY === true ? null : pipedText(process.stdin, LIMITS.inputBytes),
+    process.stdin.isTTY === true ? null : pipedText(process.stdin, FILE_LIMITS.inputBytes),
   write: output => process.stdout.write(output),
 });

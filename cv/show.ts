@@ -9,7 +9,7 @@
  */
 import { done, rejected } from '../core/errors.ts';
 import type { Result } from '../core/errors.ts';
-import { COLUMN } from '../core/limits.ts';
+import { COLUMN } from '../core/cv.limits.ts';
 import { schemaIssues, unknownBlock } from '../core/check.ts';
 import { Master } from '../core/cv.schema.ts';
 import type { Block } from '../core/cv.schema.ts';

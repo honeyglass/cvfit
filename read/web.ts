@@ -19,9 +19,10 @@ import { brotliDecompressSync, gunzipSync, inflateSync } from 'node:zlib';
 import { $try, shown, trySync$ } from '@honeyglass/utils/ts';
 import { NETWORK_FAILED, SERVER_BUSY, done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
-import { LIMITS } from '../core/limits.ts';
+import { FILE_LIMITS } from '../core/files.limits.ts';
 import { pipedBytes, tooLarge } from '../core/files.ts';
 import { isPublic } from './address.ts';
+import { READ_LIMITS } from './limits.ts';
 
 export type Target = { address: string; url: URL; signal: AbortSignal };
 export type Answer = {
@@ -44,9 +45,9 @@ export type Web = {
  * @returns the body, unpacked; a refusal for a URL, an address or an answer the lists do not allow
  */
 export async function download(link: string, web: Web, option: string): Promise<Result<Buffer>> {
-  const signal = AbortSignal.timeout(LIMITS.downloadSeconds * 1_000);
+  const signal = AbortSignal.timeout(READ_LIMITS.downloadSeconds * 1_000);
   let next = link;
-  for (let hop = 0; hop <= LIMITS.redirects; hop += 1) {
+  for (let hop = 0; hop <= READ_LIMITS.redirects; hop += 1) {
     const reached = await requested(next, web, signal, option);
     if (reached.error !== null) return reached;
     const { url, answer } = reached.data;
@@ -102,10 +103,10 @@ function redirectOf(answer: Answer, url: URL) {
 // The encodings a body may come in, each unpacked only up to the limit.
 const UNPACK: Record<string, ((body: Buffer) => Buffer) | undefined> = {
   identity: body => body,
-  gzip: body => gunzipSync(body, { maxOutputLength: LIMITS.readBytes }),
-  'x-gzip': body => gunzipSync(body, { maxOutputLength: LIMITS.readBytes }),
-  deflate: body => inflateSync(body, { maxOutputLength: LIMITS.readBytes }),
-  br: body => brotliDecompressSync(body, { maxOutputLength: LIMITS.readBytes }),
+  gzip: body => gunzipSync(body, { maxOutputLength: FILE_LIMITS.readBytes }),
+  'x-gzip': body => gunzipSync(body, { maxOutputLength: FILE_LIMITS.readBytes }),
+  deflate: body => inflateSync(body, { maxOutputLength: FILE_LIMITS.readBytes }),
+  br: body => brotliDecompressSync(body, { maxOutputLength: FILE_LIMITS.readBytes }),
 };
 
 async function bodyOf(answer: Answer, option: string): Promise<Result<Buffer>> {
@@ -116,14 +117,14 @@ async function bodyOf(answer: Answer, option: string): Promise<Result<Buffer>> {
   const encoding = (answer.encoding ?? 'identity').trim().toLowerCase();
   const unpack = Object.hasOwn(UNPACK, encoding) ? UNPACK[encoding] : undefined;
   if (unpack === undefined) return rejected('read', [encodingNotAllowed(option, encoding)]);
-  const body = await $try(pipedBytes(answer.body, LIMITS.readBytes));
+  const body = await $try(pipedBytes(answer.body, FILE_LIMITS.readBytes));
   if (body.error !== null) return rejected('read', [bodyFailed(option, body.error)], body.error);
-  if (body.data.length > LIMITS.readBytes)
-    return rejected('read', [tooLarge(option, LIMITS.readBytes)]);
+  if (body.data.length > FILE_LIMITS.readBytes)
+    return rejected('read', [tooLarge(option, FILE_LIMITS.readBytes)]);
   const unpacked = trySync$(() => unpack(body.data));
   if (unpacked.error === null) return done(unpacked.data);
   const isTooLarge = 'code' in unpacked.error && unpacked.error.code === 'ERR_BUFFER_TOO_LARGE';
-  if (isTooLarge) return rejected('read', [tooLarge(option, LIMITS.readBytes)]);
+  if (isTooLarge) return rejected('read', [tooLarge(option, FILE_LIMITS.readBytes)]);
   return rejected('read', [notUnpacked(option, encoding)], unpacked.error);
 }
 
@@ -159,13 +160,13 @@ const bodyFailed = (option: string, error: Error): Issue => ({
   code: NETWORK_FAILED,
   path: option,
   message: `The download stopped: ${'code' in error ? `${error.code}` : error.name}`,
-  hint: `Call again; a download may take at most ${LIMITS.downloadSeconds} seconds`,
+  hint: `Call again; a download may take at most ${READ_LIMITS.downloadSeconds} seconds`,
 });
 
 const tooManyRedirects = (option: string): Issue => ({
   code: 'TOO_MANY_REDIRECTS',
   path: option,
-  message: `The address leads on more than ${LIMITS.redirects} times`,
+  message: `The address leads on more than ${READ_LIMITS.redirects} times`,
   hint: 'Open it in a browser and pass the address it ends at, or save the page and pass the file',
 });
 

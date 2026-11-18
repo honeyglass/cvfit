@@ -12,7 +12,7 @@
 import { shown, trySync$ } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
-import { LIMITS } from '../core/limits.ts';
+import { READ_LIMITS } from './limits.ts';
 import { tooLarge } from '../core/files.ts';
 import { cleanText } from './clean.ts';
 import { docxText } from './docx.ts';
@@ -69,7 +69,7 @@ async function wordText(
     case 'no-word':
       return rejected('read', [unsupportedKind(option)]);
     case 'too-large':
-      return rejected('read', [tooLarge(option, LIMITS.documentBytes)]);
+      return rejected('read', [tooLarge(option, READ_LIMITS.documentBytes)]);
     case 'broken':
       return rejected('read', [unreadable(option, 'Word file')]);
   }

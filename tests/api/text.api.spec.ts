@@ -1,7 +1,7 @@
 // A document becomes text only when its content is a kind on the list; any other is refused.
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { LIMITS } from '../../core/limits.ts';
+import { READ_LIMITS } from '../../read/limits.ts';
 import { textOf } from '../../read/text.ts';
 import { codes } from '../utils/fixture.ts';
 import { docx, pdf, zip } from '../utils/documents.ts';
@@ -50,7 +50,7 @@ test('refuses every other kind, a broken document, and a document without text',
 
 // The size inside a ZIP can lie, so the unpacking itself stops at the limit.
 test('refuses a Word file that unpacks to more than the limit', async () => {
-  const bomb = await docx(['a'.repeat(LIMITS.documentBytes + 1)]);
+  const bomb = await docx(['a'.repeat(READ_LIMITS.documentBytes + 1)]);
   assert.ok(bomb.length < 1_000_000);
   assert.deepEqual(codes(await read(bomb)), ['INPUT_TOO_LARGE']);
 });

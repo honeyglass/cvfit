@@ -6,10 +6,10 @@
  * @example const parsed = INPUT['block move'].safeParse(input);
  */
 import { z } from 'zod';
-import { LIMITS } from '../core/limits.ts';
+import { CV_LIMITS } from '../core/cv.limits.ts';
 import { Block, Id, Language, Page, Text } from '../core/cv.schema.ts';
 
-const index = z.int().min(0).max(LIMITS.items);
+const index = z.int().min(0).max(CV_LIMITS.items);
 
 export const INPUT = {
   'block add': z.strictObject({ block: Block, before: Id.optional(), after: Id.optional() }),

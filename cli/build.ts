@@ -10,7 +10,6 @@ import { shown } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
 import { withCredits } from '../terminal/credits.ts';
-import { STYLES } from '../core/limits.ts';
 import type { Master } from '../core/cv.schema.ts';
 import { place } from '../core/place.ts';
 import type { Plan } from '../core/place.ts';
@@ -21,6 +20,7 @@ import { toPdf } from '../pdf/convert.ts';
 import { preview } from '../terminal/sheets.ts';
 import { photoBytes, writeAll } from '../core/files.ts';
 import { checked } from '../core/load.ts';
+import { STYLES } from './commands.ts';
 import { outputPath } from './out.ts';
 import type { Call, Fields } from './types.ts';
 

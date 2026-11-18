@@ -13,7 +13,7 @@ import { join, resolve } from 'node:path';
 import { shown } from '@honeyglass/utils/ts';
 import { Rejection, done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
-import { LIMITS } from '../core/limits.ts';
+import { FILE_LIMITS } from '../core/files.limits.ts';
 import { schemaIssues } from '../core/check.ts';
 import { Id } from '../core/cv.schema.ts';
 import { cleanText } from './clean.ts';
@@ -102,7 +102,7 @@ async function documentOf(input: Input, request: Request): Promise<Result<Docume
   const isLink = /^[a-z][a-z0-9+.-]*:\/\//i.test(input.source);
   const bytes = isLink
     ? await download(input.source, request.web, input.role)
-    : await readBounded(resolve(request.cwd, input.source), LIMITS.readBytes, input.role);
+    : await readBounded(resolve(request.cwd, input.source), FILE_LIMITS.readBytes, input.role);
   if (bytes.error !== null) return withSource(bytes.error, input.source);
   const read = await textOf(bytes.data, input.role);
   if (read.error !== null) return withSource(read.error, input.source);
@@ -168,8 +168,8 @@ async function notesFile(notes: Document[], path: string): Promise<Result<NewFil
   const sections = notes.map(note => `## ${cleanText(note.source).text}\n\n${note.text}\n`);
   const before = existing.data?.trim() ?? '';
   const content = (before === '' ? sections : [`${before}\n`, ...sections]).join('\n');
-  if (Buffer.byteLength(content) > LIMITS.readBytes)
-    return rejected('read', [tooLarge('notes', LIMITS.readBytes)]);
+  if (Buffer.byteLength(content) > FILE_LIMITS.readBytes)
+    return rejected('read', [tooLarge('notes', FILE_LIMITS.readBytes)]);
   return done({ path, content });
 }
 

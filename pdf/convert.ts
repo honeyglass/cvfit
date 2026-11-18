@@ -22,7 +22,7 @@ import { promisify } from 'node:util';
 import { $try, causeText } from '@honeyglass/utils/ts';
 import { NOT_INSTALLED, SYSTEM_REFUSED, done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
-import { LIMITS } from '../core/limits.ts';
+import { PDF_LIMITS } from './limits.ts';
 
 const run = promisify(execFile);
 
@@ -56,7 +56,7 @@ async function converted(soffice: string, folder: string, docx: Uint8Array) {
   const profile = `-env:UserInstallation=${pathToFileURL(join(folder, 'profile')).href}`;
   const args = [profile, '--headless', '--convert-to', 'pdf', '--outdir', folder, source];
   const env = await fontEnv(soffice, folder);
-  await run(soffice, args, { timeout: LIMITS.pdfSeconds * 1000, env });
+  await run(soffice, args, { timeout: PDF_LIMITS.pdfSeconds * 1000, env });
   return readFile(join(folder, 'cv.pdf'));
 }
 

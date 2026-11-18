@@ -12,7 +12,7 @@ import { join, resolve } from 'node:path';
 import { trySync$ } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
-import { LIMITS } from '../core/limits.ts';
+import { FILE_LIMITS } from '../core/files.limits.ts';
 import { schemaIssues } from '../core/check.ts';
 import { Master, Profile } from '../core/cv.schema.ts';
 import { photoUnreadable } from './docx.ts';
@@ -96,7 +96,7 @@ async function profileOwner(home: string, name: string): Promise<Result<Owner>> 
 }
 
 async function squared(path: string): Promise<Result<Uint8Array>> {
-  const bytes = await readBounded(path, LIMITS.photoBytes, 'file');
+  const bytes = await readBounded(path, FILE_LIMITS.photoBytes, 'file');
   if (bytes.error !== null) return bytes;
   const square = trySync$(() => squarePhoto(bytes.data));
   if (square.error !== null)

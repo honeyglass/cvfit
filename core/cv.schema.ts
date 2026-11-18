@@ -13,11 +13,14 @@
 import { isAbsolute, normalize, sep } from 'node:path';
 import { UNSAFE_CHAR } from '@honeyglass/utils/ts';
 import { z } from 'zod';
-import { ICONS, LIMITS } from './limits.ts';
+import { CV_LIMITS, ICONS } from './cv.limits.ts';
 
 const isVisibleLine = (value: string) => value.trim() !== '' && UNSAFE_CHAR.test(value) === false;
 
-const text = z.string().max(LIMITS.text).refine(isVisibleLine, 'Expected one line of visible text');
+const text = z
+  .string()
+  .max(CV_LIMITS.text)
+  .refine(isVisibleLine, 'Expected one line of visible text');
 const id = z
   .string()
   .max(60)
@@ -25,17 +28,17 @@ const id = z
     /^[a-z0-9]+(-[a-z0-9]+)*$/,
     'Expected lower-case words joined by hyphens, such as additional-skills',
   );
-const level = z.int().min(0).max(LIMITS.level);
-const page = z.int().min(1).max(LIMITS.pages);
+const level = z.int().min(0).max(CV_LIMITS.level);
+const page = z.int().min(1).max(CV_LIMITS.pages);
 const link = z
   .string()
-  .max(LIMITS.text)
+  .max(CV_LIMITS.text)
   .regex(/^https:\/\/\S+$/, 'Expected an https:// address')
   .refine(isVisibleLine, 'Expected one line of visible text');
 
 // `page` is the earliest page a block may start on; the blocks after it follow.
 const common = { id, section: text, page: page.optional(), hidden: z.boolean().optional() };
-const items = <Item extends z.ZodType>(item: Item) => z.array(item).min(1).max(LIMITS.items);
+const items = <Item extends z.ZodType>(item: Item) => z.array(item).min(1).max(CV_LIMITS.items);
 
 const RatedItem = z.strictObject({ name: text, level });
 const EntryItem = z.strictObject({ title: text, note: text });
@@ -48,7 +51,7 @@ const Job = z.strictObject({
   title: text,
   place: text,
   employer: text,
-  bullets: z.array(text).max(LIMITS.items),
+  bullets: z.array(text).max(CV_LIMITS.items),
 });
 // A right-column block may leave out its title when it is the only block of its section.
 const Rated = z.strictObject({
@@ -121,7 +124,7 @@ export const Master = z.strictObject({
   person: z.strictObject({ firstName: text, lastName: text, role: text, photo }),
   contact: z.strictObject({ title: text, items: z.array(ContactItem).max(8) }),
   pages: page,
-  blocks: z.array(Block).max(LIMITS.blocks),
+  blocks: z.array(Block).max(CV_LIMITS.blocks),
 });
 export type Master = z.output<typeof Master>;
 
@@ -130,7 +133,7 @@ export const NewCv = z.strictObject({ language, firstName: text, lastName: text,
 export const Profile = z.strictObject({
   cv: id.optional(),
   person: z.strictObject({ role: text, photo }).partial().optional(),
-  order: z.array(id).max(LIMITS.blocks).optional(),
+  order: z.array(id).max(CV_LIMITS.blocks).optional(),
   blocks: z.record(z.string(), z.unknown()).optional(),
 });
 export type Profile = z.output<typeof Profile>;

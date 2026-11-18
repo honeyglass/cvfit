@@ -40,7 +40,7 @@ import {
 import type { IParagraphOptions, IRunOptions, ITableCellOptions, ParagraphChild } from 'docx';
 import { done, rejected } from '../core/errors.ts';
 import type { Result } from '../core/errors.ts';
-import { ICONS, LIMITS } from '../core/limits.ts';
+import { CV_LIMITS, ICONS } from '../core/cv.limits.ts';
 import type { Block, Master } from '../core/cv.schema.ts';
 import { spacedRole } from '../core/measure.ts';
 import { HEIGHT, SPACE, WIDTH } from '../core/metrics.ts';
@@ -589,7 +589,7 @@ function ratedTable(items: { name: string; level: number }[], look: Look) {
 // The dots are text: Google Docs has no letter spacing, so a small space stands between them.
 function dots(level: number) {
   const children: TextRun[] = [];
-  for (let index = 0; index < LIMITS.level; index++) {
+  for (let index = 0; index < CV_LIMITS.level; index++) {
     if (index > 0) children.push(new TextRun({ text: ' ', font: FONT.symbol, size: 16 }));
     children.push(
       new TextRun({
