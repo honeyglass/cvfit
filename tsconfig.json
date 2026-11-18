@@ -11,5 +11,18 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["tools", "bin", "core", "edit", "classic", "pdf", "terminal", "read", "cli", "tests"]
+  "include": [
+    "tools",
+    "bin",
+    "core",
+    "edit",
+    "classic",
+    "pdf",
+    "terminal",
+    "read",
+    "cv",
+    "profile",
+    "cli",
+    "tests"
+  ]
 }

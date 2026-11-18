@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { LIMITS } from '../../core/limits.ts';
-import { textOf } from '../../read/index.ts';
+import { textOf } from '../../read/text.ts';
 import { codes } from '../utils/fixture.ts';
 import { docx, pdf, zip } from '../utils/documents.ts';
 

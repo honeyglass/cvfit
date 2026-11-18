@@ -1,8 +1,7 @@
 /**
- * The commands for the profile of one job posting: store it checked, and show it with its posting.
+ * The command profile set: checks the profile of one job posting against its CV, then stores it.
  *
  * setProfile: checks a whole profile against its CV, then stores it, and names what it changed.
- * showProfile: the stored profile and the posting read for it.
  *
  * A profile is checked by the same check plan runs, before it is written, so a refused profile is
  * never stored. It replaces the stored one whole, and only on request, so the answer names every
@@ -15,11 +14,12 @@ import { shown, trySync$ } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
 import { check, schemaIssues } from '../core/check.ts';
-import { Id, Profile } from '../core/cv.schema.ts';
+import { Profile } from '../core/cv.schema.ts';
 import { place } from '../core/place.ts';
 import { optionText } from '../core/options.ts';
-import { existingText, invalidJson, missingOption, readJson, writeAll } from '../core/files.ts';
+import { existingText, readJson, writeAll } from '../core/files.ts';
 import { chosenCv } from '../core/home.ts';
+import { profileName } from './name.ts';
 
 type Fields = Record<string, unknown>;
 type Request = {
@@ -56,32 +56,6 @@ export async function setProfile(request: Request): Promise<Result<Fields>> {
   return done({ name: name.data, stored, written: isWriting, ...changes, ...fits.data });
 }
 
-/**
- * @param home - the data folder
- * @param name - the profile's name
- * @returns the stored profile and the posting read for it, each null when there is none
- */
-export async function showProfile(home: string, name: string | undefined): Promise<Result<Fields>> {
-  const checkedName = profileName(name, 'profile show');
-  if (checkedName.error !== null) return checkedName;
-  const profile = await storedProfile(join(home, 'profiles', `${checkedName.data}.json`));
-  if (profile.error !== null) return profile;
-  const posting = await existingText(join(home, 'profiles', `${checkedName.data}.posting.md`));
-  if (posting.error !== null) return posting;
-  if (profile.data === null && posting.data === null)
-    return rejected('profile show', [unknownProfile(checkedName.data)]);
-  return done({ name: checkedName.data, profile: profile.data, posting: posting.data });
-}
-
-// The name becomes a file name, so it passes the id pattern before any path is built from it.
-function profileName(name: string | undefined, command: string): Result<string> {
-  if (name === undefined) return rejected(command, [profileMissing(command)]);
-  const parsed = Id.safeParse(name);
-  if (parsed.success === false)
-    return rejected(command, schemaIssues(parsed.error, ['profile'], command));
-  return done(parsed.data);
-}
-
 // The checks plan runs on the profile's CV; a CV too long for its pages is answered, not refused.
 async function checkedFit(home: string, profile: Profile) {
   const cv = await chosenCv(home, undefined, profile.cv);
@@ -96,20 +70,6 @@ async function checkedFit(home: string, profile: Profile) {
     fits: placed.error === null,
     layout: placed.error?.issues ?? [],
   });
-}
-
-async function storedProfile(path: string): Promise<Result<Profile | null>> {
-  const text = await existingText(path);
-  if (text.error !== null) return text;
-  if (text.data === null) return done(null);
-  const raw = text.data;
-  const value = trySync$((): unknown => JSON.parse(raw));
-  if (value.error !== null)
-    return rejected('profile show', [invalidJson(`The file ${shown(path)}`)], value.error);
-  const profile = Profile.safeParse(value.data);
-  if (profile.success === false)
-    return rejected('profile show', schemaIssues(profile.error, [], 'profile'));
-  return done(profile.data);
 }
 
 // The stored profile as a value; an unreadable one counts as empty, so every part counts as added.
@@ -151,27 +111,10 @@ function changesOf(before: unknown, after: unknown) {
   };
 }
 
-const profileMissing = (command: string): Issue => ({
-  ...missingOption(
-    'profile',
-    'the name of the profile',
-    'Run the command for the existing profiles, or pass a new name in lower-case words joined by hyphens',
-  ),
-  command: `oriko ${command} --profile`,
-});
-
 const profileExists = (name: string): Issue => ({
   code: 'PROFILE_EXISTS',
   path: 'profile',
   message: `The profile ${shown(name)} is already stored`,
   hint: 'Run the command to see it; add --replace to overwrite it, or pass another --profile',
   command: `oriko profile show${optionText('profile', name)}`,
-});
-
-const unknownProfile = (name: string): Issue => ({
-  code: 'UNKNOWN_PROFILE',
-  path: 'profile',
-  message: `The data folder has no profile ${shown(name)}, nor a posting read for it`,
-  hint: 'Run the command and use one of the profile names it lists',
-  command: 'oriko plan --profile',
 });

@@ -42,12 +42,13 @@ import type { Command, CommandName } from './commands.ts';
 import { NEW_NAME, OPTIONS, isListed, missingHint, optionText } from '../core/options.ts';
 import type { ListedOption, OptionName } from '../core/options.ts';
 import { chosenCv, cvNames, heldCvs, homeIssues, profileNames, profilePath } from '../core/home.ts';
-import { createCv, cvNameMissing } from './init.ts';
+import { createCv, cvNameMissing } from '../cv/init.ts';
 import { nextSteps } from './next.ts';
 import type { Step } from './next.ts';
 import { setPhoto } from '../classic/photo.ts';
-import { readDocuments } from './read.ts';
-import { setProfile, showProfile } from './profile.ts';
+import { readDocuments } from '../read/documents.ts';
+import { setProfile } from '../profile/set.ts';
+import { showProfile } from '../profile/show.ts';
 import type { Web } from '../read/web.ts';
 
 export type Io = {
