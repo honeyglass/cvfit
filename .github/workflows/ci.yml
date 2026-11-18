@@ -45,18 +45,18 @@ jobs:
       # through Corepack, which refuses a pnpm whose sha512 differs from the one in
       # package.json, and leaves both on for the steps below.
       - uses: honeyglass/actions/supply-check@d775cff14274bc10b5efcf9ad1826455f1ecde18
-      # The supply check ran on Node 24; the checks below run on the Node of this runner.
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: ${{ matrix.node }}
-          package-manager-cache: false
-      - run: node --version && pnpm --version
       - run: pnpm install --frozen-lockfile
       # Right after the install, before the steps below run code from node_modules: a link
       # there that dangles or leads out of the checkout fails the job.
       - uses: honeyglass/actions/supply-check@d775cff14274bc10b5efcf9ad1826455f1ecde18
         with:
           mode: links
+      # Each supply check sets up Node 24 again, so the Node of this runner comes after the last.
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ matrix.node }}
+          package-manager-cache: false
+      - run: node --version && pnpm --version
       - run: pnpm run format:check
       # Every repository names its scripts lint, typecheck and test, so this file stays the
       # same everywhere. --if-present skips the step in a repository without that script.
