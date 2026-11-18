@@ -190,6 +190,8 @@ Run `oriko build --profile NAME --out NAME.docx` in the user's working directory
 - Add `--style terminal` when the user asks for the version in the look of the preview; name it
   `NAME-terminal.docx`. Tell the user to send it by mail to people, not through an upload portal:
   portals read the text, and the two columns run together line by line.
+- Add `--credits` to a terminal build or a preview only when the user asks for it: it names oriko
+  and its author on the right of the last page. The classic look refuses it.
 
 ### 6 Report
 

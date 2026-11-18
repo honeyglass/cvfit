@@ -11,12 +11,14 @@
  * @example const docx = await renderTerminal(cv, plan);
  */
 import { Document, ExternalHyperlink, Packer, Paragraph, TextRun } from 'docx';
+import type { ParagraphChild } from 'docx';
 import { done } from '../core/errors.ts';
 import type { Result } from '../core/errors.ts';
 import type { Master } from '../data/cv.schema.ts';
 import type { Plan } from '../layout/place.ts';
 import { HEIGHT, WIDTH } from '../layout/metrics.ts';
-import { REPOSITORY, sheets } from '../preview/text.ts';
+import { REPOSITORY } from '../core/credits.ts';
+import { repositoryLines, sheets } from '../preview/text.ts';
 import { stable } from './zip.ts';
 
 const FONT = 'Fira Code';
@@ -39,8 +41,9 @@ const SPARE_EDGE = 300;
 export async function renderTerminal(cv: Master, plan: Plan): Promise<Result<Uint8Array>> {
   const pages = sheets(cv, plan, PAGE_LINES);
   const spacing = lineSpacing(Math.max(...pages.map(lines => lines.length)));
+  const links = repositoryLines();
   const paragraphs = pages.flatMap((lines, page) =>
-    lines.map((text, row) => line(text, spacing, page > 0 && row === 0)),
+    lines.map((text, row) => line(linked(text, links), spacing, page > 0 && row === 0)),
   );
   return done(await stable(await Packer.toBuffer(document(paragraphs))));
 }
@@ -49,24 +52,31 @@ export async function renderTerminal(cv: Master, plan: Plan): Promise<Result<Uin
 const lineSpacing = (tallest: number) =>
   Math.min(SPACING, Math.floor((SPACING * PAGE_LINES) / tallest));
 
-const line = (text: string, spacing: number, isPageStart: boolean) =>
+const line = (children: ParagraphChild[], spacing: number, isPageStart: boolean) =>
   new Paragraph({
     pageBreakBefore: isPageStart,
     spacing: { before: 0, after: 0, line: spacing },
-    children: linked(text),
+    children,
   });
 
 const run = (text: string) => new TextRun({ text, font: FONT, size: SIZE });
 
-// The repository in a top edge becomes a link a reader of the PDF can click.
-function linked(text: string) {
-  const [before, after] = text.split(REPOSITORY);
-  if (after === undefined) return [run(text)];
-  const link = new ExternalHyperlink({
-    link: `https://${REPOSITORY}`,
-    children: [run(REPOSITORY)],
-  });
-  return [run(before ?? ''), link, run(after)];
+/**
+ * The address of oriko in the credits becomes a link a reader of the PDF can click.
+ *
+ * The right column breaks the address over lines, so a row links when its right cell holds
+ * exactly one of those lines; the left column may hold the same text without a link.
+ *
+ * @param text - one row of a sheet
+ * @param links - the lines of the address
+ * @returns the runs of the row, the address line as a link
+ */
+function linked(text: string, links: string[]) {
+  const cell = text.split('│').at(-2)?.trim() ?? '';
+  if (links.includes(cell) === false) return [run(text)];
+  const at = text.lastIndexOf(cell);
+  const link = new ExternalHyperlink({ link: `https://${REPOSITORY}`, children: [run(cell)] });
+  return [run(text.slice(0, at)), link, run(text.slice(at + cell.length))];
 }
 
 function document(paragraphs: Paragraph[]) {

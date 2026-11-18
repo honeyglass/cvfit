@@ -36,8 +36,8 @@ one accepts.
 | :--- | :--- |
 | `cvs`, `profiles` | list your CVs and versions, and whether each one fits its pages |
 | `show` | outline of a CV; `--block <id>` shows one block in full |
-| `plan`, `preview` | the page plan as JSON, or as the sheets of the terminal preview |
-| `build --out <file>.docx` | writes the Word file, or with `<file>.pdf` its PDF through LibreOffice; `--style terminal` in the look of the preview, `--dry-run` writes nothing |
+| `plan`, `preview` | the page plan as JSON, or as the sheets of the terminal preview; `preview --credits` adds who made the CV |
+| `build --out <file>.docx` | writes the Word file, or with `<file>.pdf` its PDF through LibreOffice; `--style terminal` in the look of the preview, with `--credits` naming oriko and its author on the last page, `--dry-run` writes nothing |
 | `init`, `cv update` | create a CV, change its language, pages, person or contact title |
 | `block …`, `item …`, `contact …` | add, update, remove and move blocks, their items and contact lines |
 | `photo set <file>` | stores a PNG or JPEG as the square photo of a CV, or of one version |

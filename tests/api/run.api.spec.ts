@@ -106,6 +106,14 @@ test('preview answers the pages as text', async () => {
   assert.equal(typeof answer.preview === 'string' && answer.preview.includes('Page 2 of 2'), true);
 });
 
+test('preview and the terminal build add the credits with --credits', async () => {
+  const space = workspace();
+  const { answer } = await call(space, ['preview', '--credits']);
+  assert.equal(typeof answer.preview === 'string' && answer.preview.includes('MADE WITH'), true);
+  const built = await call(space, ['build', '--out', 't.docx', '--style', 'terminal', '--credits']);
+  assert.equal(built.exit, 0);
+});
+
 test('build writes the .docx, and with --dry-run it writes nothing', async () => {
   const space = workspace();
   assert.equal((await call(space, ['build', '--out', 'out.docx', '--dry-run'])).exit, 0);
@@ -249,6 +257,7 @@ test('refuses bad input with exit code 1 and the code of the reason', async () =
     [['build', '--out', 'out.txt'], 'WRONG_EXTENSION'],
     [['build'], 'MISSING_OPTION'],
     [['build', '--out', 'out.docx', '--style', 'neon'], 'UNKNOWN_STYLE'],
+    [['build', '--out', 'out.docx', '--credits'], 'CREDITS_NEED_TERMINAL'],
     [['block', 'remove', '--json', '{broken'], 'INVALID_JSON'],
     [['block', 'remove'], 'MISSING_INPUT'],
     [['paint'], 'UNKNOWN_COMMAND'],

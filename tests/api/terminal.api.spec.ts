@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import JSZip from 'jszip';
+import { withCredits } from '../../core/credits.ts';
 import { place } from '../../layout/place.ts';
 import { preview } from '../../preview/text.ts';
 import { renderTerminal } from '../../render/terminal.ts';
@@ -50,10 +51,14 @@ test('gives every page as many lines as the tallest page can hold', async () => 
   assert.ok(empty.test(second.at(-4) ?? ''));
 });
 
-test('links the repository in the top edge of every page', async () => {
-  const zip = await JSZip.loadAsync(await build());
+// The column breaks the address over two lines, so each of them is a link.
+test('links the address of oriko in the credits, and nothing without them', async () => {
+  const cv = withCredits(fixture(), 2);
+  const zip = await JSZip.loadAsync(unwrap(await renderTerminal(cv, unwrap(place(cv)))));
   const xml = (await zip.file('word/document.xml')?.async('string')) ?? '';
   const rels = (await zip.file('word/_rels/document.xml.rels')?.async('string')) ?? '';
   assert.equal(xml.split('<w:hyperlink').length - 1, 2);
   assert.ok(rels.includes('Target="https://github.com/honeyglass/oriko"'));
+  const { xml: plain } = await pages();
+  assert.equal(plain.includes('<w:hyperlink'), false);
 });

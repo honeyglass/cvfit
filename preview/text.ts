@@ -3,7 +3,7 @@
  *
  * preview: the pages of a plan as text, each page a framed sheet with its two columns.
  * sheets: the same sheets as lists of lines, padded with empty rows to a given height.
- * REPOSITORY: where oriko lives, as the top edge of every sheet names it.
+ * repositoryLines: the lines the right column breaks the address of oriko into, in the credits.
  *
  * It shows what stands on which page, in which order, and how full each column is. It does not
  * show fonts or exact distances, and Oriko stands where the photo is; those exist only
@@ -11,6 +11,7 @@
  *
  * @example io.write(preview(cv, plan));
  */
+import { REPOSITORY } from '../core/credits.ts';
 import { LIMITS } from '../core/limits.ts';
 import type { Block, Master } from '../data/cv.schema.ts';
 import type { Column, Placed, Plan } from '../layout/place.ts';
@@ -32,8 +33,6 @@ const FACE = [
 const FACE_WIDTH = 12;
 /** The rows of the name block of page 1, with a blank row above and one below it. */
 const NAME_ROWS = FACE.length + 2;
-/** Where oriko lives, in the top edge of every sheet, so a reader of the file can find it. */
-export const REPOSITORY = 'github.com/honeyglass/oriko';
 
 /**
  * @param cv - a checked CV
@@ -77,7 +76,7 @@ function sheet(title: string, left: string[], right: string[], fill: string, hei
       `│ ${(leftRows[row] ?? '').padEnd(LEFT)} │ ${(rightRows[row] ?? '').padEnd(RIGHT)} │`,
   );
   return [
-    `${`╭─ ${title} `.padEnd(LEFT - REPOSITORY.length, '─')} ${REPOSITORY} ─┬${'─'.repeat(RIGHT + 2)}╮`,
+    `${`╭─ ${title} `.padEnd(LEFT + 3, '─')}┬${'─'.repeat(RIGHT + 2)}╮`,
     ...body,
     `├${'─'.repeat(LEFT + 2)}┴${'─'.repeat(RIGHT + 2)}┤`,
     `│ ${fill.padEnd(LEFT + RIGHT + 3)} │`,
@@ -93,6 +92,9 @@ function bar(column: Column) {
   const cells = Math.min(BAR, Math.round(share * BAR));
   return `${'■'.repeat(cells)}${'□'.repeat(BAR - cells)} ${Math.round(share * 100)} % full`;
 }
+
+/** The address of oriko in lines, as the credits in the right column show it. */
+export const repositoryLines = () => wrap(REPOSITORY, RIGHT);
 
 // Breaks at spaces; a word longer than the line is cut, so no line grows past the column.
 function wrap(text: string, width: number) {
@@ -110,7 +112,11 @@ function wrap(text: string, width: number) {
   return [...lines, line];
 }
 
-const cut = (word: string, width: number) => word.match(new RegExp(`.{1,${width}}`, 'gu')) ?? [''];
+// The cut falls after a slash where one is in reach, so an address breaks between its parts.
+function cut(word: string, width: number) {
+  if (word.length <= width) return [word];
+  return word.match(new RegExp(`.{1,${width - 1}}/|.{1,${width}}`, 'gu')) ?? [''];
+}
 
 const blockOf = (cv: Master, placed: Placed) => cv.blocks.find(block => block.id === placed.id);
 

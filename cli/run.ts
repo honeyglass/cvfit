@@ -14,6 +14,7 @@ import { $try, causeText, refusal, shown, trySync$ } from '@honeyglass/utils/ts'
 import { z } from 'zod';
 import { Rejection, done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
+import { withCredits } from '../core/credits.ts';
 import { COLUMN, EXIT, ICONS, KINDS, LIMITS, STYLES } from '../core/limits.ts';
 import { check, schemaIssues, unknownBlock } from '../data/check.ts';
 import { Block, Master, Profile } from '../data/cv.schema.ts';
@@ -591,9 +592,23 @@ async function profiles(call: Call): Promise<Result<Fields>> {
 async function previewed(call: Call): Promise<Result<Fields>> {
   const cv = await checked(call);
   if (cv.error !== null) return cv;
-  const placed = place(cv.data);
-  if (placed.error !== null) return placed;
-  return done({ preview: preview(cv.data, placed.data) });
+  const sheet = planned(cv.data, call.values.credits === true);
+  if (sheet.placed.error !== null) return sheet.placed;
+  return done({ preview: preview(sheet.cv, sheet.placed.data) });
+}
+
+/**
+ * The CV as the terminal look sets it, and its plan; the credits join the last page it fills.
+ *
+ * @param cv - a checked CV
+ * @param hasCredits - whether the call asks for the credits
+ * @returns the CV, with the credits when asked, and its plan
+ */
+function planned(cv: Master, hasCredits: boolean) {
+  const placed = place(cv);
+  if (placed.error !== null || hasCredits === false) return { cv, placed };
+  const credited = withCredits(cv, placed.data.pages.length);
+  return { cv: credited, placed: place(credited) };
 }
 
 async function profileSet(call: Call): Promise<Result<Fields>> {
@@ -646,15 +661,18 @@ async function plan(call: Call): Promise<Result<Fields>> {
 async function build(call: Call): Promise<Result<Fields>> {
   const style = STYLES.find(known => known === (call.values.style ?? 'classic'));
   if (style === undefined) return rejected('build', [unknownStyle(call.values.style ?? '')]);
+  const hasCredits = call.values.credits === true;
+  if (hasCredits && style !== 'terminal') return rejected('build', [creditsNeedTerminal()]);
   const out = await outputPath(call.io.cwd, call.values.out);
   if (out.error !== null) return out;
   const cv = await checked(call);
   if (cv.error !== null) return cv;
-  const placed = place(cv.data);
+  const sheet = planned(cv.data, hasCredits);
+  const placed = sheet.placed;
   if (placed.error !== null) return placed;
   const isPdf = out.data.name.endsWith('.pdf');
   const engine = isPdf ? 'libreoffice' : 'google';
-  const docx = await rendered(call.home, cv.data, placed.data, style, engine);
+  const docx = await rendered(call.home, sheet.cv, placed.data, style, engine);
   if (docx.error !== null) return docx;
   const file = isPdf ? await toPdf(docx.data, call.io.soffice) : docx;
   if (file.error !== null) return file;
@@ -685,6 +703,13 @@ async function rendered(
   if (picture.error !== null) return picture;
   return render(cv, plan, picture.data, engine);
 }
+
+const creditsNeedTerminal = (): Issue => ({
+  code: 'CREDITS_NEED_TERMINAL',
+  path: 'credits',
+  message: 'The option --credits works only in the terminal look',
+  hint: 'Add --style terminal, or leave out --credits',
+});
 
 const unknownStyle = (style: string): Issue => ({
   code: 'UNKNOWN_STYLE',

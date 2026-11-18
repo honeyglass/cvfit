@@ -88,6 +88,10 @@ export const OPTIONS = {
     listed: true,
     text: 'json or text; json when stdout is no terminal',
   },
+  credits: {
+    type: 'boolean',
+    text: 'for preview, and build with --style terminal: names oriko and its author on the right of the last page',
+  },
 } as const satisfies Record<string, Option>;
 
 export type OptionName = keyof typeof OPTIONS;
@@ -145,10 +149,10 @@ export const COMMANDS = {
   show: { does: 'outlines a CV, or shows one block in full', options: ['cv', 'profile', 'block'] },
   profiles: { does: 'lists the profiles and whether each fits its pages', options: [] },
   plan: { does: 'places every block on the pages', options: ['cv', 'profile'] },
-  preview: { does: 'draws the pages in the terminal', options: ['cv', 'profile'] },
+  preview: { does: 'draws the pages in the terminal', options: ['cv', 'profile', 'credits'] },
   build: {
     does: 'writes the Word file, or its PDF through LibreOffice',
-    options: ['cv', 'profile', 'out', 'style', 'dry-run'],
+    options: ['cv', 'profile', 'out', 'style', 'credits', 'dry-run'],
   },
   read: {
     does: 'reads a posting, notes or an old CV from a file or an https address',

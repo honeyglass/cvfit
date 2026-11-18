@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { withCredits } from '../../core/credits.ts';
 import { place } from '../../layout/place.ts';
 import { preview } from '../../preview/text.ts';
 import { fixture, unwrap } from '../utils/fixture.ts';
@@ -89,11 +90,24 @@ test('indents the items of a group below its title', () => {
   );
 });
 
-test('names the repository in the top edge of every sheet', () => {
+test('names only the page in the top edge of every sheet', () => {
   const tops = lines.filter(line => line.startsWith('╭─ Page'));
   assert.equal(tops.length, 2);
-  for (const top of tops)
-    assert.match(top, /^╭─ Page \d of 2 ─+ github\.com\/honeyglass\/oriko ─┬─+╮$/);
+  for (const top of tops) assert.match(top, /^╭─ Page \d of 2 ─+┬─+╮$/);
+});
+
+// The credits pin to the last page; only a word longer than the column breaks at its slash.
+test('shows the credits on the right of the last page, the address broken after a slash', () => {
+  const cv = withCredits(fixture(), 2);
+  const sheet = preview(cv, unwrap(place(cv))).split('\n');
+  const heading = sheet.findIndex(line => /│ MADE WITH ─+ │$/.test(line));
+  assert.ok(heading > sheet.findIndex(line => line.startsWith('╭─ Page 2')));
+  assert.deepEqual(
+    sheet.slice(heading + 2, heading + 6).map(line => line.split('│').at(-2)?.trim()),
+    ['This CV was made with', 'github.com/honeyglass/', 'oriko', 'Author: Serkan Sipahi'],
+  );
+  assert.equal(text.includes('MADE WITH'), false);
+  assert.ok(sheet.some(line => /│ 09\/2022 +│$/.test(line)));
 });
 
 test('keeps every line within 84 characters, so the frame holds in a narrow terminal', () => {

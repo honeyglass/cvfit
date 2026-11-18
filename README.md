@@ -202,7 +202,7 @@ column beside the right one, as in the finished document:
 <summary><b>The same preview as text</b></summary>
 
 ```text
-╭─ Page 1 of 3 ────────── github.com/honeyglass/oriko ─┬───────────────────────────╮
+╭─ Page 1 of 3 ────────────────────────────────────────┬───────────────────────────╮
 │                                                      │                           │
 │   ╭───────┐                                     Jane │ CONTACT ───────────────── │
 │   │       └┐                                     Doe │                           │
