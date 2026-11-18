@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { check } from '../../data/check.ts';
+import { check } from '../../core/check.ts';
 import { codes, fixture, unwrap } from '../utils/fixture.ts';
 
 test('accepts the reference CV with all of its blocks', () => {

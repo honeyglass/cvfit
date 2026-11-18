@@ -21,11 +21,11 @@ import { lstat, mkdir, open, realpath, rename, rm, stat, writeFile } from 'node:
 import type { FileHandle } from 'node:fs/promises';
 import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { $try, anyError, shown, trySync$ } from '@honeyglass/utils/ts';
-import { SYSTEM_REFUSED, done, rejected } from '../core/errors.ts';
-import type { Issue, Result } from '../core/errors.ts';
-import { LIMITS } from '../core/limits.ts';
-import { missingHint } from './commands.ts';
-import type { OptionName } from './commands.ts';
+import { SYSTEM_REFUSED, done, rejected } from './errors.ts';
+import type { Issue, Result } from './errors.ts';
+import { LIMITS } from './limits.ts';
+import { missingHint } from './options.ts';
+import type { OptionName } from './options.ts';
 
 export const isMissing = (error: Error) => 'code' in error && error.code === 'ENOENT';
 

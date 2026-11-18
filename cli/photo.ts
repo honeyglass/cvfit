@@ -13,12 +13,12 @@ import { trySync$ } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
 import { LIMITS } from '../core/limits.ts';
-import { schemaIssues } from '../data/check.ts';
-import { Master, Profile } from '../data/cv.schema.ts';
+import { schemaIssues } from '../core/check.ts';
+import { Master, Profile } from '../core/cv.schema.ts';
 import { photoUnreadable } from '../render/docx.ts';
 import { squarePhoto } from '../render/images.ts';
-import { readBounded, readJson, writeAll } from './files.ts';
-import { chosenCv, profilePath } from './home.ts';
+import { readBounded, readJson, writeAll } from '../core/files.ts';
+import { chosenCv, profilePath } from '../core/home.ts';
 
 type Request = {
   home: string;

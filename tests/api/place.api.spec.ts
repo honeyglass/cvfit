@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { place } from '../../layout/place.ts';
+import { place } from '../../core/place.ts';
 import { codes, fixture, unwrap } from '../utils/fixture.ts';
 
 const ids = (blocks: { id: string }[]) => blocks.map(block => block.id);

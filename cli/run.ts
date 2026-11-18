@@ -16,11 +16,11 @@ import { Rejection, done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
 import { withCredits } from '../core/credits.ts';
 import { COLUMN, EXIT, ICONS, KINDS, LIMITS, STYLES } from '../core/limits.ts';
-import { check, schemaIssues, unknownBlock } from '../data/check.ts';
-import { Block, Master, Profile } from '../data/cv.schema.ts';
+import { check, schemaIssues, unknownBlock } from '../core/check.ts';
+import { Block, Master, Profile } from '../core/cv.schema.ts';
 import { apply } from '../edit/apply.ts';
-import { place } from '../layout/place.ts';
-import type { Plan } from '../layout/place.ts';
+import { place } from '../core/place.ts';
+import type { Plan } from '../core/place.ts';
 import { render } from '../render/docx.ts';
 import type { Engine } from '../render/docx.ts';
 import { renderTerminal } from '../render/terminal.ts';
@@ -34,20 +34,14 @@ import {
   readJson,
   tooLarge,
   writeAll,
-} from './files.ts';
-import { optionText, readArgs } from './args.ts';
+} from '../core/files.ts';
+import { readArgs } from './args.ts';
 import type { Values } from './args.ts';
-import {
-  COMMANDS,
-  EVERYWHERE,
-  NEW_NAME,
-  OPTIONS,
-  SHAPES,
-  isListed,
-  missingHint,
-} from './commands.ts';
-import type { Command, CommandName, ListedOption, OptionName } from './commands.ts';
-import { chosenCv, cvNames, heldCvs, homeIssues, profileNames, profilePath } from './home.ts';
+import { COMMANDS, EVERYWHERE, SHAPES } from './commands.ts';
+import type { Command, CommandName } from './commands.ts';
+import { NEW_NAME, OPTIONS, isListed, missingHint, optionText } from '../core/options.ts';
+import type { ListedOption, OptionName } from '../core/options.ts';
+import { chosenCv, cvNames, heldCvs, homeIssues, profileNames, profilePath } from '../core/home.ts';
 import { createCv, cvNameMissing } from './init.ts';
 import { nextSteps } from './next.ts';
 import type { Step } from './next.ts';

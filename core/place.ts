@@ -9,10 +9,10 @@
  *
  * @example const plan = place(cv);
  */
-import { done, rejected } from '../core/errors.ts';
-import type { Issue, Result } from '../core/errors.ts';
-import { COLUMN } from '../core/limits.ts';
-import type { Block, Master } from '../data/cv.schema.ts';
+import { done, rejected } from './errors.ts';
+import type { Issue, Result } from './errors.ts';
+import { COLUMN } from './limits.ts';
+import type { Block, Master } from './cv.schema.ts';
 import { shown } from '@honeyglass/utils/ts';
 import { blockHeight, contactHeight, roleLines } from './measure.ts';
 import { COLUMN_HEIGHT, LEFT_START, LINE, SPACE, pt } from './metrics.ts';

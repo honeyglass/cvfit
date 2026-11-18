@@ -13,7 +13,7 @@ import { shown, trySync$ } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
 import { LIMITS } from '../core/limits.ts';
-import { tooLarge } from '../cli/files.ts';
+import { tooLarge } from '../core/files.ts';
 import { cleanText } from './clean.ts';
 import { docxText } from './docx.ts';
 import { htmlText } from './html.ts';

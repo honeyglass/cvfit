@@ -11,7 +11,7 @@
 import { readFileSync } from 'node:fs';
 import { PNG } from 'pngjs';
 import type { Result } from '../../core/errors.ts';
-import { Master } from '../../data/cv.schema.ts';
+import { Master } from '../../core/cv.schema.ts';
 
 export const FIXTURE_URL = new URL('../fixtures/cv.json', import.meta.url);
 

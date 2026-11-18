@@ -8,9 +8,9 @@
  */
 import { shown } from '@honeyglass/utils/ts';
 import type { z } from 'zod';
-import { done, rejected } from '../core/errors.ts';
-import type { Issue, Result } from '../core/errors.ts';
-import { COLUMN } from '../core/limits.ts';
+import { done, rejected } from './errors.ts';
+import type { Issue, Result } from './errors.ts';
+import { COLUMN } from './limits.ts';
 import { Block, Master, PATCH, Profile } from './cv.schema.ts';
 
 /**

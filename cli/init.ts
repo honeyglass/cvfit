@@ -12,12 +12,12 @@ import { join } from 'node:path';
 import { shown } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
-import { check, schemaIssues } from '../data/check.ts';
-import { Id, NewCv } from '../data/cv.schema.ts';
-import type { Master } from '../data/cv.schema.ts';
-import { missingOption, writeAll } from './files.ts';
-import { NEW_NAME } from './commands.ts';
-import { cvNames } from './home.ts';
+import { check, schemaIssues } from '../core/check.ts';
+import { Id, NewCv } from '../core/cv.schema.ts';
+import type { Master } from '../core/cv.schema.ts';
+import { missingOption, writeAll } from '../core/files.ts';
+import { NEW_NAME } from '../core/options.ts';
+import { cvNames } from '../core/home.ts';
 
 const PLACEHOLDER = join(import.meta.dirname, '..', 'assets', 'placeholder.png');
 

@@ -13,7 +13,7 @@
 import { isAbsolute, normalize, sep } from 'node:path';
 import { UNSAFE_CHAR } from '@honeyglass/utils/ts';
 import { z } from 'zod';
-import { ICONS, LIMITS } from '../core/limits.ts';
+import { ICONS, LIMITS } from './limits.ts';
 
 const isVisibleLine = (value: string) => value.trim() !== '' && UNSAFE_CHAR.test(value) === false;
 

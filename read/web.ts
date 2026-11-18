@@ -20,7 +20,7 @@ import { $try, shown, trySync$ } from '@honeyglass/utils/ts';
 import { NETWORK_FAILED, SERVER_BUSY, done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
 import { LIMITS } from '../core/limits.ts';
-import { pipedBytes, tooLarge } from '../cli/files.ts';
+import { pipedBytes, tooLarge } from '../core/files.ts';
 import { isPublic } from './address.ts';
 
 export type Target = { address: string; url: URL; signal: AbortSignal };

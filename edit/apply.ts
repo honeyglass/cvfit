@@ -13,8 +13,8 @@ import { shown } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
 import { COLUMN } from '../core/limits.ts';
-import { check, patched, schemaIssues, unknownBlock } from '../data/check.ts';
-import { Block, ContactItem, ITEM, ITEM_PATCH, Master } from '../data/cv.schema.ts';
+import { check, patched, schemaIssues, unknownBlock } from '../core/check.ts';
+import { Block, ContactItem, ITEM, ITEM_PATCH, Master } from '../core/cv.schema.ts';
 import { INPUT } from './edit.schema.ts';
 
 type Command = keyof typeof INPUT;

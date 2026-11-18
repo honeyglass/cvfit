@@ -1,7 +1,6 @@
 /**
- * The one table of oriko's commands and options, so parsing, checks, schema and lists agree.
+ * The one table of oriko's commands, so parsing, checks, schema and lists agree.
  *
- * OPTIONS, OptionName: every option with its type, whether a list holds its values, and its texts.
  * EVERYWHERE: the options every command takes.
  * COMMANDS, CommandName, Command: every command with what it does, its options, words and input.
  * SHAPES: the shapes a caller writes that no command takes whole, such as a profile or an item.
@@ -12,102 +11,9 @@
  */
 import { z } from 'zod';
 import type { ZodType } from 'zod';
-import { Block, ContactItem, ITEM, Master, NewCv, Profile } from '../data/cv.schema.ts';
+import { Block, ContactItem, ITEM, Master, NewCv, Profile } from '../core/cv.schema.ts';
 import { INPUT } from '../edit/edit.schema.ts';
-
-type Option = {
-  type: 'string' | 'boolean';
-  /** The values sit in a list, so the option without a value answers that list. */
-  listed?: true;
-  text: string;
-  /** What to add when the option comes without a value and no list holds its values. */
-  missing?: string;
-  /** The option may come several times, each with a value of its own. */
-  multiple?: true;
-};
-
-export const OPTIONS = {
-  home: {
-    type: 'string',
-    text: 'the data folder with cvs/NAME.json and profiles/NAME.json; ~/.oriko when left out',
-    missing: 'Add the data folder that holds cvs/ and profiles/, or leave out --home for ~/.oriko',
-  },
-  cv: {
-    type: 'string',
-    listed: true,
-    text: 'the name of one CV; needed only when the data folder holds several and no profile names one',
-  },
-  profile: {
-    type: 'string',
-    listed: true,
-    text: 'the name of one profile; it names its CV in its field cv',
-  },
-  out: {
-    type: 'string',
-    text: 'the .docx or .pdf to write, for build; a path inside the working directory; a .pdf needs LibreOffice',
-    missing: 'Add the path of the .docx or .pdf file to write, inside the working directory',
-  },
-  json: {
-    type: 'string',
-    text: 'the input of an edit command; without it the input comes from stdin',
-    missing: 'Run the command for the input shape, then pass it as one JSON object',
-  },
-  block: {
-    type: 'string',
-    listed: true,
-    text: 'the id of one block to show in full, for show',
-  },
-  'dry-run': { type: 'boolean', text: 'check and answer, but write no file' },
-  posting: {
-    type: 'string',
-    text: 'the job posting, for read: a PDF, Word, HTML or text file, or an https:// address',
-    missing: 'Add the file or the https:// address of the job posting',
-  },
-  notes: {
-    type: 'string',
-    multiple: true,
-    text: 'notes on the career, for read, kept beside the CV; may come several times',
-    missing: 'Add the file or the https:// address of the notes',
-  },
-  resume: {
-    type: 'string',
-    text: 'an old CV, for read: its text is answered and stored nowhere',
-    missing: 'Add the file or the https:// address of the old CV',
-  },
-  replace: {
-    type: 'boolean',
-    text: 'for read and profile set: overwrite the posting or the profile that is already stored',
-  },
-  style: {
-    type: 'string',
-    listed: true,
-    text: 'the look of the file, for build: classic, or terminal like the preview; classic when left out',
-  },
-  output: {
-    type: 'string',
-    listed: true,
-    text: 'json or text; json when stdout is no terminal',
-  },
-  credits: {
-    type: 'boolean',
-    text: 'for preview, and build with --style terminal: names oriko and its author on the right of the last page',
-  },
-} as const satisfies Record<string, Option>;
-
-export type OptionName = keyof typeof OPTIONS;
-
-/** An option whose values sit in a list; a switch over it must answer every such option. */
-export type ListedOption = {
-  [Name in OptionName]: (typeof OPTIONS)[Name] extends { listed: true } ? Name : never;
-}[OptionName];
-
-export const isListed = (name: OptionName): name is ListedOption => 'listed' in OPTIONS[name];
-
-/** What to add to an option without a value, the same whether it is missing or empty. */
-export function missingHint(option: OptionName) {
-  const spec: Option = OPTIONS[option];
-  return spec.missing ?? `Add a value to --${option}`;
-}
+import type { OptionName } from '../core/options.ts';
 
 export const EVERYWHERE: OptionName[] = ['home', 'output'];
 
@@ -123,10 +29,6 @@ export type Command = {
   /** Options whose value is a new name, so no list holds it. */
   fresh?: OptionName[];
 };
-
-/** What a new name looks like, for an option that takes one. */
-export const NEW_NAME =
-  'Add a new name in lower-case words joined by hyphens; the command lists the names already taken';
 
 const EDIT: OptionName[] = ['cv', 'json', 'dry-run'];
 

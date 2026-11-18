@@ -13,8 +13,8 @@
  */
 import { REPOSITORY } from '../core/credits.ts';
 import { LIMITS } from '../core/limits.ts';
-import type { Block, Master } from '../data/cv.schema.ts';
-import type { Column, Placed, Plan } from '../layout/place.ts';
+import type { Block, Master } from '../core/cv.schema.ts';
+import type { Column, Placed, Plan } from '../core/place.ts';
 
 const LEFT = 52;
 const RIGHT = 25;

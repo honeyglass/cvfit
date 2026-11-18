@@ -14,8 +14,8 @@
 import { readdir, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { $try, shown } from '@honeyglass/utils/ts';
-import { done, rejected } from '../core/errors.ts';
-import type { Issue, Result } from '../core/errors.ts';
+import { done, rejected } from './errors.ts';
+import type { Issue, Result } from './errors.ts';
 import { isMissing, notAFolder, pathIssue } from './files.ts';
 
 const SUFFIX = '.json';

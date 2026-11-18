@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { lineCount } from '../../layout/measure.ts';
+import { lineCount } from '../../core/measure.ts';
 
 // Widths of single words in Open Sans Regular 10 pt, measured in a PDF that Word wrote, in pt.
 const MEASURED: [string, number][] = [

@@ -9,7 +9,7 @@
  *
  * @example const credited = withCredits(cv, plan.pages.length);
  */
-import type { Block, Master } from '../data/cv.schema.ts';
+import type { Block, Master } from './cv.schema.ts';
 
 export const REPOSITORY = 'github.com/honeyglass/oriko';
 

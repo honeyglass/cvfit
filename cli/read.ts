@@ -14,17 +14,17 @@ import { shown } from '@honeyglass/utils/ts';
 import { Rejection, done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
 import { LIMITS } from '../core/limits.ts';
-import { schemaIssues } from '../data/check.ts';
-import { Id } from '../data/cv.schema.ts';
+import { schemaIssues } from '../core/check.ts';
+import { Id } from '../core/cv.schema.ts';
 import { cleanText } from '../read/clean.ts';
 import { textOf } from '../read/index.ts';
 import type { Kind } from '../read/index.ts';
 import { download } from '../read/web.ts';
 import type { Web } from '../read/web.ts';
-import { existingText, missingOption, readBounded, tooLarge, writeAll } from './files.ts';
-import type { NewFile } from './files.ts';
-import { chosenCv } from './home.ts';
-import type { CvFile } from './home.ts';
+import { existingText, missingOption, readBounded, tooLarge, writeAll } from '../core/files.ts';
+import type { NewFile } from '../core/files.ts';
+import { chosenCv } from '../core/home.ts';
+import type { CvFile } from '../core/home.ts';
 
 type Request = {
   home: string;

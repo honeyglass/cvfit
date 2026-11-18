@@ -14,12 +14,12 @@ import { join } from 'node:path';
 import { shown, trySync$ } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
-import { check, schemaIssues } from '../data/check.ts';
-import { Id, Profile } from '../data/cv.schema.ts';
-import { place } from '../layout/place.ts';
-import { optionText } from './args.ts';
-import { existingText, invalidJson, missingOption, readJson, writeAll } from './files.ts';
-import { chosenCv } from './home.ts';
+import { check, schemaIssues } from '../core/check.ts';
+import { Id, Profile } from '../core/cv.schema.ts';
+import { place } from '../core/place.ts';
+import { optionText } from '../core/options.ts';
+import { existingText, invalidJson, missingOption, readJson, writeAll } from '../core/files.ts';
+import { chosenCv } from '../core/home.ts';
 
 type Fields = Record<string, unknown>;
 type Request = {

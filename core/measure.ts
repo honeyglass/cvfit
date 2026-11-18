@@ -11,7 +11,7 @@
  *
  * @example const lines = lineCount('Angular, React, Signals', 157);
  */
-import type { Block, Master } from '../data/cv.schema.ts';
+import type { Block, Master } from './cv.schema.ts';
 import { LINE, SPACE, WIDTH, pt } from './metrics.ts';
 
 /** Advance widths of Open Sans Regular, in thousandths of the font size. */

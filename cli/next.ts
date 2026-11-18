@@ -8,7 +8,7 @@
  *
  * @example const next = nextSteps({ command: 'plan', selector: ' --profile go-e', data, isDryRun });
  */
-import { optionText } from './args.ts';
+import { optionText } from '../core/options.ts';
 import { COMMANDS } from './commands.ts';
 import type { CommandName } from './commands.ts';
 

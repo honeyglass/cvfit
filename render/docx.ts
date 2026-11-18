@@ -41,12 +41,12 @@ import type { IParagraphOptions, IRunOptions, ITableCellOptions, ParagraphChild 
 import { done, rejected } from '../core/errors.ts';
 import type { Result } from '../core/errors.ts';
 import { ICONS, LIMITS } from '../core/limits.ts';
-import type { Block, Master } from '../data/cv.schema.ts';
-import { spacedRole } from '../layout/measure.ts';
-import { HEIGHT, SPACE, WIDTH } from '../layout/metrics.ts';
-import type { Column, Heading, Placed, Plan } from '../layout/place.ts';
+import type { Block, Master } from '../core/cv.schema.ts';
+import { spacedRole } from '../core/measure.ts';
+import { HEIGHT, SPACE, WIDTH } from '../core/metrics.ts';
+import type { Column, Heading, Placed, Plan } from '../core/place.ts';
 import { circlePhoto, solidPng } from './images.ts';
-import { stable } from './zip.ts';
+import { stable } from '../core/zip.ts';
 
 const COLOR = {
   text: '262626',

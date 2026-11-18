@@ -14,12 +14,12 @@ import { Document, ExternalHyperlink, Packer, Paragraph, TextRun } from 'docx';
 import type { ParagraphChild } from 'docx';
 import { done } from '../core/errors.ts';
 import type { Result } from '../core/errors.ts';
-import type { Master } from '../data/cv.schema.ts';
-import type { Plan } from '../layout/place.ts';
-import { HEIGHT, WIDTH } from '../layout/metrics.ts';
+import type { Master } from '../core/cv.schema.ts';
+import type { Plan } from '../core/place.ts';
+import { HEIGHT, WIDTH } from '../core/metrics.ts';
 import { REPOSITORY } from '../core/credits.ts';
 import { repositoryLines, sheets } from '../preview/text.ts';
-import { stable } from './zip.ts';
+import { stable } from '../core/zip.ts';
 
 const FONT = 'Fira Code';
 /** 11 pt, in half points. */

@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, readdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { pathIssue, pipedText, writeAll } from '../../cli/files.ts';
+import { pathIssue, pipedText, writeAll } from '../../core/files.ts';
 import { rejected } from '../../core/errors.ts';
 
 async function* endless() {

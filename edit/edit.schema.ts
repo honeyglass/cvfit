@@ -7,7 +7,7 @@
  */
 import { z } from 'zod';
 import { LIMITS } from '../core/limits.ts';
-import { Block, Id, Language, Page, Text } from '../data/cv.schema.ts';
+import { Block, Id, Language, Page, Text } from '../core/cv.schema.ts';
 
 const index = z.int().min(0).max(LIMITS.items);
 

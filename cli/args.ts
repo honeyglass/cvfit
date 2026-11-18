@@ -4,27 +4,15 @@
  * readArgs: the values, the words, the options given and those given without a value, and the
  * mistakes the arguments hold by themselves.
  * Values: the value of each option a call gives.
- * optionText: one option with its value, written so a shell and readArgs read the value back.
  *
  * A strict parse stops at the first unknown option; this one reads every argument and collects.
- * A command oriko names may be run by an agent as it stands, so every value in it is quoted.
  *
  * @example const { values, words, issues } = readArgs(['plan', '--cv', 'jane']);
  */
 import { parseArgs } from 'node:util';
-import { UNSAFE_CHAR } from '@honeyglass/utils/ts';
 import type { Issue } from '../core/errors.ts';
-import { OPTIONS } from './commands.ts';
-import type { OptionName } from './commands.ts';
-
-type Options = typeof OPTIONS;
-type Switch = {
-  [Name in OptionName]: Options[Name] extends { type: 'boolean' } ? Name : never;
-}[OptionName];
-type Many = {
-  [Name in OptionName]: Options[Name] extends { multiple: true } ? Name : never;
-}[OptionName];
-type One = Exclude<OptionName, Switch | Many>;
+import { OPTIONS, isDashed } from '../core/options.ts';
+import type { Many, One, OptionName, Switch } from '../core/options.ts';
 
 export type Values = { [Name in One]?: string } & { [Name in Switch]?: boolean } & {
   [Name in Many]?: string[];
@@ -84,36 +72,6 @@ function dashValuesEmptied(argv: string[]) {
 function takesText(arg: string) {
   const name = arg.slice(2);
   return arg.startsWith('--') && isOption(name) && OPTIONS[name].type === 'string';
-}
-
-// Node's own test: '-' alone is a value, so only a dash with more after it starts an option.
-const isDashed = (arg: string | undefined) =>
-  arg !== undefined && arg.length > 1 && arg.startsWith('-');
-
-/**
- * @param name - the option
- * @param value - its value, from the call or the data folder
- * @returns ' --name value', or ' --name=value' when the value starts with a dash
- */
-export function optionText(name: One, value: string) {
-  const word = shellWord(value);
-  return isDashed(value) ? ` --${name}=${word}` : ` --${name} ${word}`;
-}
-
-// Only letters, digits and '_ . / -' stay bare; a visible value, '~' too, goes in single quotes.
-// A value with a character that does not show as itself goes in $'…' with that character as
-// escaped bytes, so the command stays one visible line that bash, zsh and ksh read back.
-function shellWord(word: string) {
-  if (/^[\w./-]+$/.test(word)) return word;
-  if (UNSAFE_CHAR.test(word) === false) return `'${word.replaceAll("'", `'\\''`)}'`;
-  return `$'${[...word].map(escapedChar).join('')}'`;
-}
-
-// '\xHH' per UTF-8 byte: bash 3.2, the one macOS ships, knows no '\u' in $'…'.
-function escapedChar(char: string) {
-  if (char === '\\' || char === "'") return `\\${char}`;
-  if (UNSAFE_CHAR.test(char) === false) return char;
-  return [...Buffer.from(char)].map(byte => `\\x${byte.toString(16).padStart(2, '0')}`).join('');
 }
 
 // An option that takes several values may come again; any other only once.
