@@ -313,6 +313,9 @@ pnpm baselines:update         # new Google PDFs and page images for changed show
 
 How to sign gws in once for `baselines:update`: [Baselines](docs/baselines.md).
 
+Every top-level folder has a README that says what it is for, such as [core/](core/README.md) or
+[cli/](cli/README.md).
+
 ## ⚖️ License
 
 Copyright (C) 2026 Serkan Sipahi. oriko is free software under the
