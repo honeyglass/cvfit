@@ -32,7 +32,8 @@ export function commandIssues(found: Found, given: OptionName[]): Issue[] {
   if (found.name === undefined) {
     const [group, ...more] = found.rest;
     const isListing = group === undefined || (more.length === 0 && actionsOf(group).length > 0);
-    if (isListing === false) return [issue.unknownCommand(found.rest)];
+    if (isListing === false)
+      return [issue.unknownCommand(found.rest, actionsOf(found.rest[0] ?? ''))];
     const listing = group === undefined ? 'oriko schema' : `oriko ${group}`;
     return options
       .filter(option => EVERYWHERE.includes(option) === false)

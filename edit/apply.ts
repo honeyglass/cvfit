@@ -48,7 +48,8 @@ const isCommand = (name: string): name is Command => Object.hasOwn(HANDLERS, nam
  * @returns the edited master file, checked like one read from disk
  */
 export function apply(master: unknown, command: string, input: unknown): Result<Master> {
-  if (isCommand(command) === false) return rejected('edit', [issue.unknownCommand(command)]);
+  if (isCommand(command) === false)
+    return rejected('edit', [issue.unknownCommand(command, COMMANDS)]);
   const parsed = Master.safeParse(master);
   if (parsed.success === false)
     return rejected(command, coreIssue.schemaIssues(parsed.error, [], 'master'));

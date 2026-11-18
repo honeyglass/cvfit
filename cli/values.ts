@@ -15,6 +15,7 @@ import { COMMANDS, OUTPUTS, STYLES } from './commands.ts';
 import type { Command, CommandName } from './commands.ts';
 import { profileCv } from '../core/load.ts';
 import { masterOf, outline } from '../cv/show.ts';
+import { schemaCommand } from './complete.ts';
 import type { Call, Fields } from './types.ts';
 
 // Options without a value: one list answers its values; a free value, a new name, or a second
@@ -28,7 +29,7 @@ export async function emptied(call: Call, empty: OptionName[]): Promise<Result<F
     ...free.map(option =>
       fresh.includes(option)
         ? issue.newNameMissing(option)
-        : issue.missingValue(option, call.command),
+        : issue.missingValue(option, schemaCommand(call.command ?? '')),
     ),
     ...(lists.length > 1 ? lists.map(issue.oneListAtATime) : []),
   ];

@@ -16,9 +16,6 @@ import * as coreIssue from '../core/issues.ts';
 import { NEW_NAME, missingHint } from '../core/options.ts';
 import type { OptionName } from '../core/options.ts';
 import { OUTPUTS, STYLES } from './commands.ts';
-import type { CommandName } from './commands.ts';
-import { schemaCommand } from './complete.ts';
-import { actionsOf } from './route.ts';
 
 export const unknownOption = (name: string): Issue => ({
   code: 'UNKNOWN_OPTION',
@@ -59,25 +56,25 @@ export const unexpectedArgument = (word: string, command: string): Issue => ({
 });
 
 // A known group with a wrong action points to the group's list, anything else to the full one.
-export function unknownCommand(words: string[]): Issue {
+export function unknownCommand(words: string[], groupActions: string[]): Issue {
   const [group = ''] = words;
   return {
     code: 'UNKNOWN_COMMAND',
     path: 'command',
     message: `There is no command ${shown(words.join(' '))}`,
     hint: 'Run the command and use one of the commands it lists',
-    command: actionsOf(group).length > 0 ? `oriko ${group}` : 'oriko schema',
+    command: groupActions.length > 0 ? `oriko ${group}` : 'oriko schema',
   };
 }
 
-export function missingValue(option: OptionName, command: CommandName | undefined): Issue {
+export function missingValue(option: OptionName, schema: string): Issue {
   const issue = {
     code: 'MISSING_VALUE',
     path: option,
     message: `The option --${option} has no value`,
     hint: missingHint(option),
   };
-  return option === 'json' ? { ...issue, command: schemaCommand(command ?? '') } : issue;
+  return option === 'json' ? { ...issue, command: schema } : issue;
 }
 
 export const newNameMissing = (option: string): Issue => ({
@@ -95,11 +92,11 @@ export const oneListAtATime = (option: string): Issue => ({
   hint: 'Leave one option without a value at a time, and give the others a value',
 });
 
-export const missingInput = (command: string): Issue => ({
+export const missingInput = (schema: string): Issue => ({
   ...coreIssue.missingOption('json', 'the input of the command'),
   code: 'MISSING_INPUT',
   hint: 'Run the command for the input shape, then pass it with --json or through stdin',
-  command: schemaCommand(command),
+  command: schema,
 });
 
 export const unknownSchema = (name: string): Issue => ({

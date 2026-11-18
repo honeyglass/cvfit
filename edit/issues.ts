@@ -9,13 +9,12 @@
  */
 import { shown } from '@honeyglass/utils/ts';
 import type { Issue } from '../core/errors.ts';
-import { COMMANDS } from './apply.ts';
 
-export const unknownCommand = (command: string): Issue => ({
+export const unknownCommand = (command: string, names: string[]): Issue => ({
   code: 'UNKNOWN_COMMAND',
   path: '',
   message: `There is no command ${shown(command)}`,
-  hint: `Use one of: ${COMMANDS.join(', ')}`,
+  hint: `Use one of: ${names.join(', ')}`,
 });
 
 export const nothingToDo = (): Issue => ({
