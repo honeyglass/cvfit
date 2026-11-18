@@ -1,9 +1,13 @@
 # TODO
 
 Open work on oriko, the CLI and its skill.
-<!-- last item number: 14 -->
+<!-- last item number: 15 -->
 
 ## Next
+
+## README
+
+- [ ] #15 Record a short video of a test run in the terminal, an agent building the terminal preview of a CV, and show it on the README page (added 2026-11-18)
 
 ## Structure
 
