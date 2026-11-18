@@ -9,9 +9,10 @@
  *
  * @example const read = await textOf(bytes, 'posting');
  */
-import { shown, trySync$ } from '@honeyglass/utils/ts';
+import { trySync$ } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
-import type { Issue, Result } from '../core/errors.ts';
+import type { Result } from '../core/errors.ts';
+import * as issue from './issues.ts';
 import * as coreIssue from '../core/issues.ts';
 import { READ_LIMITS } from './limits.ts';
 import { cleanText } from './clean.ts';
@@ -32,7 +33,7 @@ export async function textOf(bytes: Buffer, option: string): Promise<Result<Read
   const raw = await rawText(bytes, option);
   if (raw.error !== null) return raw;
   const { text, replaced } = cleanText(raw.data.text);
-  if (text === '') return rejected('read', [noText(option)]);
+  if (text === '') return rejected('read', [issue.noText(option)]);
   return done({ kind: raw.data.kind, text, replaced });
 }
 
@@ -46,12 +47,12 @@ async function rawText(
 ): Promise<Result<{ kind: Kind; text: string }>> {
   if (startsWith(bytes, PDF)) {
     const read = await pdfText(bytes);
-    if (read.error !== null) return rejected('read', [unreadable(option, 'PDF')], read.error);
+    if (read.error !== null) return rejected('read', [issue.unreadable(option, 'PDF')], read.error);
     return done({ kind: 'pdf', text: read.data });
   }
   if (startsWith(bytes, ZIP)) return wordText(bytes, option);
   const decoded = utf8(bytes);
-  if (decoded === null) return rejected('read', [unsupportedKind(option)]);
+  if (decoded === null) return rejected('read', [issue.unsupportedKind(option)]);
   if (HTML_START.test(decoded)) return done({ kind: 'html', text: htmlText(decoded) });
   return done({ kind: 'text', text: decoded });
 }
@@ -67,11 +68,11 @@ async function wordText(
     case null:
       return done({ kind: 'docx', text: read.text });
     case 'no-word':
-      return rejected('read', [unsupportedKind(option)]);
+      return rejected('read', [issue.unsupportedKind(option)]);
     case 'too-large':
       return rejected('read', [coreIssue.tooLarge(option, READ_LIMITS.documentBytes)]);
     case 'broken':
-      return rejected('read', [unreadable(option, 'Word file')]);
+      return rejected('read', [issue.unreadable(option, 'Word file')]);
   }
 }
 
@@ -84,24 +85,3 @@ function utf8(bytes: Buffer) {
 
 // A page whose first element is html, after an optional XML declaration and comments.
 const HTML_START = /^\s*(?:<\?xml[^>]*>\s*)?(?:<!--[\s\S]*?-->\s*)*<(?:!doctype\s+html|html)[\s>]/i;
-
-const unsupportedKind = (option: string): Issue => ({
-  code: 'UNSUPPORTED_KIND',
-  path: option,
-  message: 'The document is no PDF, Word file, HTML page or UTF-8 text',
-  hint: 'Save it as PDF or as text, then pass that file',
-});
-
-const unreadable = (option: string, kind: string): Issue => ({
-  code: 'DOCUMENT_UNREADABLE',
-  path: option,
-  message: `The ${kind} is broken, encrypted or cannot be opened`,
-  hint: `Open it, save it again as a new ${kind} without a password, and pass that file`,
-});
-
-const noText = (option: string): Issue => ({
-  code: 'NO_TEXT',
-  path: option,
-  message: `The document behind --${shown(option)} holds no text, such as a scan`,
-  hint: 'Copy the text into a .txt or .md file and pass that file',
-});

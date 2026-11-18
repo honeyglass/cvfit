@@ -13,6 +13,7 @@ import { join, resolve } from 'node:path';
 import { shown } from '@honeyglass/utils/ts';
 import { Rejection, done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
+import * as issue from './issues.ts';
 import * as coreIssue from '../core/issues.ts';
 import { FILE_LIMITS } from '../core/files.limits.ts';
 import { Id } from '../core/cv.schema.ts';
@@ -52,7 +53,7 @@ type Target = { profile: string | undefined; cv: CvFile | undefined };
  */
 export async function readDocuments(request: Request): Promise<Result<Record<string, unknown>>> {
   const inputs = inputsOf(request);
-  if (inputs.length === 0) return rejected('read', [missingInput()]);
+  if (inputs.length === 0) return rejected('read', [issue.missingInput()]);
   const target = await targetOf(request);
   const documents = await Promise.all(inputs.map(input => documentOf(input, request)));
   const issues = [target, ...documents].flatMap(result => result.error?.issues ?? []);
@@ -92,7 +93,7 @@ async function targetOf(request: Request): Promise<Result<Target>> {
 }
 
 function profileIssues(profile: string | undefined): Issue[] {
-  if (profile === undefined) return [profileMissing()];
+  if (profile === undefined) return [issue.profileMissing()];
   const name = Id.safeParse(profile);
   return name.success ? [] : coreIssue.schemaIssues(name.error, ['profile'], 'read');
 }
@@ -157,7 +158,8 @@ async function postingFile(
   const existing = await existingText(path);
   if (existing.error !== null) return existing;
   if (existing.data === content) return done(null);
-  if (existing.data !== null && isReplace === false) return rejected('read', [postingExists(path)]);
+  if (existing.data !== null && isReplace === false)
+    return rejected('read', [issue.postingExists(path)]);
   return done({ path, content });
 }
 
@@ -181,28 +183,4 @@ const answerOf = (document: Document, stored: string | undefined) => ({
   replaced: document.replaced,
   ...(stored === undefined ? {} : { stored }),
   text: document.text,
-});
-
-const missingInput = (): Issue => ({
-  code: 'MISSING_INPUT',
-  path: 'posting',
-  message: 'The command names nothing to read',
-  hint: 'Run the command and pass --posting, --notes or --resume with a file or an https:// address',
-  command: 'oriko schema read',
-});
-
-const profileMissing = (): Issue => ({
-  ...coreIssue.missingOption(
-    'profile',
-    'the profile the posting belongs to',
-    'Run the command for the existing profiles, or pass a new name in lower-case words joined by hyphens',
-  ),
-  command: 'oriko read --profile',
-});
-
-const postingExists = (path: string): Issue => ({
-  code: 'POSTING_EXISTS',
-  path: 'posting',
-  message: `${shown(path)} already holds another posting`,
-  hint: 'Add --replace to overwrite it, or pass another --profile',
 });
