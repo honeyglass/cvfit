@@ -299,7 +299,6 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
 - [ ] A cover letter per job posting, from the same facts as the CV
 - [ ] A one-line installer for Windows
 - [ ] A new CV from a LinkedIn export or a JSON Resume file
-- [ ] The PDF from Google Docs without uploading the file by hand
 - [ ] Publish on npm as `oriko`
 
 ## 🛠️ Development
