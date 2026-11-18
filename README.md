@@ -310,8 +310,9 @@ pnpm run typecheck
 pnpm run format:check
 sh tests/e2e/install.e2e.sh   # the install script in empty home folders
 pnpm baselines:update         # new Google PDFs and page images for changed showcase files (macOS)
-pnpm baselines:gws auth login # signs gws in once, for baselines:update
 ```
+
+How to sign gws in once for `baselines:update`: [Baselines](docs/baselines.md).
 
 ## ⚖️ License
 
