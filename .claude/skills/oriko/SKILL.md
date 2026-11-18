@@ -167,6 +167,7 @@ Coming back from 4 Check, change only what the refusal names:
 | 'BLOCK_TOO_TALL'          | shorten the named block                                                                           |
 | 'ROLE_TOO_LONG'           | shorten 'person.role' in the profile, keeping only words the master or the posting's title uses   |
 | 'SCHEMA', 'UNKNOWN_BLOCK' | fix the named path                                                                                |
+| 'ITEM_NOT_IN_MASTER'      | drop the named item from the profile; adding it to the master is the user's decision: STOP and ask |
 
 Raising `pages` in the master is the user's decision: STOP and ask.
 

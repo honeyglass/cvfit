@@ -49,6 +49,7 @@ function applyProfile(master: Master, value: unknown): Result<Master> {
   const profile = parsed.data;
   const issues = unknownIds(master, profile);
   const blocks = master.blocks.map(block => patched(block, profile.blocks?.[block.id], issues));
+  issues.push(...itemsNotInMaster(master.blocks, blocks));
   if (issues.length > 0) return rejected('check', issues);
   const person = { ...master.person, ...profile.person };
   return done(withoutHidden({ ...master, person }, ordered(blocks, profile.order ?? [])));
@@ -64,6 +65,24 @@ function unknownIds(master: Master, profile: Profile) {
     if (known.has(id) === false) issues.push(issue.unknownBlock(id, `order.${index}`));
   }
   return issues;
+}
+
+/**
+ * The list items a profile adds, since a profile may drop and reorder items but never claim new ones.
+ *
+ * Jobs and entries stay free, as a profile may shorten or reword their text.
+ *
+ * @param master - the blocks of the master file
+ * @param blocks - the same blocks with the profile laid over them, in the same order
+ * @returns one issue per list block that holds an item the master does not
+ */
+function itemsNotInMaster(master: Block[], blocks: Block[]) {
+  return master.flatMap((block, index) => {
+    const result = blocks[index];
+    if (block.kind !== 'list' || result?.kind !== 'list') return [];
+    const added = result.items.filter(item => block.items.includes(item) === false);
+    return added.length === 0 ? [] : [issue.itemsNotInMaster(block.id, added)];
+  });
 }
 
 /**

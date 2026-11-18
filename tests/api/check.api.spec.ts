@@ -92,6 +92,22 @@ test('a profile shows a block the master hides', () => {
   assert.equal(unwrap(check(cv, { blocks: { northwind: { hidden: false } } })).blocks.length, 15);
 });
 
+test('a profile drops and reorders the items of a list', () => {
+  const profile = { blocks: { 'additional-skills': { items: ['Terraform', 'PostgreSQL'] } } };
+  const skills = unwrap(check(fixture(), profile)).blocks.find(b => b.id === 'additional-skills');
+  assert.deepEqual(skills?.kind === 'list' && skills.items, ['Terraform', 'PostgreSQL']);
+});
+
+test('refuses a profile that adds an item the master does not list', () => {
+  const profile = { blocks: { 'additional-skills': { items: ['Go', 'Kubernetes'] } } };
+  const result = check(fixture(), profile);
+  assert.deepEqual(codes(result), ['ITEM_NOT_IN_MASTER']);
+  assert.deepEqual(
+    result.error?.issues.map(issue => issue.path),
+    ['blocks.additional-skills.items'],
+  );
+});
+
 test('refuses a profile that names an unknown block or changes a kind', () => {
   assert.deepEqual(codes(check(fixture(), { blocks: { nobody: { hidden: true } } })), [
     'UNKNOWN_BLOCK',

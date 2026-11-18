@@ -1,7 +1,8 @@
 /**
  * The issues core raises, and those several folders raise, each made by one function.
  *
- * schemaIssues, duplicateId, unknownBlock, untitledNotAlone: what the check of a CV finds.
+ * schemaIssues, duplicateId, unknownBlock, untitledNotAlone, itemsNotInMaster: what the check
+ * of a CV finds.
  * fileNotFound, notAFile, notAFolder, tooLarge, invalidJson, pathOutside: the failures of a file.
  * pathRefused, systemRefused: a refusal of the system on a path, by who can solve it.
  * missingOption, cvNameMissing: an option a command needs and the call leaves out.
@@ -59,6 +60,13 @@ export const untitledNotAlone = (id: string): Issue => ({
   path: `blocks.${id}`,
   message: `The block ${shown(id)} has no title but shares its section with a block next to it`,
   hint: 'Give the block a title, or make it the only block of its section',
+});
+
+export const itemsNotInMaster = (id: string, items: string[]): Issue => ({
+  code: 'ITEM_NOT_IN_MASTER',
+  path: `blocks.${id}.items`,
+  message: `The block ${shown(id)} lists ${items.map(shown).join(', ')}, which the master does not hold`,
+  hint: 'Keep only items of the master, or add the item to the master first',
 });
 
 export const fileNotFound = (path: string, option: string): Issue => ({
