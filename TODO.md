@@ -5,7 +5,6 @@ Open work on oriko, the CLI and its skill.
 
 ## Next
 
-- #8
 - #13
 - #14
 
@@ -31,7 +30,7 @@ Open work on oriko, the CLI and its skill.
 - [ ] #6 Add a one-line installer for Windows, like install.sh for macOS and Linux (added 2026-11-17)
       'install.sh'
 - [ ] #7 Create a CV from a LinkedIn export or a JSON Resume file (added 2026-11-17)
-- [ ] #8 Add 'pnpm baselines:update' for the showcase examples, the references the tests compare against: a 'google.json' beside each Google PDF holds the sha256 of the .docx it came from; when the committed .docx changes, the command uploads it through the gws CLI, exports the PDF, renders the PNGs and writes the new hash, and a test fails while a hash does not match its .docx; no browser control, no '--engine' option for users (added 2026-11-17)
+- [x] #8 Add 'pnpm baselines:update' for the showcase examples, the references the tests compare against: a 'google.json' beside each Google PDF holds the sha256 of the .docx it came from; when the committed .docx changes, the command uploads it through the gws CLI, exports the PDF, renders the PNGs and writes the new hash, and a test fails while a hash does not match its .docx; no browser control, no '--engine' option for users (added 2026-11-17, done 2026-11-18)
       'package.json', 'examples/showcase', 'tests/api/pdf.api.spec.ts', 'tests/api/run.api.spec.ts'
 - [ ] #9 Publish oriko on npm, where the name is still free (added 2026-11-17)
       'package.json'
