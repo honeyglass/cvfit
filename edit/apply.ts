@@ -9,9 +9,9 @@
  *
  * @example const edited = apply(master, 'block move', { id: 'awards', page: 2 });
  */
-import { shown } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
 import type { Issue, Result } from '../core/errors.ts';
+import * as issue from './issues.ts';
 import * as coreIssue from '../core/issues.ts';
 import { COLUMN } from '../core/cv.limits.ts';
 import { check, patched } from '../core/check.ts';
@@ -48,7 +48,7 @@ const isCommand = (name: string): name is Command => Object.hasOwn(HANDLERS, nam
  * @returns the edited master file, checked like one read from disk
  */
 export function apply(master: unknown, command: string, input: unknown): Result<Master> {
-  if (isCommand(command) === false) return rejected('edit', [unknownCommand(command)]);
+  if (isCommand(command) === false) return rejected('edit', [issue.unknownCommand(command)]);
   const parsed = Master.safeParse(master);
   if (parsed.success === false)
     return rejected(command, coreIssue.schemaIssues(parsed.error, [], 'master'));
@@ -58,13 +58,6 @@ export function apply(master: unknown, command: string, input: unknown): Result<
   if (checked.error !== null) return rejected(command, checked.error.issues);
   return edited;
 }
-
-const unknownCommand = (command: string): Issue => ({
-  code: 'UNKNOWN_COMMAND',
-  path: '',
-  message: `There is no command ${shown(command)}`,
-  hint: `Use one of: ${COMMANDS.join(', ')}`,
-});
 
 function addBlock(master: Master, input: unknown): Result<Master> {
   const parsed = INPUT['block add'].safeParse(input);
@@ -107,7 +100,7 @@ function moveBlock(master: Master, input: unknown): Result<Master> {
   const block = master.blocks.find(candidate => candidate.id === id);
   if (block === undefined) return rejected('block move', [coreIssue.unknownBlock(id, 'id')]);
   const hasNothing = before === undefined && after === undefined && page === undefined;
-  if (hasNothing) return rejected('block move', [nothingToDo()]);
+  if (hasNothing) return rejected('block move', [issue.nothingToDo()]);
   const issues = anchorIssues(master, block, before, after);
   const pinned = page === undefined ? block : patched(block, { page }, issues);
   if (issues.length > 0) return rejected('block move', issues);
@@ -119,13 +112,6 @@ function moveBlock(master: Master, input: unknown): Result<Master> {
       : { ...master, blocks: inserted(others, pinned, before, after) },
   );
 }
-
-const nothingToDo = (): Issue => ({
-  code: 'NOTHING_TO_DO',
-  path: '',
-  message: 'The input names no new place for the block',
-  hint: 'Send at least one of "before", "after" or "page"',
-});
 
 const replaced = (master: Master, block: Block): Master => ({
   ...master,
@@ -139,16 +125,7 @@ function anchorIssues(
   before: string | undefined,
   after: string | undefined,
 ): Issue[] {
-  if (before !== undefined && after !== undefined) {
-    return [
-      {
-        code: 'BOTH_ANCHORS',
-        path: 'after',
-        message: 'The input names two anchors',
-        hint: 'Send "before" or "after", not both',
-      },
-    ];
-  }
+  if (before !== undefined && after !== undefined) return [issue.bothAnchors()];
   const id = before ?? after;
   if (id === undefined) return [];
   const path = before === undefined ? 'after' : 'before';
@@ -159,14 +136,8 @@ function anchorIssues(
   const sameColumn = master.blocks.filter(
     candidate => COLUMN[candidate.kind] === column && candidate.id !== block.id,
   );
-  return [
-    {
-      code: 'OTHER_COLUMN',
-      path,
-      message: `The block ${shown(block.id)} stands in the ${column} column, the anchor ${shown(id)} does not`,
-      hint: `Use an anchor of the ${column} column: ${sameColumn.map(candidate => candidate.id).join(', ')}`,
-    },
-  ];
+  const others = sameColumn.map(candidate => candidate.id);
+  return [issue.otherColumn(block.id, id, column, path, others)];
 }
 
 // Without an anchor a block goes to the end, which is the end of its own column too.
@@ -320,7 +291,7 @@ function added(
   step: string,
 ): Result<unknown[]> {
   const index = at ?? items.length;
-  if (index > items.length) return rejected(step, [outOfRange('index', index, items.length)]);
+  if (index > items.length) return rejected(step, [issue.outOfRange('index', index, items.length)]);
   return done([...items.slice(0, index), value, ...items.slice(index)]);
 }
 
@@ -330,7 +301,8 @@ function updated(
   change: unknown,
   step: string,
 ): Result<unknown[]> {
-  if (index >= items.length) return rejected(step, [outOfRange('index', index, items.length - 1)]);
+  if (index >= items.length)
+    return rejected(step, [issue.outOfRange('index', index, items.length - 1)]);
   return done(items.map((item, at) => (at === index ? merged(item, change) : item)));
 }
 
@@ -342,21 +314,15 @@ function merged(item: unknown, change: unknown) {
 }
 
 function removed(items: unknown[], index: number, step: string): Result<unknown[]> {
-  if (index >= items.length) return rejected(step, [outOfRange('index', index, items.length - 1)]);
+  if (index >= items.length)
+    return rejected(step, [issue.outOfRange('index', index, items.length - 1)]);
   return done(items.filter((_, at) => at !== index));
 }
 
 function moved(items: unknown[], index: number, to: number, step: string): Result<unknown[]> {
   const last = items.length - 1;
-  if (index > last) return rejected(step, [outOfRange('index', index, last)]);
-  if (to > last) return rejected(step, [outOfRange('to', to, last)]);
+  if (index > last) return rejected(step, [issue.outOfRange('index', index, last)]);
+  if (to > last) return rejected(step, [issue.outOfRange('to', to, last)]);
   const rest = items.filter((_, at) => at !== index);
   return done([...rest.slice(0, to), items[index], ...rest.slice(to)]);
 }
-
-const outOfRange = (path: string, index: number, last: number): Issue => ({
-  code: 'INDEX_OUT_OF_RANGE',
-  path,
-  message: `There is no place ${index} in this list`,
-  hint: last < 0 ? 'The list is empty; add an item first' : `Use an index from 0 to ${last}`,
-});
