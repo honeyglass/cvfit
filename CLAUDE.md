@@ -19,6 +19,7 @@ rules and fails on a forbidden import; every new top-level folder with code coun
 - A new feature is a new folder; add it to "include" in tsconfig.json.
 - A file two features need moves to core/.
 - A folder's constants sit in its limits.ts; core/ names them by topic, such as cv.limits.ts.
+- A folder's issues sit in its issues.ts; callers import it as a namespace and call issue.name(). An issue two folders raise goes to core/issues.ts.
 
 ## Checks
 
