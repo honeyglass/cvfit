@@ -8,7 +8,7 @@
  * isMissing, fileNotFound, notAFile, notAFolder, tooLarge, invalidJson, missingOption: the
  * expected failures of a file, as issues.
  * photoBytes: the photo a master file or a profile names, from the data folder only.
- * outputPath: the path of the .docx or .pdf to write, inside the working directory only.
+ * leaves, pathOutside: whether a path leaves its folder, and the issue for one that does.
  * writeAll, NewFile: the files of one command, all written whole or none, never through a link.
  *
  * A master file or a profile may come from an agent that read a job posting. A path inside it
@@ -17,9 +17,9 @@
  * @example const master = await readJson(masterPath(home), 'home');
  */
 import { constants } from 'node:fs';
-import { lstat, mkdir, open, realpath, rename, rm, stat, writeFile } from 'node:fs/promises';
+import { mkdir, open, realpath, rename, rm, writeFile } from 'node:fs/promises';
 import type { FileHandle } from 'node:fs/promises';
-import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path';
+import { dirname, isAbsolute, relative, resolve } from 'node:path';
 import { $try, anyError, shown, trySync$ } from '@honeyglass/utils/ts';
 import { SYSTEM_REFUSED, done, rejected } from './errors.ts';
 import type { Issue, Result } from './errors.ts';
@@ -173,13 +173,6 @@ export const fileNotFound = (path: string, option: string): Issue => ({
   hint: 'Check the path, or pass the full path of the file',
 });
 
-const folderNotFound = (path: string, option: string): Issue => ({
-  code: 'FOLDER_NOT_FOUND',
-  path: option,
-  message: `There is no folder ${shown(path)}`,
-  hint: 'Create the folder, or write into the working directory',
-});
-
 export const notAFile = (path: string, option: string): Issue => ({
   code: 'NOT_A_FILE',
   path: option,
@@ -223,58 +216,13 @@ export async function photoBytes(folder: string, photo: string): Promise<Result<
   return readBounded(real.data, LIMITS.photoBytes, 'person.photo');
 }
 
-/**
- * @param cwd - the working directory
- * @param out - the path the caller named, or nothing
- * @returns the file to write, in the folder the check resolved, and its path from the working directory
- */
-export async function outputPath(
-  cwd: string,
-  out: string | undefined,
-): Promise<Result<{ path: string; name: string }>> {
-  if (out === undefined)
-    return rejected('build', [missingOption('out', 'the path of the .docx or .pdf to write')]);
-  if (OUTPUTS.some(extension => out.endsWith(extension)) === false)
-    return rejected('build', [wrongExtension(out)]);
-  const path = resolve(cwd, out);
-  const parent = await $try(realpath(dirname(path)));
-  if (parent.error !== null)
-    return rejected('build', [folderIssue(parent.error, dirname(path))], parent.error);
-  const real = await realpath(cwd);
-  const isInside = parent.data === real || leaves(real, parent.data) === false;
-  if (isInside === false) return rejected('build', [pathOutside('out', out, cwd)]);
-  // The write goes into the folder the check resolved, never again through the path as given.
-  const target = join(parent.data, basename(path));
-  const kinds = await outputKinds(parent.data, target);
-  if (kinds.error !== null) return kinds;
-  return done({ path: target, name: relative(real, target) });
-}
-
-const folderIssue = (error: Error, folder: string) =>
-  isMissing(error) ? folderNotFound(folder, 'out') : pathIssue(error, folder, 'out');
-
-// Checked before the write, so --dry-run answers what the write would meet: a folder to write
-// into, and no folder in the place of the file. lstat reads the path as the rename does, which
-// replaces a link and never follows it.
-async function outputKinds(parent: string, path: string): Promise<Result<undefined>> {
-  const folder = await $try(stat(parent));
-  if (folder.error !== null) return rejected('build', [pathIssue(folder.error, parent, 'out')]);
-  if (folder.data.isDirectory() === false) return rejected('build', [notAFolder(parent, 'out')]);
-  const file = await $try(lstat(path));
-  if (file.error === null)
-    return file.data.isDirectory() ? rejected('build', [notAFile(path, 'out')]) : done(undefined);
-  return isMissing(file.error)
-    ? done(undefined)
-    : rejected('build', [pathIssue(file.error, path, 'out')]);
-}
-
 // True for the folder itself too: the check is for a file in the folder, never for the folder.
-function leaves(folder: string, path: string) {
+export function leaves(folder: string, path: string) {
   const fromFolder = relative(folder, path);
   return fromFolder === '' || fromFolder.startsWith('..') || isAbsolute(fromFolder);
 }
 
-const pathOutside = (option: string, path: string, folder: string): Issue => ({
+export const pathOutside = (option: string, path: string, folder: string): Issue => ({
   code: 'PATH_OUTSIDE',
   path: option,
   message: `The path ${shown(path)} leaves the folder ${shown(folder)}`,
@@ -297,15 +245,6 @@ export const missingOption = (
   path: option,
   message: `The command needs --${option}, ${what}`,
   hint,
-});
-
-const OUTPUTS = ['.docx', '.pdf'];
-
-const wrongExtension = (out: string): Issue => ({
-  code: 'WRONG_EXTENSION',
-  path: 'out',
-  message: `The output ${shown(out)} is no .docx or .pdf file`,
-  hint: 'Use a file name that ends in .docx, or in .pdf when LibreOffice is installed',
 });
 
 export type NewFile = { path: string; content: string | Uint8Array };
