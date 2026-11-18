@@ -13,8 +13,8 @@
     "typecheck": "tsc -p . --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "baselines:update": "node baselines/update.ts",
-    "baselines:gws": "node baselines/gws.ts"
+    "baselines:update": "node tools/baselines/update.ts",
+    "baselines:gws": "node tools/baselines/gws.ts"
   },
   "engines": {
     "node": ">=24"

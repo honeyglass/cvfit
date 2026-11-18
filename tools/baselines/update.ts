@@ -18,7 +18,7 @@ import { gwsProgram } from './gws.ts';
 import { MANIFEST, hashOf, manifestOf, staleBaselines } from './stale.ts';
 
 const run = promisify(execFile);
-const SHOWCASE = fileURLToPath(new URL('../examples/showcase', import.meta.url));
+const SHOWCASE = fileURLToPath(new URL('../../examples/showcase', import.meta.url));
 const IMAGES = fileURLToPath(new URL('./images.swift', import.meta.url));
 
 /** The README shows the top of this sheet, in a light and a dark version. */

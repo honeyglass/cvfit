@@ -14,9 +14,9 @@ this; building, previewing and testing oriko need no Google account.
 
 ## What it needs
 
-- **macOS** for now: `baselines/images.swift` draws the page images with PDFKit.
+- **macOS** for now: `tools/baselines/images.swift` draws the page images with PDFKit.
 - **gws**, the Google Workspace CLI: `pnpm baselines:gws` downloads its release archive once and
-  runs it only when the archive's sha256 matches the table in `baselines/gws.ts`.
+  runs it only when the archive's sha256 matches the table in `tools/baselines/gws.ts`.
 - **A Google account** that gws is signed in to, with the Drive API in a Google Cloud project.
 
 ## Sign in once

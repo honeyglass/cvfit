@@ -39,7 +39,7 @@ const ARCHIVES: Partial<Record<string, Archive>> = {
 export const GWS = { version: '0.22.5', archives: ARCHIVES };
 
 /** Outside the repository's tracked files, and kept across installs. */
-const CACHE = fileURLToPath(new URL('../node_modules/.cache/oriko', import.meta.url));
+const CACHE = fileURLToPath(new URL('../../node_modules/.cache/oriko', import.meta.url));
 /** An archive is about 6 MB; more than this is not the archive the table names. */
 const MAX_BYTES = 50_000_000;
 
@@ -93,7 +93,7 @@ const unsupported = (system: string) =>
   new RefusalError({
     kind: 'ask',
     step: 'baselines',
-    reason: `gws ${GWS.version} is not set up for ${system} yet; GWS in baselines/gws.ts lists only ${Object.keys(GWS.archives).join(', ')}`,
+    reason: `gws ${GWS.version} is not set up for ${system} yet; GWS in tools/baselines/gws.ts lists only ${Object.keys(GWS.archives).join(', ')}`,
     next: `Ask the person whether to add the ${system} archive of gws ${GWS.version} with the sha256 GitHub shows for it`,
     state: 'Nothing was downloaded.',
   });
@@ -102,7 +102,7 @@ const mismatch = (name: string, wasCached: boolean) =>
   new RefusalError({
     kind: 'ask',
     step: 'baselines',
-    reason: `the sha256 of ${name} does not match GWS in baselines/gws.ts${wasCached ? ' (the copy in the cache)' : ''}`,
+    reason: `the sha256 of ${name} does not match GWS in tools/baselines/gws.ts${wasCached ? ' (the copy in the cache)' : ''}`,
     next: 'Stop and tell the person: the archive may have been replaced; run nothing of it',
     state: 'The archive was deleted from the cache; nothing of it ran.',
   });

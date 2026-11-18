@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { staleBaselines } from '../../baselines/stale.ts';
+import { staleBaselines } from '../../tools/baselines/stale.ts';
 
 const SHOWCASE = fileURLToPath(new URL('../../examples/showcase', import.meta.url));
 

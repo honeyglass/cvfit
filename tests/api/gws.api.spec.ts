@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { readRefusal } from '@honeyglass/utils/ts';
-import { gwsProgram } from '../../baselines/gws.ts';
+import { gwsProgram } from '../../tools/baselines/gws.ts';
 
 const cache = () => mkdtempSync(join(tmpdir(), 'oriko-gws-'));
 const unused = async () => assert.fail('nothing may be downloaded');
