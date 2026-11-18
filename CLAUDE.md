@@ -24,9 +24,10 @@ rules and fails on a forbidden import; every new top-level folder with code coun
 ## Folder READMEs
 
 Every top-level folder has a README.md that tells a person, in plain words, what the folder is for
-and how it fits the rest; it names roles, not every file. When a change alters what a folder does,
-which parts it has, or how it connects to other folders, update that folder's README in the same
-commit. A new top-level folder gets one too.
+and how it fits the rest. A folder with code lists its modules, one sentence each, shows one short
+example, and names the folders it uses and the folders that use it; tests/ alone lists what the
+tests cover. When a change alters what a folder does, which modules it has, or how it connects to
+other folders, update that folder's README in the same commit. A new top-level folder gets one too.
 
 ## Checks
 

@@ -8,6 +8,28 @@ folders; this one only hands the call over to `cli/` and passes its answer back.
 
 The installer links `~/.local/bin/oriko` to `bin/oriko.ts`, so this file never moves.
 
+## Modules
+
+- `oriko.ts`: starts oriko with the real terminal, the data folder `~/.oriko`, the network and the
+  places where LibreOffice may be installed.
+
+## Example
+
+```sh
+node bin/oriko.ts schema   # from a clone of the repository
+oriko schema               # the same file, through the link the installer makes
+```
+
+Both lines run this one file and give the same answer.
+
+## Connections
+
+- **Uses:** [cli/](../cli/README.md) to run the call, [core/](../core/README.md) to read piped
+  input up to its size limit, [read/](../read/README.md) for the real network, and
+  [pdf/](../pdf/README.md) for the places where LibreOffice may be installed.
+- **Used by:** no folder imports it; [install.sh](../install.sh) links `~/.local/bin/oriko` to it,
+  and the `bin` field of [package.json](../package.json) names it.
+
 ---
 
 [← Back to the README](../README.md)
