@@ -19,9 +19,10 @@ import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { promisify } from 'node:util';
-import { $try, causeText } from '@honeyglass/utils/ts';
-import { NOT_INSTALLED, SYSTEM_REFUSED, done, rejected } from '../core/errors.ts';
-import type { Issue, Result } from '../core/errors.ts';
+import { $try } from '@honeyglass/utils/ts';
+import { done, rejected } from '../core/errors.ts';
+import type { Result } from '../core/errors.ts';
+import * as issue from './issues.ts';
 import { PDF_LIMITS } from './limits.ts';
 
 const run = promisify(execFile);
@@ -33,11 +34,11 @@ const run = promisify(execFile);
  */
 export async function toPdf(docx: Uint8Array, candidates: string[]): Promise<Result<Uint8Array>> {
   const soffice = await firstInstalled(candidates);
-  if (soffice === undefined) return rejected('build', [notInstalled()]);
+  if (soffice === undefined) return rejected('build', [issue.notInstalled()]);
   const folder = await mkdtemp(join(tmpdir(), 'oriko-pdf-'));
   const pdf = await $try(converted(soffice, folder, docx));
   await rm(folder, { recursive: true, force: true });
-  if (pdf.error !== null) return rejected('build', [conversionFailed(pdf.error)], pdf.error);
+  if (pdf.error !== null) return rejected('build', [issue.conversionFailed(pdf.error)], pdf.error);
   return done(pdf.data);
 }
 
@@ -122,21 +123,3 @@ export function sofficePaths() {
       ];
   }
 }
-
-const notInstalled = (): Issue => ({
-  code: NOT_INSTALLED,
-  path: 'out',
-  message: 'A PDF needs LibreOffice, and it is not installed',
-  hint:
-    'Ask the person to install LibreOffice, then call again: on macOS brew install --cask ' +
-    'libreoffice, on Debian or Ubuntu sudo apt install libreoffice, on Windows winget install ' +
-    'TheDocumentFoundation.LibreOffice, or from https://www.libreoffice.org/download. Without ' +
-    'it, build a .docx and save it as PDF in Google Docs',
-});
-
-const conversionFailed = (error: Error): Issue => ({
-  code: SYSTEM_REFUSED,
-  path: 'out',
-  message: `LibreOffice wrote no PDF: ${causeText(error)}`,
-  hint: 'Tell the person what LibreOffice answered; a .docx saved as PDF in Google Docs works without it',
-});
