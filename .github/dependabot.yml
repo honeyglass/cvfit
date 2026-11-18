@@ -36,6 +36,12 @@ updates:
       timezone: Europe/Berlin
     cooldown:
       default-days: 3
+    # The Node types follow the Node version oriko runs on (engines in package.json), not the
+    # newest Node; types of a newer major would allow calls that Node 24 does not have.
+    ignore:
+      - dependency-name: '@types/node'
+        update-types:
+          - 'version-update:semver-major'
     groups:
       all-dependencies:
         patterns:
