@@ -59,17 +59,23 @@ an `error` to pass on.
 
 - **Uses:** nothing outside itself.
 - **Used by:**
-  - [cli/](../cli/README.md): loads, checks and plans the CV, reads the options, writes the files.
-  - [cv/](../cv/README.md): checks and plans a CV, lists the CVs and shows their blocks.
-  - [profile/](../profile/README.md): checks a profile against its CV and plans its pages.
-  - [edit/](../edit/README.md): checks and plans every change to a CV, and saves it.
-  - [read/](../read/README.md): reads files and downloads up to a limit, picks the CV that notes
-    belong to, and writes what it read.
-  - [classic/](../classic/README.md) and [terminal/](../terminal/README.md): build the .docx from
-    the page plan, the page distances and `stable()` of `zip.ts`; terminal/ also draws the
-    preview, and classic/ stores the photo in the data folder.
-  - [pdf/](../pdf/README.md): the error shape and the codes of a refusal.
-  - [bin/](../bin/README.md): reads the input piped into the command.
+  - [bin/](../bin/README.md): imports `files.limits.ts`, `files.ts`
+  - [classic/](../classic/README.md): imports `cv.limits.ts`, `cv.schema.ts`, `errors.ts`,
+    `files.limits.ts`, `files.ts`, `home.ts`, `issues.ts`, `measure.ts`, `metrics.ts`, `place.ts`,
+    `zip.ts`
+  - [cli/](../cli/README.md): imports `cv.limits.ts`, `cv.schema.ts`, `errors.ts`,
+    `files.limits.ts`, `files.ts`, `home.ts`, `issues.ts`, `load.ts`, `options.ts`, `place.ts`
+  - [cv/](../cv/README.md): imports `check.ts`, `cv.limits.ts`, `cv.schema.ts`, `errors.ts`,
+    `files.ts`, `home.ts`, `issues.ts`, `load.ts`, `place.ts`
+  - [edit/](../edit/README.md): imports `check.ts`, `cv.limits.ts`, `cv.schema.ts`, `errors.ts`,
+    `files.ts`, `home.ts`, `issues.ts`, `place.ts`
+  - [pdf/](../pdf/README.md): imports `errors.ts`
+  - [profile/](../profile/README.md): imports `check.ts`, `cv.schema.ts`, `errors.ts`, `files.ts`,
+    `home.ts`, `issues.ts`, `load.ts`, `options.ts`, `place.ts`
+  - [read/](../read/README.md): imports `cv.schema.ts`, `errors.ts`, `files.limits.ts`, `files.ts`,
+    `home.ts`, `issues.ts`
+  - [terminal/](../terminal/README.md): imports `cv.limits.ts`, `cv.schema.ts`, `errors.ts`,
+    `metrics.ts`, `place.ts`, `zip.ts`
 
 ---
 

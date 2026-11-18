@@ -34,9 +34,11 @@ oriko profiles
 
 ## Connections
 
-- **Uses:** [core/](../core/README.md) for the profile schema, the check, the page plan, the data
-  folder and safe file writes.
-- **Used by:** [cli/](../cli/README.md), which runs `profile set`, `profile show` and `profiles`.
+- **Uses:**
+  - [core/](../core/README.md): imports `check.ts`, `cv.schema.ts`, `errors.ts`, `files.ts`,
+    `home.ts`, `issues.ts`, `load.ts`, `options.ts`, `place.ts`
+- **Used by:**
+  - [cli/](../cli/README.md): imports `list.ts`, `set.ts`, `show.ts`
 
 ---
 

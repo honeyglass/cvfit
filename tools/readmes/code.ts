@@ -2,6 +2,7 @@
  * The facts a folder README states, read from the code by the TypeScript compiler.
  *
  * Code, Edge, codeOf: the top-level folders, their files, and the imports between them.
+ * Docs, docsOf: the doc comments of one file, as material for whoever writes its sentence.
  *
  * Only the compiler reads the code, never a pattern, so every import form it parses is seen.
  * An import() whose path is no literal is an issue, since nothing can tell where it leads.
@@ -9,13 +10,13 @@
  * @example const { folders, files, edges } = codeOf(root);
  */
 import { readFileSync, readdirSync } from 'node:fs';
-import { dirname, join, relative, resolve, sep } from 'node:path';
+import { join, relative, resolve, sep } from 'node:path';
 import ts from 'typescript';
 import * as issue from './issues.ts';
 import type { Issue } from './issues.ts';
 
 /** One import from a file in one top-level folder to a path outside that folder. */
-export type Edge = { from: string; file: string; spec: string; to: string };
+export type Edge = { from: string; file: string; spec: string; target: string; to: string };
 
 export type Code = {
   folders: string[];
@@ -23,6 +24,8 @@ export type Code = {
   edges: Edge[];
   issues: Issue[];
 };
+
+export type Docs = { header: string | undefined; exports: { name: string; doc: string }[] };
 
 /**
  * Reads every top-level folder; hidden folders and node_modules hold no code of the project.
@@ -40,6 +43,22 @@ export function codeOf(root: string): Code {
       .flatMap(file => edgesOf(root, folder, file, issues)),
   );
   return { folders, files, edges, issues };
+}
+
+/**
+ * The header and the comments of the exported names of one file, raw as they stand.
+ *
+ * @param path - the path of a .ts file
+ * @returns the comment above the first line of code, and each export that has one of its own
+ */
+export function docsOf(path: string): Docs {
+  const text = readFileSync(path, 'utf8');
+  const source = ts.createSourceFile(path, text, ts.ScriptTarget.Latest, true);
+  const header = headerOf(text);
+  const exports = source.statements.flatMap(statement =>
+    exportDocs(statement, source, header?.pos),
+  );
+  return { header: header?.text, exports };
 }
 
 function foldersOf(root: string) {
@@ -69,8 +88,15 @@ function edgesOf(root: string, folder: string, file: string, issues: Issue[]): E
   collect(source, specs, () => issues.push(issue.dynamicImport(`${folder}/${file}`)));
   return specs
     .filter(spec => spec.startsWith('.'))
-    .map(spec => ({ from: folder, file, spec, to: topOf(root, resolve(dirname(path), spec)) }))
+    .map(spec => edgeOf(root, folder, file, spec))
     .filter(edge => edge.to !== folder);
+}
+
+// The target as a path from the root with /, and its first part: a folder, a root file, or '..'.
+function edgeOf(root: string, folder: string, file: string, spec: string): Edge {
+  const resolved = resolve(join(root, folder, file, '..'), spec);
+  const target = relative(root, resolved).split(sep).join('/');
+  return { from: folder, file, spec, target, to: target.split('/')[0] ?? '' };
 }
 
 /**
@@ -106,7 +132,41 @@ function specOf(node: ts.Node) {
   return undefined;
 }
 
-// The top-level name a path lands in: a folder, a file at the root, or '..' outside of it.
-function topOf(root: string, path: string) {
-  return relative(root, path).split(sep)[0] ?? '';
+// The comment at the very start of a file, after a shebang, when it is a doc comment.
+function headerOf(text: string) {
+  const start = ts.getShebang(text)?.length ?? 0;
+  const [first] = ts.getLeadingCommentRanges(text, start) ?? [];
+  if (first === undefined) return undefined;
+  const comment = text.slice(first.pos, first.end);
+  return comment.startsWith('/**') ? { pos: first.pos, text: comment } : undefined;
+}
+
+// The names one statement exports with the doc comment right above it, never the file header.
+function exportDocs(statement: ts.Statement, source: ts.SourceFile, header: number | undefined) {
+  const modifiers = ts.canHaveModifiers(statement) ? ts.getModifiers(statement) : undefined;
+  const exported = modifiers?.some(modifier => modifier.kind === ts.SyntaxKind.ExportKeyword);
+  const doc = ts
+    .getJSDocCommentsAndTags(statement)
+    .filter(ts.isJSDoc)
+    .filter(jsDoc => jsDoc.getStart(source) !== header)
+    .at(-1);
+  if (exported !== true || doc === undefined) return [];
+  return namesOf(statement, source).map(name => ({ name, doc: doc.getText(source) }));
+}
+
+function namesOf(statement: ts.Statement, source: ts.SourceFile) {
+  if (ts.isVariableStatement(statement))
+    return statement.declarationList.declarations.map(item => item.name.getText(source));
+  const name = namedDeclaration(statement) ? statement.name : undefined;
+  return name === undefined ? [] : [name.getText(source)];
+}
+
+function namedDeclaration(statement: ts.Statement) {
+  return (
+    ts.isFunctionDeclaration(statement) ||
+    ts.isClassDeclaration(statement) ||
+    ts.isInterfaceDeclaration(statement) ||
+    ts.isTypeAliasDeclaration(statement) ||
+    ts.isEnumDeclaration(statement)
+  );
 }

@@ -6,6 +6,7 @@ oriko writes .docx files. When you ask for a PDF, this folder hands the file to 
 with the fonts from `assets/fonts/`, so lines and pages break where Google Docs breaks them.
 Where the PDF still differs: [Compatibility](../README.md#-compatibility). Without LibreOffice,
 the answer says how to install it, or to save the .docx as PDF in Google Docs instead.
+[install.sh](../install.sh) asks `convert.ts` where LibreOffice may be installed.
 
 ## Modules
 
@@ -24,11 +25,11 @@ A file name that ends in `.pdf` sends the Word file through this folder.
 
 ## Connections
 
-- **Uses:** [core/](../core/README.md) for the shape of a result and the error codes, and the
-  fonts in [assets/fonts/](../assets/fonts/README.md).
-- **Used by:** [cli/](../cli/README.md) for `build` and `oriko schema`, [bin/](../bin/README.md)
-  for the places LibreOffice may be installed, and [install.sh](../install.sh) to find out
-  whether LibreOffice is installed.
+- **Uses:**
+  - [core/](../core/README.md): imports `errors.ts`
+- **Used by:**
+  - [bin/](../bin/README.md): imports `convert.ts`
+  - [cli/](../cli/README.md): imports `convert.ts`, `limits.ts`
 
 ---
 

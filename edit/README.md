@@ -34,10 +34,11 @@ lists them all.
 
 ## Connections
 
-- **Uses:** [core/](../core/README.md) for the CV schema, the check, the page plan, the data
-  folder and safe file writes.
-- **Used by:** [cli/](../cli/README.md), which runs every edit command and builds its command
-  table from the inputs.
+- **Uses:**
+  - [core/](../core/README.md): imports `check.ts`, `cv.limits.ts`, `cv.schema.ts`, `errors.ts`,
+    `files.ts`, `home.ts`, `issues.ts`, `place.ts`
+- **Used by:**
+  - [cli/](../cli/README.md): imports `edit.schema.ts`, `save.ts`
 
 ---
 

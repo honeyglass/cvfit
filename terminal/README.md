@@ -25,8 +25,11 @@ oriko build --profile go-e-senior-backend --style terminal --credits --out go-e-
 
 ## Connections
 
-- **Uses:** [core/](../core/README.md) for the CV, the page plan and the page size.
-- **Used by:** [cli/](../cli/README.md) for the commands `preview` and `build --style terminal`.
+- **Uses:**
+  - [core/](../core/README.md): imports `cv.limits.ts`, `cv.schema.ts`, `errors.ts`, `metrics.ts`,
+    `place.ts`, `zip.ts`
+- **Used by:**
+  - [cli/](../cli/README.md): imports `credits.ts`, `docx.ts`, `sheets.ts`
 
 ---
 

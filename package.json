@@ -14,7 +14,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "baselines:update": "node tools/baselines/update.ts",
-    "baselines:gws": "node tools/baselines/gws.ts"
+    "baselines:gws": "node tools/baselines/gws.ts",
+    "readmes": "node tools/readmes/update.ts"
   },
   "engines": {
     "node": ">=24"
@@ -33,6 +34,8 @@
     "@types/node": "24.19.2",
     "@types/pngjs": "6.0.5",
     "lint-staged": "17.6.0",
+    "micromark": "4.0.2",
+    "micromark-extension-gfm": "3.0.0",
     "prettier": "3.9.10",
     "typescript": "5.9.3"
   },

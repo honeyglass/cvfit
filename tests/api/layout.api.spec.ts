@@ -1,11 +1,10 @@
 import assert from 'node:assert/strict';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { rmSync } from 'node:fs';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { codeOf } from '../../tools/readmes/code.ts';
 import type { Code } from '../../tools/readmes/code.ts';
+import { repository } from '../utils/repository.ts';
 
 const ROOT = fileURLToPath(new URL('../..', import.meta.url));
 
@@ -31,16 +30,6 @@ function toolImports(code: Code) {
   return code.edges
     .filter(edge => edge.to === 'tools' && edge.from !== 'tests')
     .map(edge => `${edge.from}/${edge.file} imports ${edge.spec}`);
-}
-
-// A repository in a temporary folder, from a map of paths to file contents.
-function repository(files: Record<string, string>) {
-  const root = mkdtempSync(join(tmpdir(), 'oriko-layout-'));
-  for (const [path, text] of Object.entries(files)) {
-    mkdirSync(join(root, path, '..'), { recursive: true });
-    writeFileSync(join(root, path), text);
-  }
-  return root;
 }
 
 const code = codeOf(ROOT);

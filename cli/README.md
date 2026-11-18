@@ -46,14 +46,18 @@ answer.
 
 ## Connections
 
-- **Uses:** [core/](../core/README.md) for the checks, the page plan, files and errors;
-  [cv/](../cv/README.md) and [profile/](../profile/README.md) to create, list and show CVs and
-  profiles; [edit/](../edit/README.md) to change a CV and for the input of its commands;
-  [read/](../read/README.md) to read postings, notes and old CVs;
-  [classic/](../classic/README.md) for the classic style and the photo;
-  [terminal/](../terminal/README.md) for the preview and the terminal style;
-  [pdf/](../pdf/README.md) for the PDF. `oriko schema` also lists the limits of read/ and pdf/.
-- **Used by:** [bin/](../bin/README.md), which runs every call through it.
+- **Uses:**
+  - [classic/](../classic/README.md): imports `docx.ts`, `photo.ts`
+  - [core/](../core/README.md): imports `cv.limits.ts`, `cv.schema.ts`, `errors.ts`,
+    `files.limits.ts`, `files.ts`, `home.ts`, `issues.ts`, `load.ts`, `options.ts`, `place.ts`
+  - [cv/](../cv/README.md): imports `init.ts`, `list.ts`, `show.ts`
+  - [edit/](../edit/README.md): imports `edit.schema.ts`, `save.ts`
+  - [pdf/](../pdf/README.md): imports `convert.ts`, `limits.ts`
+  - [profile/](../profile/README.md): imports `list.ts`, `set.ts`, `show.ts`
+  - [read/](../read/README.md): imports `documents.ts`, `limits.ts`, `web.ts`
+  - [terminal/](../terminal/README.md): imports `credits.ts`, `docx.ts`, `sheets.ts`
+- **Used by:**
+  - [bin/](../bin/README.md): imports `run.ts`
 
 ---
 

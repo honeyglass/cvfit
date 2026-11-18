@@ -4,8 +4,8 @@ The commands for your master CVs: create one, list them, and look inside one.
 
 A master CV is the full record of your career: every job, skill and contact line. You keep one
 per language or per person, and every version for a job posting starts from it. This folder
-creates a new, empty master with a placeholder photo, lists the masters with whether each fits
-its pages, and shows the outline of one master or one of its blocks in full.
+creates a new, empty master with the placeholder photo from `assets/`, lists the masters with
+whether each fits its pages, and shows the outline of one master or one of its blocks in full.
 
 Changing a master happens in `edit/`; tailoring it to a posting happens in `profile/`.
 
@@ -30,10 +30,11 @@ oriko show --cv jane-doe --block awards
 
 ## Connections
 
-- **Uses:** [core/](../core/README.md) for the CV schema, the check, the page plan, the data
-  folder and safe file writes; [assets/](../assets/README.md) for the placeholder photo.
-- **Used by:** [cli/](../cli/README.md), which runs `init`, `cvs` and `show`, and lists the block
-  ids when `--block` has no value.
+- **Uses:**
+  - [core/](../core/README.md): imports `check.ts`, `cv.limits.ts`, `cv.schema.ts`, `errors.ts`,
+    `files.ts`, `home.ts`, `issues.ts`, `load.ts`, `place.ts`
+- **Used by:**
+  - [cli/](../cli/README.md): imports `init.ts`, `list.ts`, `show.ts`
 
 ---
 
