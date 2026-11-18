@@ -314,7 +314,8 @@ pnpm baselines:update         # new Google PDFs and page images for changed show
 How to sign gws in once for `baselines:update`: [Baselines](docs/baselines.md).
 
 Every top-level folder has a README that says what it is for, such as [core/](core/README.md) or
-[cli/](cli/README.md).
+[cli/](cli/README.md). `pnpm readmes` keeps their file lists and connections true to the code:
+[tools/readmes/](tools/readmes/README.md).
 
 ## ⚖️ License
 

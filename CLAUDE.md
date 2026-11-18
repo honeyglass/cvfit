@@ -24,11 +24,17 @@ rules and fails on a forbidden import; every new top-level folder with code coun
 ## Folder READMEs
 
 Every top-level folder has a README.md that tells a person, in plain words, what the folder is for
-and how it fits the rest. A folder with code lists its modules, one sentence each, shows one short
-example, and names the folders it uses and the folders that use it; tests/ alone lists what the
-tests cover. When a change alters what a folder does, which modules it has, or how it connects to
-other folders, update that folder's README in the same commit. A new top-level folder gets one too.
+and how it fits the rest. A folder with code has the sections Modules, Example and Connections.
+
+pnpm readmes writes the facts: the file names under Modules and all of Connections, from the
+imports. Never edit those by hand. Write the sentence after each file name, the intro and the
+example; when pnpm readmes prints a gap, write that file's sentence from what the gap shows. A
+connection that is no import, such as install.sh, stands in the intro. How the tool works and
+which folders it leaves out: tools/readmes/README.md.
+
+When a change alters what a folder does, update its README in the same commit, and run
+pnpm readmes. A new top-level folder with code gets a README too.
 
 ## Checks
 
-Run pnpm test, pnpm typecheck and pnpm run format:check before a commit.
+Run pnpm readmes, pnpm test, pnpm typecheck and pnpm run format:check before a commit.
