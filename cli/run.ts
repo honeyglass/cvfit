@@ -10,12 +10,12 @@
  * @example process.exitCode = await run(process.argv.slice(2), io);
  */
 import { resolve } from 'node:path';
-import { $try, causeText, shown } from '@honeyglass/utils/ts';
+import { $try, causeText } from '@honeyglass/utils/ts';
 import { rejected } from '../core/errors.ts';
-import type { Issue } from '../core/errors.ts';
+import * as issue from './issues.ts';
 import { homeIssues } from '../core/home.ts';
 import { readArgs } from './args.ts';
-import { OUTPUTS, isOutput } from './commands.ts';
+import { isOutput } from './commands.ts';
 import { json, text } from './answer.ts';
 import { commandIssues, commandOf } from './route.ts';
 import { withCommands, withNext } from './complete.ts';
@@ -69,17 +69,10 @@ async function answered(argv: string[], io: Io) {
     ...commandIssues(found, args.given),
     ...args.issues,
     ...(isHomeEmpty ? [] : await homeIssues(home)),
-    ...(isKnownOutput ? [] : [unknownOutput(values.output ?? '')]),
+    ...(isKnownOutput ? [] : [issue.unknownOutput(values.output ?? '')]),
   ];
   if (issues.length > 0)
     return { result: await withCommands(call, rejected('oriko', issues)), asText };
   const result = args.empty.length === 0 ? await dispatched(call) : await emptied(call, args.empty);
   return { result: await withCommands(call, withNext(call, result)), asText };
 }
-
-const unknownOutput = (output: string): Issue => ({
-  code: 'UNKNOWN_OUTPUT',
-  path: 'output',
-  message: `No output is called ${shown(output)}`,
-  hint: `Use one of: ${OUTPUTS.join(', ')}`,
-});

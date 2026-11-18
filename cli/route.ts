@@ -8,8 +8,8 @@
  *
  * @example const issues = commandIssues(commandOf(args.words), args.given);
  */
-import { shown } from '@honeyglass/utils/ts';
 import type { Issue } from '../core/errors.ts';
+import * as issue from './issues.ts';
 import type { OptionName } from '../core/options.ts';
 import { COMMANDS, EVERYWHERE, SHAPES } from './commands.ts';
 import type { Command, CommandName } from './commands.ts';
@@ -32,11 +32,11 @@ export function commandIssues(found: Found, given: OptionName[]): Issue[] {
   if (found.name === undefined) {
     const [group, ...more] = found.rest;
     const isListing = group === undefined || (more.length === 0 && actionsOf(group).length > 0);
-    if (isListing === false) return [unknownCommand(found.rest)];
+    if (isListing === false) return [issue.unknownCommand(found.rest)];
     const listing = group === undefined ? 'oriko schema' : `oriko ${group}`;
     return options
       .filter(option => EVERYWHERE.includes(option) === false)
-      .map(option => optionNotAllowed(option, 'oriko without a command', listing));
+      .map(option => issue.optionNotAllowed(option, 'oriko without a command', listing));
   }
   const name = found.name;
   const command: Command = COMMANDS[name];
@@ -45,8 +45,8 @@ export function commandIssues(found: Found, given: OptionName[]): Issue[] {
   return [
     ...options
       .filter(option => allowed.includes(option) === false)
-      .map(option => optionNotAllowed(option, `The command ${name}`, `oriko schema ${name}`)),
-    ...words.map(word => unexpectedArgument(word, name)),
+      .map(option => issue.optionNotAllowed(option, `The command ${name}`, `oriko schema ${name}`)),
+    ...words.map(word => issue.unexpectedArgument(word, name)),
   ];
 }
 
@@ -56,34 +56,6 @@ export const actionsOf = (group: string) =>
     const [first, action] = name.split(' ');
     return first === group && action !== undefined;
   });
-
-const optionNotAllowed = (option: string, who: string, listing: string): Issue => ({
-  code: 'OPTION_NOT_ALLOWED',
-  path: option,
-  message: `${who} takes no --${option}`,
-  hint: 'Run the command and use only the options it lists',
-  command: listing,
-});
-
-const unexpectedArgument = (word: string, command: string): Issue => ({
-  code: 'UNEXPECTED_ARGUMENT',
-  path: word,
-  message: `The command ${command} takes no word ${shown(word)}`,
-  hint: 'Run the command and pass only the words and options it lists',
-  command: `oriko schema ${command}`,
-});
-
-// A known group with a wrong action points to the group's list, anything else to the full one.
-function unknownCommand(words: string[]): Issue {
-  const [group = ''] = words;
-  return {
-    code: 'UNKNOWN_COMMAND',
-    path: 'command',
-    message: `There is no command ${shown(words.join(' '))}`,
-    hint: 'Run the command and use one of the commands it lists',
-    command: actionsOf(group).length > 0 ? `oriko ${group}` : 'oriko schema',
-  };
-}
 
 export const isCommandName = (name: string): name is CommandName => Object.hasOwn(COMMANDS, name);
 export const isShapeName = (name: string): name is keyof typeof SHAPES =>

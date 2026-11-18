@@ -9,9 +9,10 @@
  */
 import { lstat, realpath, stat } from 'node:fs/promises';
 import { basename, dirname, join, relative, resolve } from 'node:path';
-import { $try, shown } from '@honeyglass/utils/ts';
+import { $try } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
-import type { Issue, Result } from '../core/errors.ts';
+import type { Result } from '../core/errors.ts';
+import * as issue from './issues.ts';
 import * as coreIssue from '../core/issues.ts';
 import { isMissing, leaves, pathIssue } from '../core/files.ts';
 
@@ -29,7 +30,7 @@ export async function outputPath(
       coreIssue.missingOption('out', 'the path of the .docx or .pdf to write'),
     ]);
   if (OUTPUTS.some(extension => out.endsWith(extension)) === false)
-    return rejected('build', [wrongExtension(out)]);
+    return rejected('build', [issue.wrongExtension(out)]);
   const path = resolve(cwd, out);
   const parent = await $try(realpath(dirname(path)));
   if (parent.error !== null)
@@ -45,7 +46,7 @@ export async function outputPath(
 }
 
 const folderIssue = (error: Error, folder: string) =>
-  isMissing(error) ? folderNotFound(folder, 'out') : pathIssue(error, folder, 'out');
+  isMissing(error) ? issue.folderNotFound(folder, 'out') : pathIssue(error, folder, 'out');
 
 // Checked before the write, so --dry-run answers what the write would meet: a folder to write
 // into, and no folder in the place of the file. lstat reads the path as the rename does, which
@@ -65,18 +66,4 @@ async function outputKinds(parent: string, path: string): Promise<Result<undefin
     : rejected('build', [pathIssue(file.error, path, 'out')]);
 }
 
-const folderNotFound = (path: string, option: string): Issue => ({
-  code: 'FOLDER_NOT_FOUND',
-  path: option,
-  message: `There is no folder ${shown(path)}`,
-  hint: 'Create the folder, or write into the working directory',
-});
-
 const OUTPUTS = ['.docx', '.pdf'];
-
-const wrongExtension = (out: string): Issue => ({
-  code: 'WRONG_EXTENSION',
-  path: 'out',
-  message: `The output ${shown(out)} is no .docx or .pdf file`,
-  hint: 'Use a file name that ends in .docx, or in .pdf when LibreOffice is installed',
-});

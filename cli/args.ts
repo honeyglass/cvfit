@@ -11,6 +11,7 @@
  */
 import { parseArgs } from 'node:util';
 import type { Issue } from '../core/errors.ts';
+import * as issue from './issues.ts';
 import { OPTIONS, isDashed } from '../core/options.ts';
 import type { Many, One, OptionName, Switch } from '../core/options.ts';
 
@@ -39,14 +40,14 @@ export function readArgs(argv: string[]) {
     if (token.kind === 'positional') words.push(token.value);
     if (token.kind !== 'option') continue;
     if (isOption(token.name) === false) {
-      issues.push(unknownOption(token.name));
+      issues.push(issue.unknownOption(token.name));
       continue;
     }
     const name = token.name;
     given.push(name);
     if (isSwitch(name)) {
       if (token.value === undefined) values[name] = true;
-      else issues.push(unexpectedValue(name));
+      else issues.push(issue.unexpectedValue(name));
       continue;
     }
     if (token.value === undefined || token.value === '') empty.push(name);
@@ -79,27 +80,5 @@ function repeated(given: OptionName[]) {
   const twice = given.filter(
     (name, index) => isMany(name) === false && given.indexOf(name) !== index,
   );
-  return [...new Set(twice)].map(repeatedOption);
+  return [...new Set(twice)].map(issue.repeatedOption);
 }
-
-const unknownOption = (name: string): Issue => ({
-  code: 'UNKNOWN_OPTION',
-  path: name,
-  message: `No option is called --${name}`,
-  hint: 'Run the command and use one of the options it lists',
-  command: 'oriko schema',
-});
-
-const unexpectedValue = (name: string): Issue => ({
-  code: 'UNEXPECTED_VALUE',
-  path: name,
-  message: `The option --${name} takes no value`,
-  hint: `Write --${name} alone`,
-});
-
-const repeatedOption = (name: string): Issue => ({
-  code: 'REPEATED_OPTION',
-  path: name,
-  message: `The option --${name} is given more than once`,
-  hint: `Give --${name} once`,
-});

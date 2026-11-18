@@ -8,7 +8,8 @@
 import { shown } from '@honeyglass/utils/ts';
 import { z } from 'zod';
 import { done, rejected } from '../core/errors.ts';
-import type { Issue, Result } from '../core/errors.ts';
+import type { Result } from '../core/errors.ts';
+import * as issue from './issues.ts';
 import { CV_LIMITS, ICONS, KINDS } from '../core/cv.limits.ts';
 import { FILE_LIMITS } from '../core/files.limits.ts';
 import { OPTIONS } from '../core/options.ts';
@@ -38,7 +39,7 @@ export function schema(name: string): Result<Fields> {
     });
   }
   if (isShapeName(name)) return done({ name, input: z.toJSONSchema(SHAPES[name]) });
-  if (isCommandName(name) === false) return rejected('schema', [unknownSchema(name)]);
+  if (isCommandName(name) === false) return rejected('schema', [issue.unknownSchema(name)]);
   const command: Command = COMMANDS[name];
   const options = Object.fromEntries(
     [...command.options, ...EVERYWHERE].map(option => [option, OPTIONS[option].text]),
@@ -46,11 +47,3 @@ export function schema(name: string): Result<Fields> {
   const input = command.input === undefined ? null : z.toJSONSchema(command.input);
   return done({ name, does: command.does, options, words: command.words ?? [], input });
 }
-
-const unknownSchema = (name: string): Issue => ({
-  code: 'UNKNOWN_COMMAND',
-  path: 'name',
-  message: `No command or shape is called ${shown(name)}`,
-  hint: 'Run the command and use one of the commands or schemas it lists',
-  command: 'oriko schema',
-});

@@ -1,0 +1,146 @@
+/**
+ * The issues the shell raises, each made by one function.
+ *
+ * unknownOption, unexpectedValue, repeatedOption: what the arguments get wrong by themselves.
+ * optionNotAllowed, unexpectedArgument, unknownCommand: what the named command does not take.
+ * missingValue, newNameMissing, oneListAtATime: an option given without a value.
+ * missingInput: a command without its JSON input.
+ * unknownSchema, unknownOutput, unknownStyle, creditsNeedTerminal: a name the cli does not know.
+ * folderNotFound, wrongExtension: an --out file the build cannot write.
+ *
+ * @example if (isOption(token.name) === false) issues.push(issue.unknownOption(token.name));
+ */
+import { shown } from '@honeyglass/utils/ts';
+import type { Issue } from '../core/errors.ts';
+import * as coreIssue from '../core/issues.ts';
+import { NEW_NAME, missingHint } from '../core/options.ts';
+import type { OptionName } from '../core/options.ts';
+import { OUTPUTS, STYLES } from './commands.ts';
+import type { CommandName } from './commands.ts';
+import { schemaCommand } from './complete.ts';
+import { actionsOf } from './route.ts';
+
+export const unknownOption = (name: string): Issue => ({
+  code: 'UNKNOWN_OPTION',
+  path: name,
+  message: `No option is called --${name}`,
+  hint: 'Run the command and use one of the options it lists',
+  command: 'oriko schema',
+});
+
+export const unexpectedValue = (name: string): Issue => ({
+  code: 'UNEXPECTED_VALUE',
+  path: name,
+  message: `The option --${name} takes no value`,
+  hint: `Write --${name} alone`,
+});
+
+export const repeatedOption = (name: string): Issue => ({
+  code: 'REPEATED_OPTION',
+  path: name,
+  message: `The option --${name} is given more than once`,
+  hint: `Give --${name} once`,
+});
+
+export const optionNotAllowed = (option: string, who: string, listing: string): Issue => ({
+  code: 'OPTION_NOT_ALLOWED',
+  path: option,
+  message: `${who} takes no --${option}`,
+  hint: 'Run the command and use only the options it lists',
+  command: listing,
+});
+
+export const unexpectedArgument = (word: string, command: string): Issue => ({
+  code: 'UNEXPECTED_ARGUMENT',
+  path: word,
+  message: `The command ${command} takes no word ${shown(word)}`,
+  hint: 'Run the command and pass only the words and options it lists',
+  command: `oriko schema ${command}`,
+});
+
+// A known group with a wrong action points to the group's list, anything else to the full one.
+export function unknownCommand(words: string[]): Issue {
+  const [group = ''] = words;
+  return {
+    code: 'UNKNOWN_COMMAND',
+    path: 'command',
+    message: `There is no command ${shown(words.join(' '))}`,
+    hint: 'Run the command and use one of the commands it lists',
+    command: actionsOf(group).length > 0 ? `oriko ${group}` : 'oriko schema',
+  };
+}
+
+export function missingValue(option: OptionName, command: CommandName | undefined): Issue {
+  const issue = {
+    code: 'MISSING_VALUE',
+    path: option,
+    message: `The option --${option} has no value`,
+    hint: missingHint(option),
+  };
+  return option === 'json' ? { ...issue, command: schemaCommand(command ?? '') } : issue;
+}
+
+export const newNameMissing = (option: string): Issue => ({
+  code: 'MISSING_VALUE',
+  path: option,
+  message: `The option --${option} has no value`,
+  hint: NEW_NAME,
+  command: `oriko show --${option}`,
+});
+
+export const oneListAtATime = (option: string): Issue => ({
+  code: 'MISSING_VALUE',
+  path: option,
+  message: `The option --${option} has no value, and another option has none either`,
+  hint: 'Leave one option without a value at a time, and give the others a value',
+});
+
+export const missingInput = (command: string): Issue => ({
+  ...coreIssue.missingOption('json', 'the input of the command'),
+  code: 'MISSING_INPUT',
+  hint: 'Run the command for the input shape, then pass it with --json or through stdin',
+  command: schemaCommand(command),
+});
+
+export const unknownSchema = (name: string): Issue => ({
+  code: 'UNKNOWN_COMMAND',
+  path: 'name',
+  message: `No command or shape is called ${shown(name)}`,
+  hint: 'Run the command and use one of the commands or schemas it lists',
+  command: 'oriko schema',
+});
+
+export const unknownOutput = (output: string): Issue => ({
+  code: 'UNKNOWN_OUTPUT',
+  path: 'output',
+  message: `No output is called ${shown(output)}`,
+  hint: `Use one of: ${OUTPUTS.join(', ')}`,
+});
+
+export const unknownStyle = (style: string): Issue => ({
+  code: 'UNKNOWN_STYLE',
+  path: 'style',
+  message: `No look is called ${shown(style)}`,
+  hint: `Use one of: ${STYLES.join(', ')}`,
+});
+
+export const creditsNeedTerminal = (): Issue => ({
+  code: 'CREDITS_NEED_TERMINAL',
+  path: 'credits',
+  message: 'The option --credits works only in the terminal look',
+  hint: 'Add --style terminal, or leave out --credits',
+});
+
+export const folderNotFound = (path: string, option: string): Issue => ({
+  code: 'FOLDER_NOT_FOUND',
+  path: option,
+  message: `There is no folder ${shown(path)}`,
+  hint: 'Create the folder, or write into the working directory',
+});
+
+export const wrongExtension = (out: string): Issue => ({
+  code: 'WRONG_EXTENSION',
+  path: 'out',
+  message: `The output ${shown(out)} is no .docx or .pdf file`,
+  hint: 'Use a file name that ends in .docx, or in .pdf when LibreOffice is installed',
+});

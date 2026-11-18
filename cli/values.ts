@@ -6,13 +6,13 @@
  * @example const result = await emptied(call, args.empty);
  */
 import { done, rejected } from '../core/errors.ts';
-import type { Issue, Result } from '../core/errors.ts';
-import { NEW_NAME, isListed, missingHint } from '../core/options.ts';
+import type { Result } from '../core/errors.ts';
+import * as issue from './issues.ts';
+import { isListed } from '../core/options.ts';
 import type { ListedOption, OptionName } from '../core/options.ts';
 import { chosenCv, cvNames, profileNames } from '../core/home.ts';
 import { COMMANDS, OUTPUTS, STYLES } from './commands.ts';
 import type { Command, CommandName } from './commands.ts';
-import { schemaCommand } from './complete.ts';
 import { profileCv } from '../core/load.ts';
 import { masterOf, outline } from '../cv/show.ts';
 import type { Call, Fields } from './types.ts';
@@ -26,33 +26,20 @@ export async function emptied(call: Call, empty: OptionName[]): Promise<Result<F
   const [only] = lists;
   const issues = [
     ...free.map(option =>
-      fresh.includes(option) ? newNameMissing(option) : missingValue(option, call.command),
+      fresh.includes(option)
+        ? issue.newNameMissing(option)
+        : issue.missingValue(option, call.command),
     ),
-    ...(lists.length > 1 ? lists.map(oneListAtATime) : []),
+    ...(lists.length > 1 ? lists.map(issue.oneListAtATime) : []),
   ];
   if (issues.length > 0 || only === undefined) return rejected('oriko', issues);
   return valuesOf(call, only);
 }
 
-const oneListAtATime = (option: string): Issue => ({
-  code: 'MISSING_VALUE',
-  path: option,
-  message: `The option --${option} has no value, and another option has none either`,
-  hint: 'Leave one option without a value at a time, and give the others a value',
-});
-
 const freshOf = (name: CommandName) => {
   const command: Command = COMMANDS[name];
   return command.fresh;
 };
-
-const newNameMissing = (option: string): Issue => ({
-  code: 'MISSING_VALUE',
-  path: option,
-  message: `The option --${option} has no value`,
-  hint: NEW_NAME,
-  command: `oriko show --${option}`,
-});
 
 // One case per listed option; a new one fails the type check until it has its case.
 async function valuesOf(call: Call, option: ListedOption): Promise<Result<Fields>> {
@@ -88,14 +75,4 @@ async function blockValues(call: Call): Promise<Result<Fields>> {
   const master = await masterOf(cv.data.path, 'show');
   if (master.error !== null) return master;
   return done({ option: 'block', cv: cv.data.name, values: master.data.blocks.map(outline) });
-}
-
-function missingValue(option: OptionName, command: CommandName | undefined): Issue {
-  const issue = {
-    code: 'MISSING_VALUE',
-    path: option,
-    message: `The option --${option} has no value`,
-    hint: missingHint(option),
-  };
-  return option === 'json' ? { ...issue, command: schemaCommand(command ?? '') } : issue;
 }

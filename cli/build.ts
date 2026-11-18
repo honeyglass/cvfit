@@ -6,9 +6,9 @@
  *
  * @example return build(call);
  */
-import { shown } from '@honeyglass/utils/ts';
 import { done, rejected } from '../core/errors.ts';
-import type { Issue, Result } from '../core/errors.ts';
+import type { Result } from '../core/errors.ts';
+import * as issue from './issues.ts';
 import { withCredits } from '../terminal/credits.ts';
 import type { Master } from '../core/cv.schema.ts';
 import { place } from '../core/place.ts';
@@ -48,9 +48,9 @@ function planned(cv: Master, hasCredits: boolean) {
 
 export async function build(call: Call): Promise<Result<Fields>> {
   const style = STYLES.find(known => known === (call.values.style ?? 'classic'));
-  if (style === undefined) return rejected('build', [unknownStyle(call.values.style ?? '')]);
+  if (style === undefined) return rejected('build', [issue.unknownStyle(call.values.style ?? '')]);
   const hasCredits = call.values.credits === true;
-  if (hasCredits && style !== 'terminal') return rejected('build', [creditsNeedTerminal()]);
+  if (hasCredits && style !== 'terminal') return rejected('build', [issue.creditsNeedTerminal()]);
   const out = await outputPath(call.io.cwd, call.values.out);
   if (out.error !== null) return out;
   const cv = await checked(call.home, call.values.cv, call.values.profile);
@@ -91,17 +91,3 @@ async function rendered(
   if (picture.error !== null) return picture;
   return render(cv, plan, picture.data, engine);
 }
-
-const creditsNeedTerminal = (): Issue => ({
-  code: 'CREDITS_NEED_TERMINAL',
-  path: 'credits',
-  message: 'The option --credits works only in the terminal look',
-  hint: 'Add --style terminal, or leave out --credits',
-});
-
-const unknownStyle = (style: string): Issue => ({
-  code: 'UNKNOWN_STYLE',
-  path: 'style',
-  message: `No look is called ${shown(style)}`,
-  hint: `Use one of: ${STYLES.join(', ')}`,
-});
