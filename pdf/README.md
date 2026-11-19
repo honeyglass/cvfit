@@ -4,7 +4,7 @@ Turns a Word file into a PDF, through LibreOffice on your own computer.
 
 oriko writes .docx files. When you ask for a PDF, this folder hands the file to LibreOffice
 with the fonts from `assets/fonts/`, so lines and pages break where Google Docs breaks them.
-Where the PDF still differs: [Compatibility](../README.md#-compatibility). Without LibreOffice,
+Where the PDF still differs: [Compatibility](../docs/compatibility.md). Without LibreOffice,
 the answer says how to install it, or to save the .docx as PDF in Google Docs instead.
 [install.sh](../install.sh) asks `convert.ts` where LibreOffice may be installed.
 

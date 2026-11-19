@@ -6,7 +6,7 @@ The small icons mark the contact lines and the jobs, and the placeholder stands 
 until you set your own. The fonts in `fonts/` are the ones Google Docs uses, or a stand-in with the
 same widths, so LibreOffice sets lines and pages the same way. Where each font comes from:
 [fonts/README.md](fonts/README.md); where the PDF still differs:
-[Compatibility](../README.md#-compatibility).
+[Compatibility](../docs/compatibility.md).
 
 ## Contents
 

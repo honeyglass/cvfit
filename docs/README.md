@@ -11,6 +11,7 @@ The README gives the overview and links here for the details.
 - `sample-data.md`: how to try oriko on the sample data in `examples/`.
 - `cli.md`: the commands, the Agent DX rules oriko follows, and how a refusal reads.
 - `terminal-preview.md`: what each mark of the terminal preview means.
+- `compatibility.md`: where oriko works, with which program, system, Node and agent.
 - `good-to-know.md`: short answers, such as how to start without a CV and what to check before
   you send.
 - `baselines.md`: for maintainers, how to renew the Google PDFs of the examples.
