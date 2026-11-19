@@ -32,7 +32,8 @@ A README also needs `## Example`. The tool checks that the section is there, not
 
 - a README that differs from what `pnpm readmes` would write
 - a file without a sentence
-- a link to a file or heading that does not exist, or out of the repository
+- a link to a file or heading that does not exist, or out of the repository, in a folder README or
+  in another page the options name, such as the root README
 - a README without one of the three sections, or with one of them twice
 - a `## Modules` that is not one flat list of `` - `file`: sentence ``, which the tool leaves
   untouched rather than guess
@@ -45,6 +46,7 @@ A README also needs `## Example`. The tool checks that the section is there, not
 - code that is not TypeScript, such as `install.sh` or `images.swift`; what they connect stands
   as prose in the README of the folder
 - a file read by its path instead of imported, such as the pictures in `assets/`
+- a link inside HTML on another page, such as the icons of the root README
 
 ## Example
 
@@ -53,8 +55,8 @@ pnpm readmes            # writes the facts, prints the gaps as JSON
 pnpm readmes --check    # writes nothing, fails on any difference or gap
 ```
 
-The folders the tool leaves out stand in `SKIP` in `update.ts`; `tests/` is one of them, since its
-own README lists what the tests use.
+The folders the tool leaves out, and the other pages whose links it checks, stand in `OPTIONS` in
+`update.ts`; `tests/` is left out, since its own README lists what the tests use.
 
 ---
 

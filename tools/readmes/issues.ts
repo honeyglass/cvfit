@@ -4,7 +4,8 @@
  * Issue: one problem, with the file it lies in.
  * dynamicImport: what the reading of the code finds.
  * noReadme, noSection, twoSections, unreadableSection, html, unstable: a README the tool cannot use.
- * noSentence, deadLink: what a README still lacks, or points to in vain.
+ * noSentence, deadLink, noPage: what a README still lacks, points to in vain, or a page to check
+ * that does not exist.
  *
  * Every issue fails the check: what the tool cannot read is a problem, never a skip.
  *
@@ -59,6 +60,12 @@ export const noSentence = (path: string, file: string): Issue => ({
   code: 'NO_SENTENCE',
   path,
   message: `\`${file}\` has no sentence; write what it does after its colon`,
+});
+
+export const noPage = (path: string): Issue => ({
+  code: 'NO_PAGE',
+  path,
+  message: 'The page whose links should be checked does not exist; fix the path in the options',
 });
 
 export const deadLink = (path: string, line: number, destination: string): Issue => ({

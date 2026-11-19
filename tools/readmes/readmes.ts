@@ -1,7 +1,8 @@
 /**
  * The one function behind pnpm readmes: each folder README as it is, and as the code says it should be.
  *
- * Readme, Gap, Options, readmes: the READMEs, what each lacks, and the folders left out.
+ * Readme, Gap, Options, readmes: the READMEs, what each lacks, the folders left out, and the
+ * other pages whose links are checked too.
  *
  * Writing and checking are this same function, so the check can never disagree with the writer.
  * A gap is a module without its sentence, handed with the file's comments and imports to whoever
@@ -31,15 +32,18 @@ export type Readme = {
   gaps: Gap[];
 };
 
-/** skip: top-level folders that get no README and stand in no other README's connections. */
-export type Options = { skip: string[] };
+/**
+ * skip: top-level folders that get no README and stand in no other README's connections.
+ * pages: other Markdown files, such as the root README, whose links are checked too.
+ */
+export type Options = { skip: string[]; pages: string[] };
 
 /** The link schemes that lead out of the repository; any other scheme is refused. */
 const EXTERNAL = new Set(['http:', 'https:', 'mailto:']);
 
 /**
  * @param root - the repository root
- * @param options - the folders to leave out
+ * @param options - the folders to leave out, and the other pages to check the links of
  * @returns one entry per folder with code, and the issues of reading the code itself
  */
 export function readmes(root: string, options: Options) {
@@ -49,7 +53,15 @@ export function readmes(root: string, options: Options) {
     folder => skip.has(folder) === false && hasCode(code, folder),
   );
   const found = folders.map(folder => readmeOf(root, code, folder, new Set(folders)));
-  return { readmes: found, issues: code.issues };
+  const linked = options.pages.flatMap(path => pageIssues(root, path));
+  return { readmes: found, issues: [...code.issues, ...linked] };
+}
+
+// A page the options name must exist, or the check would pass over it without a word.
+function pageIssues(root: string, path: string) {
+  const file = join(root, path);
+  if (existsSync(file) === false) return [issue.noPage(path)];
+  return deadLinks(root, path, pageOf(readFileSync(file, 'utf8')));
 }
 
 function hasCode(code: Code, folder: string) {

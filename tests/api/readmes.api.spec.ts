@@ -3,10 +3,12 @@ import { readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { SKIP, update } from '../../tools/readmes/update.ts';
+import { OPTIONS, update } from '../../tools/readmes/update.ts';
 import { repository } from '../utils/repository.ts';
 
 const ROOT = fileURLToPath(new URL('../..', import.meta.url));
+// Every folder gets its README, and no other page is checked.
+const ALL = { skip: [], pages: [] };
 const NONE = '- **Uses:** nothing outside itself.\n- **Used by:** no folder.';
 
 // A folder README with the three sections, a body for Modules and one for Connections.
@@ -25,7 +27,7 @@ const read = (root: string, path: string) => readFileSync(join(root, path), 'utf
 const codes = (messages: string[]) => messages.map(message => message.split(' ')[0]);
 
 test('every folder README matches the code', () => {
-  assert.deepEqual(update(ROOT, ['--check'], SKIP).messages, []);
+  assert.deepEqual(update(ROOT, ['--check'], OPTIONS).messages, []);
 });
 
 test('writes a new file as a bullet without a sentence, and hands its comments to the writer', () => {
@@ -39,7 +41,7 @@ test('writes a new file as a bullet without a sentence, and hands its comments t
       'export const plain = 1;',
     ].join('\n'),
   });
-  const result = update(root, [], []);
+  const result = update(root, [], ALL);
   assert.match(read(root, 'a/README.md'), /- `old.ts`: does the old thing.\n- `new.ts`:\n/);
   assert.deepEqual(codes(result.messages), ['NO_SENTENCE']);
   assert.deepEqual(
@@ -57,7 +59,7 @@ test('keeps each sentence and the order, and drops the bullet of a removed file'
     'a/a.ts': 'export const a = 1;\n',
     'a/b.ts': 'export const b = 1;\n',
   });
-  assert.equal(update(root, [], []).failed, false);
+  assert.equal(update(root, [], ALL).failed, false);
   assert.match(
     read(root, 'a/README.md'),
     /## Modules\n\n- `b.ts`: reads .*\n  over two lines.\n- `a.ts`: comes last.\n\n## Example/,
@@ -74,7 +76,7 @@ test('writes both directions of an import, and leaves the skipped folders out', 
     'core/x.ts': 'export const x = 1;\n',
     'tests/a.spec.ts': "import { a } from '../a/a.ts';\n",
   });
-  assert.equal(update(root, [], ['tests']).failed, false);
+  assert.equal(update(root, [], { skip: ['tests'], pages: [] }).failed, false);
   assert.match(
     read(root, 'a/README.md'),
     /- \*\*Uses:\*\*\n  - \[core\/\]\(\.\.\/core\/README\.md\): imports `x.ts`\n- \*\*Used by:\*\* no folder\./,
@@ -97,7 +99,7 @@ test('--check writes nothing and fails on a connection written by hand', () => {
     'core/x.ts': 'export const x = 1;\n',
   });
   const before = read(root, 'a/README.md');
-  assert.deepEqual(update(root, ['--check'], []).messages, [
+  assert.deepEqual(update(root, ['--check'], ALL).messages, [
     'STALE a/README.md: run pnpm readmes to write it',
   ]);
   assert.equal(read(root, 'a/README.md'), before);
@@ -118,7 +120,7 @@ test('refuses a README it cannot read, and leaves it as it was', () => {
     'e/README.md': readme('- `e.ts`: one.\n  - nested'),
     'e/e.ts': 'export const e = await import(name);\n',
   });
-  const result = update(root, [], []);
+  const result = update(root, [], ALL);
   assert.deepEqual(codes(result.messages), [
     'DYNAMIC_IMPORT',
     'UNREADABLE_SECTION',
@@ -148,7 +150,7 @@ test('names every link that leads nowhere', () => {
     'a/README.md': readme('- `a.ts`: links.').replace('What a/ is for.', links),
     'a/a.ts': 'export const a = 1;\n',
   });
-  const result = update(root, ['--check'], []);
+  const result = update(root, ['--check'], ALL);
   assert.deepEqual(
     result.messages.map(
       message => message.split(':')[0] + message.split('The link ')[1]?.split(' ')[0],
@@ -167,8 +169,18 @@ test('names every link that leads nowhere', () => {
   rmSync(root, { recursive: true });
 });
 
+test('checks the links of another page the options name, and refuses one that does not exist', () => {
+  const root = repository({ 'README.md': '# root\n\n[Docs](#docs) [Gone](gone.md)\n' });
+  const result = update(root, ['--check'], { skip: [], pages: ['README.md', 'missing.md'] });
+  assert.deepEqual(
+    result.messages.map(message => message.split(': ')[0]),
+    ['DEAD_LINK README.md:3', 'DEAD_LINK README.md:3', 'NO_PAGE missing.md'],
+  );
+  rmSync(root, { recursive: true });
+});
+
 test('refuses an argument it does not know, and runs nothing', () => {
-  const result = update(ROOT, ['--fix'], SKIP);
+  const result = update(ROOT, ['--fix'], OPTIONS);
   assert.equal(result.failed, true);
   assert.deepEqual(result.messages, ['Unknown argument --fix; only --check is known']);
 });
