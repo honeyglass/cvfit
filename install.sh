@@ -83,13 +83,14 @@ install_dependencies() {
 
 # The skills CLI installs the skill for every agent it finds, Claude Code among them, and a later
 # run updates it. With ORIKO_REPOSITORY it installs the skill of that copy instead of GitHub's.
+# --skill oriko takes only oriko's skill; without it, -y adds every skill the repository holds.
 install_skill() {
   need_command npx
   source='honeyglass/oriko'
   if [ -n "${ORIKO_REPOSITORY:-}" ]; then source="$DIR"; fi
   say "adding the skill with the skills CLI of skills.sh ($SKILLS_CLI)"
-  npx --yes "$SKILLS_CLI" add "$source" -g -y ||
-    fail "the skills CLI could not add the skill; the command oriko works. Add the skill later with: npx skills add honeyglass/oriko -g -y"
+  npx --yes "$SKILLS_CLI" add "$source" --skill oriko -g -y ||
+    fail "the skills CLI could not add the skill; the command oriko works. Add the skill later with: npx skills add honeyglass/oriko --skill oriko -g -y"
 }
 
 # A link that already points at oriko stays; anything else at that path is the user's and stays too.
