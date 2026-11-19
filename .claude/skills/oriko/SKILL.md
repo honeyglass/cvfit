@@ -33,13 +33,13 @@ node "$ORIKO_REPO/bin/oriko.ts" profiles
 When oriko is missing, send the user to the Quickstart of the README,
 https://github.com/honeyglass/oriko#-quickstart; never run an installer yourself.
 
-| Answer                      | Exit code | What to do                                                                       |
-| :-------------------------- | :-------- | :------------------------------------------------------------------------------- |
-| '"ok": true'                | 0         | go on; 'next' names the commands that can follow, the choice stays yours         |
-| '"ok": false' with 'issues' | 1         | run the 'command' of each issue that has one, follow its 'hint', then call again |
-| '"kind": "ask"'             | 1         | stop and tell the user every issue, such as a full disk; call again once solved  |
-| '"kind": "retry"'           | 1         | call again in a minute; after three tries, stop and tell the user                |
-| '"kind": "bug"'             | 2         | stop and tell the user; oriko has a bug, do not work around it                   |
+| Answer            | Exit code | What to do                                                                                         |
+| :---------------- | :-------- | :------------------------------------------------------------------------------------------------- |
+| '"ok": true'      | 0         | go on; 'next' names the commands that can follow, the choice stays yours                           |
+| '"kind": "fix"'   | 1         | run the 'command' of each issue that has one, follow its 'hint' and 'Fixing a refusal', call again |
+| '"kind": "ask"'   | 1         | STOP and tell the user every issue, such as a full disk; call again once solved                    |
+| '"kind": "retry"' | 1         | call again in a minute, at most three times; a fourth 'retry' is a STOP                            |
+| '"kind": "bug"'   | 2         | STOP and tell the user; oriko has a bug, do not work around it                                     |
 
 An option without a value lists the values it accepts, such as `oriko show --cv` for the CV names.
 
@@ -79,40 +79,91 @@ A block with `page` starts on that page at the earliest.
 - Existing profiles: pass `--replace` to `oriko profile set` only when the user asked to revise that profile.
 - Privacy: never paste a master or a profile into a web service. Reading the posting from a URL is fine.
 
+## Fixing a refusal
+
+**A refusal of kind 'fix' goes back to the state that made the input; change only what the issues name.**
+
+'oriko plan' in 4 Check and 9 Verify sends it to 3 Draft and 8 Write; every other command stays in its state.
+
+Each such back edge is bounded: at most three returns, and the fourth refusal is a STOP.
+
+| Issue code                                            | Arises in                   | Change                                                                                             |
+| :---------------------------------------------------- | :-------------------------- | :------------------------------------------------------------------------------------------------- |
+| 'PAGE_OVERFLOW'                                       | 3 Draft, 4 Check, 9 Verify  | in a profile, first clear a 'page' pin of a named block, then hide or shorten the least relevant   |
+| 'BLOCK_TOO_TALL'                                      | 3 Draft, 4 Check, 9 Verify  | shorten the named block                                                                            |
+| 'ROLE_TOO_LONG'                                       | 3 Draft, 4 Check, 9 Verify  | shorten 'person.role' in the profile, keeping only words the master or the posting's title uses    |
+| 'SCHEMA', 'UNKNOWN_BLOCK'                             | 2 Inspect, 3 Draft, 8 Write | fix the named path                                                                                 |
+| 'ITEM_NOT_IN_MASTER'                                  | 3 Draft, 4 Check            | drop the named item from the profile; adding it to the master is the user's decision: STOP and ask |
+| 'FACT_CHANGED', 'LEVEL_RAISED', 'JOB_MOVED'           | 3 Draft, 4 Check            | take the named field, level or job back to the master's; a wrong fact in the master: STOP and ask  |
+| 'PROFILE_EXISTS', 'POSTING_EXISTS'                    | 1 Posting, 3 Draft          | add '--replace' only when the user asked to revise that profile; else STOP and ask                 |
+| 'CV_EXISTS'                                           | 8 Write                     | STOP and ask: another name, or changes to that master                                              |
+| 'WRONG_EXTENSION', 'PATH_OUTSIDE', 'FOLDER_NOT_FOUND' | 5 Build                     | pass '--out' as a '.docx' or '.pdf' file inside the working directory                              |
+| 'UNKNOWN_STYLE', 'CREDITS_NEED_TERMINAL'              | 5 Build                     | keep '--style' and '--credits' as the user asked; when the two clash, STOP and ask                 |
+| any other code                                        | the state that made it      | run the issue's 'command', follow its 'hint'                                                       |
+
+Raising `pages` in a master, or cutting a fact from it, is the user's decision: STOP and ask.
+
 ## Flow
 
 **Move only along the rows of this table; a move missing from the table is a mistake to report.**
 
-**STOP** means: halt, say what happened, ask the user, and continue only along the answer.
+'any state' stands for each of 0 Setup to 11 Interview; STOP is a state of its own, after 11 Interview.
+A back edge with bound 3 returns at most three times; the fourth trigger leads to STOP.
 
-| From         | To           | When                                                            |
-| :----------- | :----------- | :-------------------------------------------------------------- |
-| 0 Setup      | 1 Posting    | 'oriko cvs' answers ok and the user gave a posting     |
-| 0 Setup      | 7 Facts      | the user gives career facts or asks for a new CV |
-| 0 Setup      | 11 Interview | the user gave a posting and no master is found |
-| 0 Setup      | STOP         | neither oriko nor Node 24 runs |
-| 1 Posting    | 2 Inspect    | the posting text is at hand                                     |
-| 1 Posting    | STOP         | no posting, the URL cannot be read, or the master unclear       |
-| 2 Inspect    | 3 Draft      | every block that may change has been read                       |
-| 3 Draft      | 4 Check      | 'oriko profile set' answers ok                                  |
-| 3 Draft      | STOP         | 'PROFILE_EXISTS' unasked, a new claim is needed, or more pages  |
-| 4 Check      | 3 Draft      | 'oriko plan' refuses the profile (**back edge**, bound 3)       |
-| 4 Check      | STOP         | 'oriko plan' refused the profile a third time                   |
-| 4 Check      | 5 Build      | 'oriko plan' answers ok                                         |
-| 5 Build      | 6 Report     | the file is written                                             |
-| 6 Report     | 3 Draft      | the user asks for changes (**back edge**)                       |
-| 6 Report     | done         | the report is given                                             |
-| 7 Facts      | 8 Write      | every job has dates, employer, job title and place              |
-| 7 Facts      | STOP         | a job lacks one of them, or the target master is unclear        |
-| 8 Write      | 9 Verify     | every fact is written with an oriko command                     |
-| 9 Verify     | 8 Write      | 'oriko plan' refuses the master (**back edge**, bound 3)        |
-| 9 Verify     | STOP         | 'oriko plan' refused the master a third time                    |
-| 9 Verify     | 10 Hand over | 'oriko plan' answers ok                                         |
-| 10 Hand over | 1 Posting    | the report is given and a posting waits from the start |
-| 10 Hand over | done         | the report is given and no posting waits |
-| 11 Interview | 7 Facts      | the user answered the questions |
-| 11 Interview | 0 Setup      | the user names a folder that holds a CV (**back edge**) |
-| 11 Interview | STOP         | the user does not want a new CV |
+| From         | To                | When                                                         |
+| :----------- | :---------------- | :----------------------------------------------------------- |
+| 0 Setup      | 1 Posting         | 'oriko cvs' answers ok and the user gave a posting           |
+| 0 Setup      | 2 Inspect         | the user asks to revise a stored profile, with no posting    |
+| 0 Setup      | 4 Check           | the user asks to preview, check or build a stored profile    |
+| 0 Setup      | 7 Facts           | the user gives career facts or asks for a new CV             |
+| 0 Setup      | 11 Interview      | the user gave a posting and no master is found               |
+| 0 Setup      | STOP              | neither oriko nor Node 24 runs                               |
+| 0 Setup      | STOP              | the named profile is not in 'oriko profiles'                 |
+| 1 Posting    | 2 Inspect         | the posting text is at hand                                  |
+| 1 Posting    | 1 Posting         | 'oriko read' refuses as fix (**back edge**, bound 3)         |
+| 1 Posting    | STOP              | 'oriko read' refuses a fourth time                           |
+| 1 Posting    | STOP              | no posting, the URL cannot be read, or the master unclear    |
+| 2 Inspect    | 3 Draft           | every block that may change has been read                    |
+| 2 Inspect    | 2 Inspect         | 'oriko show' refuses as fix (**back edge**, bound 3)         |
+| 2 Inspect    | STOP              | 'oriko show' refuses a fourth time                           |
+| 3 Draft      | 4 Check           | 'oriko profile set' answers ok                               |
+| 3 Draft      | 3 Draft           | 'oriko profile set' refuses as fix (**back edge**, bound 3)  |
+| 3 Draft      | STOP              | 'oriko profile set' refuses a fourth time                    |
+| 3 Draft      | STOP              | a new claim is needed                                        |
+| 4 Check      | 3 Draft           | 'oriko plan' refuses the draft (**back edge**, bound 3)      |
+| 4 Check      | STOP              | 'oriko plan' refuses the draft a fourth time                 |
+| 4 Check      | STOP              | 'oriko plan' refuses a profile this run did not draft        |
+| 4 Check      | 5 Build           | 'oriko plan' answers ok and a file is asked or due           |
+| 4 Check      | 6 Report          | 'oriko plan' answers ok and only a check or preview is asked |
+| 5 Build      | 6 Report          | 'oriko build' answers ok                                     |
+| 5 Build      | 5 Build           | 'oriko build' refuses as fix (**back edge**, bound 3)        |
+| 5 Build      | STOP              | 'oriko build' refuses a fourth time                          |
+| 6 Report     | 3 Draft           | the user asks for changes (**back edge**, bound 3)           |
+| 6 Report     | STOP              | the user asks for changes a fourth time                      |
+| 6 Report     | done              | the report is given                                          |
+| 7 Facts      | 8 Write           | every job has dates, employer, job title and place           |
+| 7 Facts      | 7 Facts           | 'oriko read' refuses as fix (**back edge**, bound 3)         |
+| 7 Facts      | STOP              | 'oriko read' refuses a fourth time                           |
+| 7 Facts      | STOP              | a job lacks one of them, or the target master is unclear     |
+| 8 Write      | 9 Verify          | every fact is written with an oriko command                  |
+| 8 Write      | 8 Write           | a write is refused as fix (**back edge**, bound 3)           |
+| 8 Write      | STOP              | the same write is refused a fourth time                      |
+| 9 Verify     | 8 Write           | 'oriko plan' refuses the master (**back edge**, bound 3)     |
+| 9 Verify     | STOP              | 'oriko plan' refuses the master a fourth time                |
+| 9 Verify     | 10 Hand over      | 'oriko plan' answers ok                                      |
+| 10 Hand over | 1 Posting         | the report is given and a posting waits from the start       |
+| 10 Hand over | done              | the report is given and no posting waits                     |
+| 11 Interview | 7 Facts           | the user answered the questions                              |
+| 11 Interview | 0 Setup           | the user names a folder to look in (**back edge**, bound 3)  |
+| 11 Interview | STOP              | the user names a fourth folder                               |
+| 11 Interview | STOP              | the user does not want a new CV                              |
+| any state    | the same state    | oriko answers kind 'retry' (**back edge**, bound 3)          |
+| any state    | STOP              | oriko answers kind 'retry' a fourth time                     |
+| any state    | STOP              | oriko answers kind 'ask' or 'bug'                            |
+| any state    | STOP              | 'Fixing a refusal' says STOP and ask                         |
+| any state    | STOP              | oriko refuses and no row above fits                          |
+| STOP         | the state it left | the user chose to go on (**back edge**, bound 3)             |
+| STOP         | done              | the user chose to end, or a fourth STOP left one state       |
 
 ### 0 Setup
 
@@ -122,6 +173,8 @@ Then run `oriko cvs` and `oriko profiles`.
 - `oriko cvs` lists every master with its name, language and person, and whether it fits its pages.
 - `oriko profiles` lists the existing profiles, their master, and whether each one builds.
 - The issue `NO_CV` means no master: for a posting, go on to 11 Interview; for a new CV, to 7 Facts.
+- A request for a stored profile names one that `oriko profiles` lists: to revise it without a new
+  posting, go on to 2 Inspect; to preview, check or build it, to 4 Check.
 
 ### 1 Posting
 
@@ -143,6 +196,7 @@ Run `oriko show --cv NAME` for the outline, then `oriko show --cv NAME --block <
 
 - The outline lists each block's id, kind, column, section, title and number of items.
 - Read the master only through `show`, so the rest of the CV stays out of the context.
+- Revising a stored profile: `oriko profile show --profile NAME` answers it and its posting; its `cv` names the master.
 
 ### 3 Draft
 
@@ -150,6 +204,7 @@ Store the profile with `oriko profile set --profile NAME --json '<profile>'`: it
 
 - The JSON is the whole profile; `oriko profile show --profile NAME` answers the stored one and its posting.
 - Revising, add `--replace`, and check `removed` in the answer: each part named there is gone from this version.
+- `oriko profile set` runs the checks of `oriko plan`, so a refusal names the same issues; fix them by 'Fixing a refusal'.
 
 - Read `./references/profile.md` for the format before the first draft.
 - Put first what the posting asks for: order the right-column groups by match.
@@ -159,27 +214,19 @@ Store the profile with `oriko profile set --profile NAME --json '<profile>'`: it
   Example: the master says 'Kunden beraten'; 'Kunden beraten und Verträge abschließen' adds a duty.
 - Name the profile in lower-case words with hyphens, such as `acme-senior-frontend`.
 
-Coming back from 4 Check, change only what the refusal names:
-
-| Issue code                | Change                                                                                            |
-| :------------------------ | :------------------------------------------------------------------------------------------------ |
-| 'PAGE_OVERFLOW'           | first clear a 'page' pin of a named block in the profile; then hide or shorten the least relevant |
-| 'BLOCK_TOO_TALL'          | shorten the named block                                                                           |
-| 'ROLE_TOO_LONG'           | shorten 'person.role' in the profile, keeping only words the master or the posting's title uses   |
-| 'SCHEMA', 'UNKNOWN_BLOCK' | fix the named path                                                                                |
-| 'ITEM_NOT_IN_MASTER'      | drop the named item from the profile; adding it to the master is the user's decision: STOP and ask |
-| 'FACT_CHANGED', 'LEVEL_RAISED', 'JOB_MOVED' | take the named field, level or job back to the master's; a wrong fact in the master is the user's to fix: STOP and ask |
-
-Raising `pages` in the master is the user's decision: STOP and ask.
+Coming back from 4 Check, change only what the refusal names, by 'Fixing a refusal'.
 
 ### 4 Check
 
 Run `oriko plan --profile NAME`.
 
 - An answer `ok` lists per page and column the blocks and the free space in pt.
-- A refusal goes back to 3 Draft with its issues.
+- A refusal of the draft, the profile 3 Draft stored in this run, goes back to 3 Draft with its issues.
+- A refusal of a stored profile this run did not draft is a STOP: changing it is the user's decision.
+  Once the user chooses there to change it, the profile counts as the draft.
 - A gap at the end of a page comes from a block that did not fit whole, or from a `page` pin.
   A pin cleared in the profile with `"page": null` changes this version only, so clear it when a relevant block would move up.
+- A file is due after a draft, or when the user asked for one; a request to only check or preview goes to 6 Report.
 
 ### 5 Build
 
@@ -202,6 +249,7 @@ Show the preview, then say what changed and why.
 - Run `oriko preview --profile NAME --output text` and print the output unchanged in a code block.
 - Name the profile file and the file written.
 - List what you hid, reordered, shortened and reworded, each with its reason from the posting.
+  For a stored profile this run did not change, say so instead.
 - List what the posting asks for and the CV does not show, so the user can add it to the master.
 - For a `.docx`, name the next manual step: upload it to Google Docs, then File, Download, PDF.
 - **Close by asking the user to read the preview and the PDF line by line before sending it.**
@@ -227,6 +275,7 @@ Write every fact with an oriko command; read `./references/master.md` for the co
   Example: 'bei Siemens, im Werk in Erlangen' gives the employer 'Siemens' and the place 'Erlangen'.
 - A skill gets a level only from a word the user used, by the table in `./references/master.md`.
   A skill named without such a word goes into a `list` block, without a level.
+- A refused write stays in 8 Write: fix it by 'Fixing a refusal'; the bound counts per write.
 
 ### 9 Verify
 
@@ -258,3 +307,15 @@ The user gave a posting but has no CV yet: offer to create one, and ask for the 
 - Ask in the language the user writes in, and say why: the CV holds only what the user says.
 - Take every answer as the user's own words; a question the user skips stays out of the CV.
 - Keep the posting for 1 Posting, which follows after 10 Hand over.
+
+### STOP
+
+**STOP** is a state of its own: halt, say what happened, and ask the user one question.
+
+- Name the state and the row of the flow table that led here, and what oriko or the posting said.
+- Ask one question with its choices, the recommended one first, and wait for the answer.
+- Go on only along a row out of STOP: back to the state the run left, or done.
+- The way back is bounded: at most three returns to one state; the fourth STOP out of it ends the run.
+  A return starts the bounds of that state's own back edges anew.
+- A choice that needs another flow, such as adding a fact to a master, ends the run;
+  the user's next request starts at 0 Setup.

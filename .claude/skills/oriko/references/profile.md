@@ -5,6 +5,7 @@ Part of state 3 Draft in `../SKILL.md`: read this file before the first draft of
 **A profile is a JSON file that names its master in `cv`; its other fields change that master for one posting only.**
 
 Store it with `oriko profile set --profile NAME --json '<profile>'`; `oriko schema profile` answers the accepted shape.
+The command runs the checks of `oriko plan` and stores nothing it refuses; fix a refusal by 'Fixing a refusal' in `../SKILL.md`.
 
 ```json
 {

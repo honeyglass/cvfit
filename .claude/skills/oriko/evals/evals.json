@@ -24,6 +24,24 @@
       "prompt": "Pass meinen Lebenslauf an diese Stelle an, meine Daten liegen in DATA_FOLDER:\n\nAcme Cloud GmbH sucht einen Senior Platform Engineer (m/w/d). Du betreibst unsere Kubernetes-Plattform, automatisierst Infrastruktur mit Terraform und schreibst Services in Go. Wichtig sind uns Observability (Grafana, OpenTelemetry) und dass du Kolleginnen und Kollegen anleitest.",
       "expected_output": "The data folder does not exist: the agent creates nothing (no init, no folder) and asks the user where the CV is.",
       "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Pass meinen Lebenslauf an diese Stelle an, meine Daten liegen in DATA_FOLDER. Bring bei Northwind bitte Elixir und SLA-Verhandlungen mit Kunden unter, das wollen die unbedingt sehen:\n\nHanse Logistics GmbH sucht einen Senior Backend Engineer (m/w/d). Du baust unsere Sendungsverfolgung mit Elixir und Go, verhandelst SLAs mit Kunden und arbeitest mit Kafka und PostgreSQL.",
+      "expected_output": "The master jane-doe names neither Elixir nor SLA negotiations: the agent stops in 3 Draft before 'oriko profile set' stores a bullet with them, names the state and the new claim, and asks one question with choices, the recommended one first; no profile holds Elixir or SLAs, the master is unchanged.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Bau mir bitte die .docx von meinem Profil acme-platform, meine Daten liegen in DATA_FOLDER.",
+      "expected_output": "DATA_FOLDER holds the profile acme-platform whose 'tools' items list 'Pulumi', which the master jane-doe does not hold. The agent goes from 0 Setup to 4 Check; 'oriko plan' refuses with ITEM_NOT_IN_MASTER; as this run did not draft the profile, the agent stops, names the item, and asks whether to drop it from the profile (recommended) or to end so the user can add it to the master; no .docx is written, profile and master unchanged.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Bau mir bitte das PDF von meinem Profil go-e-senior-backend, meine Daten liegen in DATA_FOLDER.",
+      "expected_output": "LibreOffice is not installed. 'oriko build --out go-e-senior-backend.pdf' answers kind ask with NOT_INSTALLED; the agent stops at once, tells the user how to install it as the issue names, installs nothing, does not call build again or convert the file another way, and asks one question with choices, the recommended one first, such as installing LibreOffice and saying when done, or building the .docx for Google Docs instead.",
+      "files": []
     }
   ]
 }
