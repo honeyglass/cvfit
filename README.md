@@ -7,6 +7,8 @@
 
 **One CV, made to fit every job posting, laid out so no job ever breaks across a page.**
 
+[Quickstart](#-quickstart) · [Docs](#-docs) · [Examples](docs/examples.md) · [CLI](docs/cli.md) · [Report an issue](https://github.com/honeyglass/oriko/issues)
+
 ![Agent Driven](https://img.shields.io/badge/Agent_Driven-purple.svg)
 ![Version](https://img.shields.io/github/package-json/v/honeyglass/oriko?label=version&color=blue)
 ![License](https://img.shields.io/github/license/honeyglass/oriko?color=green)
