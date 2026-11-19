@@ -188,26 +188,10 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
 
 ## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/puzzle-dark.svg"><img src="brand/icons/puzzle.svg" width="24" height="24" alt=""></picture> Principles
 
-### Agentic meets deterministic
-
-An agent alone can be wrong without noticing, and a tool alone cannot read a job posting. oriko
-puts the two together, on three principles:
-
-- **The agent judges:** it reads the posting and your notes, chooses and words.
-- **The CLI checks:** every step runs through it; it refuses what does not fit and never guesses.
-- **The skill sets the order:** a fixed flow of steps. After a refusal the agent goes back and
-  fixes it, at most three times; then it stops and asks you.
-
-How to build a CLI and its agent skill this way, for any tool:
-[ADX for CLIs](.claude/skills/adx-cli/README.md). oriko's own skill and its flow:
-[`.claude/skills/oriko/`](.claude/skills/oriko/SKILL.md#flow); every rule its CLI follows:
-[the CLI page](docs/cli.md).
-
-### Safe dependencies
-
-Our own [supply check](https://github.com/honeyglass/actions/tree/main/supply-check) runs first in
-every CI run. A package comes in only from an allow list, a new version only once it is three days
-old, and no package may run programs while it installs. More in [SECURITY.md](SECURITY.md).
+- 🧩 **[Agentic meets deterministic](.claude/skills/adx-cli/README.md)**: the agent judges, the CLI
+  checks every step, and the skill fixes the order.
+- 🛡️ **[Safe dependencies](SECURITY.md)**: packages only from an allow list, at least three days
+  old, and none may run programs while it installs.
 
 ## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/book-open-dark.svg"><img src="brand/icons/book-open.svg" width="24" height="24" alt=""></picture> Docs
 
