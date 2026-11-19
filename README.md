@@ -47,49 +47,31 @@ when LibreOffice is installed.
 ## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/terminal-dark.svg"><img src="brand/icons/terminal.svg" width="24" height="24" alt=""></picture> Quickstart
 
 ```bash
+# The command and the agent skill; run it again to update both
 curl -fsSL https://raw.githubusercontent.com/honeyglass/oriko/main/install.sh | sh
-```
 
-The script installs the command `oriko` and then the agent skill, for Claude Code and every other
-agent it finds. For the skill it runs the [skills CLI](https://www.skills.sh/) behind skills.sh.
-Run the line again to update both.
-
-<details>
-<summary><b>With the PDF, without Google Docs</b></summary>
-
-```bash
+# The same with the PDF, without Google Docs: also installs LibreOffice
 curl -fsSL https://raw.githubusercontent.com/honeyglass/oriko/main/install.sh | sh -s -- --pdf
-```
 
-oriko always writes the Word file for Google Docs. With [LibreOffice](https://www.libreoffice.org)
-it writes the PDF too, the page Google Docs would make: `oriko build --out cv.pdf`. `--pdf`
-installs LibreOffice with brew, apt or dnf; without it, the script names the command to run.
-
-</details>
-
-<details>
-<summary><b>Command and skill separately</b></summary>
-
-```bash
+# The command and the skill separately
 curl -fsSL https://raw.githubusercontent.com/honeyglass/oriko/main/install.sh | sh -s -- --no-skill
-npx skills add honeyglass/oriko -g -y
-```
+npx skills add honeyglass/oriko --skill oriko -g -y
 
-</details>
-
-<details>
-<summary><b>Manual installation</b></summary>
-
-```sh
+# By hand, from a clone
 git clone https://github.com/honeyglass/oriko.git
 cd oriko
 pnpm install --frozen-lockfile
 node bin/oriko.ts schema
 ```
 
-</details>
+The script installs the command `oriko` and then the agent skill, for Claude Code and every other
+agent it finds. For the skill it runs the [skills CLI](https://www.skills.sh/) behind skills.sh.
 
-## ⭐ The recommended way
+oriko always writes the Word file for Google Docs. With [LibreOffice](https://www.libreoffice.org)
+it writes the PDF too, the page Google Docs would make: `oriko build --out cv.pdf`. `--pdf`
+installs LibreOffice with brew, apt or dnf; without it, the script names the command to run.
+
+## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/star-dark.svg"><img src="brand/icons/star.svg" width="24" height="24" alt=""></picture> The recommended way
 
 Give the agent three things at once, then answer its questions:
 
@@ -99,7 +81,12 @@ Give the agent three things at once, then answer its questions:
 - **The job posting**: a file or a link.
 
 ```text
+# All three at once
 Create a CV for this job. My CV: ~/cv.pdf. My notes: ~/notes.txt. The posting: ~/job.pdf
+
+# Shorter requests work too
+Fit my CV to this job: <paste the job posting>
+Create a new CV for me. Since 03/2021 I have worked as a data engineer at …
 ```
 
 The agent reads all three, asks in short rounds before a fact from your notes goes into your CV,
@@ -109,13 +96,6 @@ shows the preview again. At the end you get the Word file, or the PDF.
 
 This works well because each part does one job: your notes bring the facts the old CV misses,
 the posting says what matters, and oriko checks every step, so nothing is invented.
-
-Shorter requests work too:
-
-```text
-Fit my CV to this job: <paste the job posting>
-Create a new CV for me. Since 03/2021 I have worked as a data engineer at …
-```
 
 **What the agent does for a job posting:**
 
