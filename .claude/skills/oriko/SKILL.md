@@ -36,7 +36,7 @@ https://github.com/honeyglass/oriko#-quickstart; never run an installer yourself
 | Answer            | Exit code | What to do                                                                                         |
 | :---------------- | :-------- | :------------------------------------------------------------------------------------------------- |
 | '"ok": true'      | 0         | go on; 'next' names the commands that can follow, the choice stays yours                           |
-| '"kind": "fix"'   | 1         | run the 'command' of each issue that has one, follow its 'hint' and 'Fixing a refusal', call again |
+| '"kind": "fix"'   | 1         | follow 'Fixing a refusal'; where it says nothing, run the issue's 'command' and follow its 'hint'; call again |
 | '"kind": "ask"'   | 1         | STOP and tell the user every issue, such as a full disk; call again once solved                    |
 | '"kind": "retry"' | 1         | call again in a minute, at most three times; a fourth 'retry' is a STOP                            |
 | '"kind": "bug"'   | 2         | STOP and tell the user; oriko has a bug, do not work around it                                     |
@@ -76,29 +76,31 @@ A block with `page` starts on that page at the earliest.
   Tailoring to a posting writes a profile and leaves the master as it is.
 - Time order: jobs in the left column stay newest first, because recruiters read them so.
   Hide an old or unrelated job instead of moving the job.
-- Existing profiles: pass `--replace` to `oriko profile set` only when the user asked to revise that profile.
-- Privacy: never paste a master or a profile into a web service. Reading the posting from a URL is fine.
+- Existing profiles: pass `--replace` to `oriko profile set` only when the user asked to revise that profile, or to store again the draft this run stored.
+- Privacy: never paste a master or a profile into a web service. Reading the posting from a URL is fine, through `oriko read` only.
 
 ## Fixing a refusal
 
 **A refusal of kind 'fix' goes back to the state that made the input; change only what the issues name.**
 
-'oriko plan' in 4 Check and 9 Verify sends it to 3 Draft and 8 Write; every other command stays in its state.
+'oriko plan' in 4 Check and 9 Verify sends it to 3 Draft and 8 Write, except a refusal of a stored profile this run did not draft, which is a STOP; every other command stays in its state.
 
 Each such back edge is bounded: at most three returns, and the fourth refusal is a STOP.
 
 | Issue code                                            | Arises in                   | Change                                                                                             |
 | :---------------------------------------------------- | :-------------------------- | :------------------------------------------------------------------------------------------------- |
-| 'PAGE_OVERFLOW'                                       | 3 Draft, 4 Check, 9 Verify  | in a profile, first clear a 'page' pin of a named block, then hide or shorten the least relevant   |
-| 'BLOCK_TOO_TALL'                                      | 3 Draft, 4 Check, 9 Verify  | shorten the named block                                                                            |
-| 'ROLE_TOO_LONG'                                       | 3 Draft, 4 Check, 9 Verify  | shorten 'person.role' in the profile, keeping only words the master or the posting's title uses    |
+| 'PAGE_OVERFLOW'                                       | 4 Check, 9 Verify           | in a profile, first clear a 'page' pin of a named block, then hide or shorten the least relevant; in a master: STOP and ask |
+| 'BLOCK_TOO_TALL'                                      | 4 Check, 9 Verify           | in a profile, shorten the named block; in a master: STOP and ask what to shorten                   |
+| 'ROLE_TOO_LONG'                                       | 4 Check, 9 Verify           | in a profile, shorten 'person.role' to words the master or the posting's title uses, same role and level; in a master: STOP and ask |
 | 'SCHEMA', 'UNKNOWN_BLOCK'                             | 2 Inspect, 3 Draft, 8 Write | fix the named path                                                                                 |
-| 'ITEM_NOT_IN_MASTER'                                  | 3 Draft, 4 Check            | drop the named item from the profile; adding it to the master is the user's decision: STOP and ask |
+| 'ITEM_NOT_IN_MASTER'                                  | 3 Draft, 4 Check            | drop the named item from the profile; when the user asked for that item, STOP and ask: the master is theirs |
 | 'FACT_CHANGED', 'LEVEL_RAISED', 'JOB_MOVED'           | 3 Draft, 4 Check            | take the named field, level or job back to the master's; a wrong fact in the master: STOP and ask  |
-| 'PROFILE_EXISTS', 'POSTING_EXISTS'                    | 1 Posting, 3 Draft          | add '--replace' only when the user asked to revise that profile; else STOP and ask                 |
+| 'PROFILE_EXISTS', 'POSTING_EXISTS'                    | 1 Posting, 3 Draft          | add '--replace' when the user asked to revise that profile or it is this run's draft; else STOP and ask |
 | 'CV_EXISTS'                                           | 8 Write                     | STOP and ask: another name, or changes to that master                                              |
 | 'WRONG_EXTENSION', 'PATH_OUTSIDE', 'FOLDER_NOT_FOUND' | 5 Build                     | pass '--out' as a '.docx' or '.pdf' file inside the working directory                              |
 | 'UNKNOWN_STYLE', 'CREDITS_NEED_TERMINAL'              | 5 Build                     | keep '--style' and '--credits' as the user asked; when the two clash, STOP and ask                 |
+| 'URL_NOT_ALLOWED', 'PRIVATE_ADDRESS', 'HTTP_STATUS', 'TOO_MANY_REDIRECTS', 'ENCODING_NOT_ALLOWED', 'DOCUMENT_UNREADABLE', 'UNSUPPORTED_KIND', 'NO_TEXT' | 1 Posting, 7 Facts | STOP and ask the user for the text or a saved file; never fetch or save the page yourself |
+| 'CV_REQUIRED', 'UNKNOWN_CV', 'CV_MISMATCH', 'UNKNOWN_PROFILE' | any state | pass the name the user gave or 1 Posting chose; with none, STOP and ask |
 | any other code                                        | the state that made it      | run the issue's 'command', follow its 'hint'                                                       |
 
 Raising `pages` in a master, or cutting a fact from it, is the user's decision: STOP and ask.
@@ -148,6 +150,7 @@ A back edge with bound 3 returns at most three times; the fourth trigger leads t
 | 8 Write      | 9 Verify          | every fact is written with an oriko command                  |
 | 8 Write      | 8 Write           | a write is refused as fix (**back edge**, bound 3)           |
 | 8 Write      | STOP              | the same write is refused a fourth time                      |
+| 8 Write      | STOP              | the user's words leave employer, job title or place open     |
 | 9 Verify     | 8 Write           | 'oriko plan' refuses the master (**back edge**, bound 3)     |
 | 9 Verify     | STOP              | 'oriko plan' refuses the master a fourth time                |
 | 9 Verify     | 10 Hand over      | 'oriko plan' answers ok                                      |
@@ -163,7 +166,9 @@ A back edge with bound 3 returns at most three times; the fourth trigger leads t
 | any state    | STOP              | 'Fixing a refusal' says STOP and ask                         |
 | any state    | STOP              | oriko refuses and no row above fits                          |
 | STOP         | the state it left | the user chose to go on (**back edge**, bound 3)             |
+| STOP         | 3 Draft           | the user chose to edit the profile (**back edge**, bound 3)  |
 | STOP         | done              | the user chose to end, or a fourth STOP left one state       |
+| STOP         | done              | the user's choice needs another flow                         |
 
 ### 0 Setup
 
@@ -203,8 +208,8 @@ Run `oriko show --cv NAME` for the outline, then `oriko show --cv NAME --block <
 Store the profile with `oriko profile set --profile NAME --json '<profile>'`: its field `cv` names the master, the rest only what differs.
 
 - The JSON is the whole profile; `oriko profile show --profile NAME` answers the stored one and its posting.
-- Revising, add `--replace`, and check `removed` in the answer: each part named there is gone from this version.
-- `oriko profile set` runs the checks of `oriko plan`, so a refusal names the same issues; fix them by 'Fixing a refusal'.
+- Revising, add `--replace`, and check `removed` in the answer: each part named there is gone from this profile.
+- `oriko profile set` refuses a changed fact or a wrong shape; page fit it answers in `fits` and `layout` without refusing, and 4 Check refuses it. Fix a refusal by 'Fixing a refusal'.
 
 - Read `./references/profile.md` for the format before the first draft.
 - Put first what the posting asks for: order the right-column groups by match.
@@ -223,7 +228,7 @@ Run `oriko plan --profile NAME`.
 - An answer `ok` lists per page and column the blocks and the free space in pt.
 - A refusal of the draft, the profile 3 Draft stored in this run, goes back to 3 Draft with its issues.
 - A refusal of a stored profile this run did not draft is a STOP: changing it is the user's decision.
-  Once the user chooses there to change it, the profile counts as the draft.
+  Once the user chooses there to change it, the run goes to 3 Draft and the profile counts as the draft.
 - A gap at the end of a page comes from a block that did not fit whole, or from a `page` pin.
   A pin cleared in the profile with `"page": null` changes this profile only, so clear it when a relevant block would move up.
 - A file is due after a draft, or when the user asked for one; a request to only check or preview goes to 6 Report.
@@ -314,7 +319,7 @@ The user gave a posting but has no CV yet: offer to create one, and ask for the 
 
 - Name the state and the row of the flow table that led here, and what oriko or the posting said.
 - Ask one question with its choices, the recommended one first, and wait for the answer.
-- Go on only along a row out of STOP: back to the state the run left, or done.
+- Go on only along a row out of STOP: back to the state the run left, to 3 Draft for a refused stored profile, or done.
 - The way back is bounded: at most three returns to one state; the fourth STOP out of it ends the run.
   A return starts the bounds of that state's own back edges anew.
 - A choice that needs another flow, such as adding a fact to a master, ends the run;
