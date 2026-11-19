@@ -106,21 +106,17 @@ What the agent does for a posting, step by step:
 ## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/puzzle-dark.svg"><img src="brand/icons/puzzle.svg" width="24" height="24" alt=""></picture> Agentic meets deterministic
 
 An agent alone can be wrong without noticing, and a tool alone cannot read a job posting. oriko
-puts the two together: the agent does what needs judgment, and every step it takes runs through
-a CLI that checks it, refuses what does not fit and never guesses. The pattern on its own, for any
-agent and tool, is the skill [agentic-meets-deterministic](.claude/skills/agentic-meets-deterministic/SKILL.md).
+puts the two together, on three principles:
 
-oriko has two parts. The **CLI** does the work and checks every input. The **skill** in
-[`.claude/skills/oriko/`](.claude/skills/oriko/SKILL.md) is the agent's manual: a fixed list of
-steps, and for each step the steps that may follow (a state machine). When oriko refuses a draft,
-the agent goes back one step and fixes it, at most three times; then it stops and asks you. The
-steps stand in [the flow of the skill](.claude/skills/oriko/SKILL.md#flow).
+- **The agent judges:** it reads the posting and your notes, chooses and words.
+- **The CLI checks:** every step runs through it; it refuses what does not fit and never guesses.
+- **The skill sets the order:** a fixed flow of steps. After a refusal the agent goes back and
+  fixes it, at most three times; then it stops and asks you.
 
-The CLI follows the Agent DX rules, which make a tool easy for an agent to use: `oriko` alone
-shows where to start, a success names the next commands when there are any, a refusal names the
-command that fixes it, and an option without a value lists the values it accepts. [The CLI
-page](docs/cli.md) lists every rule and how oriko meets it; the rules on their own, for any CLI,
-are the skill [adx-cli](.claude/skills/adx-cli/SKILL.md).
+How to build a CLI and its agent skill this way, for any tool:
+[ADX for CLIs](.claude/skills/adx-cli/README.md). oriko's own skill and its flow:
+[`.claude/skills/oriko/`](.claude/skills/oriko/SKILL.md#flow); every rule its CLI follows:
+[the CLI page](docs/cli.md).
 
 ## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/monitor-dark.svg"><img src="brand/icons/monitor.svg" width="24" height="24" alt=""></picture> Terminal preview
 
