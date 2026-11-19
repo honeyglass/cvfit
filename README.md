@@ -11,6 +11,7 @@
 
 ![Agent Driven](https://img.shields.io/badge/Agent_Driven-purple.svg)
 ![Version](https://img.shields.io/github/package-json/v/honeyglass/oriko?label=version&color=blue)
+[![skills.sh](https://skills.sh/b/honeyglass/oriko)](https://skills.sh/honeyglass/oriko)
 ![License](https://img.shields.io/github/license/honeyglass/oriko?color=green)
 ![Node](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fhoneyglass%2Foriko%2Fmain%2Fpackage.json&query=%24.engines.node&label=node&color=brightgreen)
 [![CI](https://github.com/honeyglass/oriko/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/honeyglass/oriko/actions/workflows/ci.yml)
