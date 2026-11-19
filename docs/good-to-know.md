@@ -26,6 +26,15 @@ you work with reads the parts of them it needs, as with any file you show it.
 - Send the terminal style by mail to people, not through an upload portal. A portal reads the
   text, and the two columns run together line by line.
 
+## 🎯 What the agent does for a job posting
+
+- Picks your CV in the language of the posting.
+- Reads the parts of your CV that matter for this job.
+- Writes a version: matching skills first, unrelated old jobs hidden, long lists shortened.
+- Checks that every block fits on the pages, and fixes it if not.
+- Builds the Word file and shows you the preview, every change, and why it made it.
+- Tells you what the posting asks for that your CV does not show yet.
+
 ## ❗ What the agent never does
 
 It never adds a skill, a level, a date or a fact you did not state. It never changes your CV for a

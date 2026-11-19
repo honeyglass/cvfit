@@ -99,16 +99,9 @@ shows the preview again. At the end you get the Word file, or the PDF.
 This works well because each part does one job: your notes bring the facts the old CV misses,
 the posting says what matters, and oriko checks every step, so nothing is invented.
 
-**What the agent does for a job posting:**
-
-- Picks your CV in the language of the posting.
-- Reads the parts of your CV that matter for this job.
-- Writes a version: matching skills first, unrelated old jobs hidden, long lists shortened.
-- Checks that every block fits on the pages, and fixes it if not.
-- Builds the Word file and shows you the preview, every change, and why it made it.
-- Tells you what the posting asks for that your CV does not show yet.
-
-No CV yet? See [Good to know](docs/good-to-know.md#-no-cv-yet).
+What the agent does for a posting, step by step:
+[Good to know](docs/good-to-know.md#-what-the-agent-does-for-a-job-posting). No CV yet? See
+[Good to know](docs/good-to-know.md#-no-cv-yet).
 
 ## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/puzzle-dark.svg"><img src="brand/icons/puzzle.svg" width="24" height="24" alt=""></picture> Agentic meets deterministic
 
