@@ -9,7 +9,7 @@ Open work on oriko, the CLI and its skill.
 
 ## Community
 
-- [ ] #17 Add a code of conduct and a contributing guide, like CODE_OF_CONDUCT.md and CONTRIBUTING.md of tstyche (https://github.com/tstyche/tstyche), which GitHub shows as tabs beside the README (added 2026-11-19)
+- [x] #17 Add a code of conduct and a contributing guide, like CODE_OF_CONDUCT.md and CONTRIBUTING.md of tstyche (https://github.com/tstyche/tstyche), which GitHub shows as tabs beside the README (added 2026-11-19, done 2026-11-19)
 
 ## README
 
