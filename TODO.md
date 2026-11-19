@@ -1,7 +1,7 @@
 # TODO
 
 Open work on oriko, the CLI and its skill.
-<!-- last item number: 17 -->
+<!-- last item number: 26 -->
 
 ## Next
 
@@ -10,6 +10,20 @@ Open work on oriko, the CLI and its skill.
 ## Community
 
 - [x] #17 Add a code of conduct and a contributing guide, like CODE_OF_CONDUCT.md and CONTRIBUTING.md of tstyche (https://github.com/tstyche/tstyche), which GitHub shows as tabs beside the README (added 2026-11-19, done 2026-11-19)
+- [ ] #20 Add issue templates in .github/ISSUE_TEMPLATE/, such as a bug report and a feature request, so an issue opened before a feature, as CONTRIBUTING.md asks, has the facts a maintainer needs (added 2026-11-19)
+- [ ] #21 Add a pull request template, .github/pull_request_template.md, whose sections match the checklist of CONTRIBUTING.md (added 2026-11-19)
+- [ ] #22 Add SUPPORT.md: where to get help with oriko (added 2026-11-19)
+- [ ] #23 Add ACCESSIBILITY.md: accessibility goals of oriko and its CVs, known barriers, and how to report one (added 2026-11-19)
+- [ ] #24 Add .github/FUNDING.yml, which shows a sponsor button on the repository (added 2026-11-19)
+- [ ] #25 Add discussion category forms in .github/DISCUSSION_TEMPLATE/, once GitHub Discussions is turned on for oriko (added 2026-11-19)
+- [ ] #26 Add .github/VULNERABILITY_REPORT.yml, a form for private vulnerability reports beside SECURITY.md (added 2026-11-19)
+
+## Skills
+
+- [ ] #18 When adx-cli moves to its own package @honeyglass/skills (as adx/cli), settle how it points to the refusal library of @honeyglass/utils, and to rules that the user's ~/.claude may override, such as errors, without depending on either (added 2026-11-19)
+      '.claude/skills/adx-cli/'
+- [ ] #19 Work out how best to build an MCP extension as a wrapper around an ADX tool, for @honeyglass/skills beside adx/cli, such as adx/mcp; start only once #18 is fully done (added 2026-11-19)
+      after:#18
 
 ## README
 
