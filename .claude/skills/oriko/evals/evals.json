@@ -16,7 +16,7 @@
     {
       "id": 3,
       "prompt": "Pass meinen Lebenslauf an diese Stelle an, meine Daten liegen in DATA_FOLDER:\n\nPayFlow GmbH sucht einen Senior Backend Engineer (m/w/d) fuer Zahlungsdienste: Go, PostgreSQL, Kafka, gerne Erfahrung mit Kartenzahlungen und On-Call.",
-      "expected_output": "The master allows one page; the agent hides or shortens blocks (and clears page pins in the profile) until oriko plan accepts it on one page, or stops after three refusals and asks; nothing invented, master unchanged.",
+      "expected_output": "The master allows one page; the agent hides or shortens blocks (and clears page pins in the profile) until oriko plan accepts it on one page, or stops at the fourth refusal and asks; nothing invented, master unchanged.",
       "files": []
     },
     {
