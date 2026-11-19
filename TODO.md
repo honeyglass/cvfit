@@ -1,13 +1,15 @@
 # TODO
 
 Open work on oriko, the CLI and its skill.
-<!-- last item number: 15 -->
+<!-- last item number: 16 -->
 
 ## Next
 
 ## README
 
 - [ ] #15 Record a short video of a test run in the terminal, an agent building the terminal preview of a CV, and show it on the README page (added 2026-11-18)
+- [ ] #16 Show in the README, as an example of a very fast start, how to ask ChatGPT or Claude, which know your history, for a text about you (what you like, what you do, what you work on) and hand that text to the agent to build a CV from (added 2026-11-18)
+      'docs/good-to-know.md'
 
 ## Structure
 
