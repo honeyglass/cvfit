@@ -31,14 +31,10 @@ when LibreOffice is installed.
 
 ### Why oriko?
 
-- 🤖 **Built for AI assistants**: oriko is a command-line tool an AI agent can drive on its own,
-  from the first look at your CV to the finished file.
-- 🧱 **Clean pages**: a job never breaks across two pages. If it does not fit, it moves to the next
-  page as a whole.
-- 🎯 **One CV, many versions**: each job posting gets a small version file. Add a new job to your
-  CV once, and every version has it.
-- ✅ **Honest by design**: a version only hides, reorders and shortens what you wrote. New claims
-  need your yes.
+- 🤖 **Built for AI assistants**: an agent drives oriko on its own, from your CV to the file.
+- 🧱 **Clean pages**: a job never breaks across two pages; it moves on as a whole.
+- 🎯 **One CV, many versions**: a small file per posting; a new job reaches every version.
+- ✅ **Honest by design**: a version only hides, reorders and shortens what you wrote.
 - 👀 **Preview before you build**: see every page in the terminal, and how full it is.
 - 🌍 **Several CVs**: one per language or per person, side by side.
 
