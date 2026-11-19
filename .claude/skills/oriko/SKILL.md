@@ -22,7 +22,7 @@ Use the command `oriko`; without it, run the repository's entry point with Node 
 - `command -v oriko` tells whether the command exists.
 - The repository is the folder three levels above this skill's base directory, with links resolved.
 - When neither the command nor '$ORIKO_REPO/bin/oriko.ts' exists, oriko is not installed.
-  Stop and ask the user to run the quickstart below; never run it yourself.
+  STOP and send the user to the Quickstart linked below; never run it yourself.
 - Every command answers one JSON object on stdout.
 
 ```bash
@@ -72,7 +72,7 @@ A block with `page` starts on that page at the earliest.
 - Nothing invented: a master holds only what the user said; a profile hides, reorders, shortens and rewords it.
   Never add a skill, tool, project, responsibility or number the user did not state.
   Never raise a level, never change a date, employer, job title or place.
-- Masters: change one with `init`, `block`, `item`, `cv update` and `contact` only in the flow 7 to 10.
+- Masters: change one with `init`, `block`, `item`, `cv update` and `contact` only in the states 7 Facts to 10 Hand over.
   Tailoring to a posting writes a profile and leaves the master as it is.
 - Time order: jobs in the left column stay newest first, because recruiters read them so.
   Hide an old or unrelated job instead of moving the job.
@@ -225,7 +225,7 @@ Run `oriko plan --profile NAME`.
 - A refusal of a stored profile this run did not draft is a STOP: changing it is the user's decision.
   Once the user chooses there to change it, the profile counts as the draft.
 - A gap at the end of a page comes from a block that did not fit whole, or from a `page` pin.
-  A pin cleared in the profile with `"page": null` changes this version only, so clear it when a relevant block would move up.
+  A pin cleared in the profile with `"page": null` changes this profile only, so clear it when a relevant block would move up.
 - A file is due after a draft, or when the user asked for one; a request to only check or preview goes to 6 Report.
 
 ### 5 Build
