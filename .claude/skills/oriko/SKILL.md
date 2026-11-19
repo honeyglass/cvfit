@@ -180,6 +180,7 @@ Then run `oriko cvs` and `oriko profiles`.
 - The issue `NO_CV` means no master: for a posting, go on to 11 Interview; for a new CV, to 7 Facts.
 - A request for a stored profile names one that `oriko profiles` lists: to revise it without a new
   posting, go on to 2 Inspect; to preview, check or build it, to 4 Check.
+- At exit: oriko runs, and the masters, the profiles and the row of the flow table that applies are known.
 
 ### 1 Posting
 
@@ -194,6 +195,7 @@ Take the posting from the conversation, a file or a URL, and note what it asks f
 - Note the role and its level, the must-have skills, the nice-to-have skills and the domain.
 - Choose the master in the posting's language; with none, the only master, or the one the user names.
 - The master is unclear when several fit equally: STOP and ask which one.
+- At exit: the posting text is at hand, through `oriko read` or the conversation, and one master is chosen.
 
 ### 2 Inspect
 
@@ -202,6 +204,7 @@ Run `oriko show --cv NAME` for the outline, then `oriko show --cv NAME --block <
 - The outline lists each block's id, kind, column, section, title and number of items.
 - Read the master only through `show`, so the rest of the CV stays out of the context.
 - Revising a stored profile: `oriko profile show --profile NAME` answers it and its posting; its `cv` names the master.
+- At exit: every block that may change has been read through `oriko show`.
 
 ### 3 Draft
 
@@ -221,6 +224,8 @@ Store the profile with `oriko profile set --profile NAME --json '<profile>'`: it
 
 Coming back from 4 Check, change only what the refusal names, by 'Fixing a refusal'.
 
+- At exit: the profile is stored and claims nothing the master does not hold.
+
 ### 4 Check
 
 Run `oriko plan --profile NAME`.
@@ -232,6 +237,7 @@ Run `oriko plan --profile NAME`.
 - A gap at the end of a page comes from a block that did not fit whole, or from a `page` pin.
   A pin cleared in the profile with `"page": null` changes this profile only, so clear it when a relevant block would move up.
 - A file is due after a draft, or when the user asked for one; a request to only check or preview goes to 6 Report.
+- At exit: `oriko plan` accepts the profile.
 
 ### 5 Build
 
@@ -246,6 +252,7 @@ Run `oriko build --profile NAME --out NAME.docx` in the user's working directory
   portals read the text, and the two columns run together line by line.
 - Add `--credits` to a terminal build or a preview only when the user asks for it: it names oriko
   and its author on the right of the last page. The classic look refuses it.
+- At exit: the file the user asked for is written inside the working directory.
 
 ### 6 Report
 
@@ -259,6 +266,7 @@ Show the preview, then say what changed and why.
 - For a `.docx`, name the next manual step: upload it to Google Docs, then File, Download, PDF.
 - **Close by asking the user to read the preview and the PDF line by line before sending it.**
   An agent can misread or reword a fact; only the user knows the facts.
+- At exit: the user has the preview, each change with its reason, the gaps, and the request to read it line by line.
 
 ### 7 Facts
 
@@ -269,6 +277,7 @@ Read the user's text and sort what it states into jobs, skills, languages and co
 - A job needs dates, employer, job title and place; ask for whatever the text leaves out.
 - Target: a new master when the user asks for a new CV, else the master the user names or the only one.
 - A new master takes the language of the user's text; its name is the person's name in lower case with hyphens.
+- At exit: every job has dates, employer, job title and place in the user's words, and the target master is clear.
 
 ### 8 Write
 
@@ -281,6 +290,7 @@ Write every fact with an oriko command; read `./references/master.md` for the co
 - A skill gets a level only from a word the user used, by the table in `./references/master.md`.
   A skill named without such a word goes into a `list` block, without a level.
 - A refused write stays in 8 Write: fix it by 'Fixing a refusal'; the bound counts per write.
+- At exit: every fact stands in the master through an oriko command.
 
 ### 9 Verify
 
@@ -288,6 +298,7 @@ Run `oriko plan --cv NAME`.
 
 - An answer `ok` means the master is valid and fits its pages.
 - A refusal goes back to 8 Write with its issues; raising `pages` is the user's decision: STOP and ask.
+- At exit: `oriko plan --cv NAME` accepts the master.
 
 ### 10 Hand over
 
@@ -299,6 +310,7 @@ Show the preview, then say what you wrote.
 - Build a `.docx` only when the user asks for one: `oriko build --cv NAME --out NAME.docx`.
 - **Ask the user to read the preview line by line; an agent can misread or reword a fact.**
 - A posting from the start still waits: go on to 1 Posting with the new master.
+- At exit: the user has the preview, every derived level with its word, the gaps, and the request to read it.
 
 ### 11 Interview
 
@@ -312,6 +324,7 @@ The user gave a posting but has no CV yet: offer to create one, and ask for the 
 - Ask in the language the user writes in, and say why: the CV holds only what the user says.
 - Take every answer as the user's own words; a question the user skips stays out of the CV.
 - Keep the posting for 1 Posting, which follows after 10 Hand over.
+- At exit: the user answered the three rounds, named a folder, or declined a new CV.
 
 ### STOP
 
