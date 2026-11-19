@@ -88,6 +88,10 @@ with years and tools where you know them. Mark what you are not sure of.
 # … save the answer, and hand it over as your notes
 Create a CV for this job. My CV: ~/cv.pdf. My notes: ~/about-me.md. The posting: ~/job.pdf
 
+# Or all of it at once: each file adds what the others leave out
+Create a CV for this job. My CV: ~/cv.pdf and ~/Downloads/Profile.pdf.
+My notes: ~/notes.txt and ~/about-me.md. The posting: ~/job.pdf
+
 # Shorter requests work too
 Fit my CV to this job: <paste the job posting>
 Create a new CV for me. Since 03/2021 I have worked as a data engineer at …
