@@ -13,7 +13,8 @@
 ![Version](https://img.shields.io/github/package-json/v/honeyglass/oriko?label=version&color=blue)
 [![skills.sh](https://skills.sh/b/honeyglass/oriko)](https://skills.sh/honeyglass/oriko)
 ![License](https://img.shields.io/github/license/honeyglass/oriko?color=green)
-![Node](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fhoneyglass%2Foriko%2Fmain%2Fpackage.json&query=%24.engines.node&label=node&color=brightgreen)
+![Node](https://img.shields.io/badge/node-24+-brightgreen.svg)
+![Coverage](https://img.shields.io/badge/coverage-%E2%89%A595%25-brightgreen.svg)
 [![CI](https://github.com/honeyglass/oriko/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/honeyglass/oriko/actions/workflows/ci.yml)
 
 </div>
