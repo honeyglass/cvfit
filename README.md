@@ -132,61 +132,20 @@ No CV yet? See [Good to know](docs/good-to-know.md#-no-cv-yet).
 
 An agent alone can be wrong without noticing, and a tool alone cannot read a job posting. oriko
 puts the two together: the agent does what needs judgment, and every step it takes runs through
-a CLI that checks it, refuses what does not fit and never guesses.
+a CLI that checks it, refuses what does not fit and never guesses. The pattern on its own, for any
+agent and tool, is the skill [agentic-meets-deterministic](.claude/skills/agentic-meets-deterministic/SKILL.md).
 
 oriko has two parts. The **CLI** does the work and checks every input. The **skill** in
-[`.claude/skills/oriko/`](.claude/skills/oriko/SKILL.md) is the agent's manual: which command to
-run when, what it may change, and when it stops and asks you.
+[`.claude/skills/oriko/`](.claude/skills/oriko/SKILL.md) is the agent's manual: a fixed list of
+steps, and for each step the steps that may follow (a state machine). When oriko refuses a draft,
+the agent goes back one step and fixes it, at most three times; then it stops and asks you. The
+steps stand in [the flow of the skill](.claude/skills/oriko/SKILL.md#flow).
 
-### The skill: a fixed flow
-
-The skill is a fixed list of steps, and for each step the steps that may follow (a state machine).
-It has two paths. To fit a CV to a posting, the agent reads the posting, inspects
-your CV, drafts a version, checks it, builds it and reports. To write a CV, it sorts your facts,
-writes them, checks them and hands over; with no CV at all, it first asks you a few short
-questions. The agent moves only along the listed steps. When oriko refuses a draft, the agent goes back
-one step and fixes it, at most three times; then it stops and asks you. The steps, what each one
-does and which may follow it, stand in [the flow of the skill](.claude/skills/oriko/SKILL.md#flow).
-
-### The CLI: Agent DX rules
-
-DX stands for developer experience: how easy a tool is to use. Agent DX asks the same question for
-an AI agent, which cannot click through a menu or guess what a vague error means. The rules start
-from Justin Poehnelt's article
-[Rewrite your CLI for AI agents](https://justin.poehnelt.com/posts/rewrite-your-cli-for-ai-agents/)
-(2026), with the [Google Workspace CLI](https://github.com/googleworkspace/cli) as its reference
-implementation. [The CLI page](docs/cli.md) lists every rule oriko follows, its commands, and a
-refusal as the agent reads it.
-
-oriko navigates on its own: `oriko` alone shows where to start, a success names the next
-commands when there are any, a refusal names the command that fixes it, and an option without a
-value lists the values it accepts. A person needs no manual, and the agent acts on what oriko
-answers, never on a guess.
-
-<details>
-<summary><b>Agent DX rules</b></summary>
-
-The rules marked ➕ oriko are new: the author of oriko added them from building tools for agents.
-
-| Rule | What oriko does | Why it helps the agent | Source |
-| :--- | :--- | :--- | :--- |
-| Raw JSON input | takes its whole input as one JSON object | passes the data as it is, without many flags | article |
-| Schema at runtime | `oriko schema` shows every command and its input | looks the format up in the tool itself | article |
-| JSON when piped | text for people, JSON for programs | each reader gets what it can read | article |
-| Input hardening | the Word file and photos stay inside their folder | a mistake never writes elsewhere | article |
-| Dry runs | `--dry-run` says what would happen | tries a command safely first | article |
-| Agent skill | the agent's manual ships with the code | knows when to stop and ask you | article |
-| Checks in layers | shape, then version, then pages; all errors at once | fixes real errors in one go | ➕ oriko |
-| Errors with a hint | each error says where and what to change | fixes the input on its own | ➕ oriko |
-| All or nothing | a refused command writes nothing | no file is left half changed | ➕ oriko |
-| Exit codes 0, 1, 2 | 0 ok, 1 fix the input, 2 something broke | knows the next step from one number | ➕ oriko |
-| Plan before the file | `plan` shows which block lands on which page | fixes an overflow before building | ➕ oriko |
-| Hints that run | a refusal names the command that lists the fitting values | runs it and picks a real value | ➕ oriko |
-| Options that list | an option without a value lists the values it accepts | finds names and ids in one call | ➕ oriko |
-| Next steps | a success names its next commands, when there are any, and what each still needs | always knows where to go on | ➕ oriko |
-| Nothing passes silently | an unknown command, option or word is refused, a group alone lists its actions | never acts on a typo | ➕ oriko |
-
-</details>
+The CLI follows the Agent DX rules, which make a tool easy for an agent to use: `oriko` alone
+shows where to start, a success names the next commands when there are any, a refusal names the
+command that fixes it, and an option without a value lists the values it accepts. [The CLI
+page](docs/cli.md) lists every rule and how oriko meets it; the rules on their own, for any CLI,
+are the skill [agent-dx-rules](.claude/skills/agent-dx-rules/SKILL.md).
 
 ## 🖥️ Terminal preview
 
