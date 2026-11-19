@@ -120,7 +120,7 @@ The CLI follows the Agent DX rules, which make a tool easy for an agent to use: 
 shows where to start, a success names the next commands when there are any, a refusal names the
 command that fixes it, and an option without a value lists the values it accepts. [The CLI
 page](docs/cli.md) lists every rule and how oriko meets it; the rules on their own, for any CLI,
-are the skill [agent-dx-rules](.claude/skills/agent-dx-rules/SKILL.md).
+are the skill [adx-cli](.claude/skills/adx-cli/SKILL.md).
 
 ## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/monitor-dark.svg"><img src="brand/icons/monitor.svg" width="24" height="24" alt=""></picture> Terminal preview
 
