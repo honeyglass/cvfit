@@ -8,10 +8,10 @@
 **One CV, made to fit every job posting, laid out so no job ever breaks across a page.**
 
 ![Agent Driven](https://img.shields.io/badge/Agent_Driven-purple.svg)
-![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
-![License](https://img.shields.io/badge/license-AGPL--3.0-green.svg)
-![Node](https://img.shields.io/badge/node-24+-brightgreen.svg)
-![Coverage](https://img.shields.io/badge/coverage-%E2%89%A595%25-brightgreen.svg)
+![Version](https://img.shields.io/github/package-json/v/honeyglass/oriko?label=version&color=blue)
+![License](https://img.shields.io/github/license/honeyglass/oriko?color=green)
+![Node](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fhoneyglass%2Foriko%2Fmain%2Fpackage.json&query=%24.engines.node&label=node&color=brightgreen)
+[![CI](https://github.com/honeyglass/oriko/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/honeyglass/oriko/actions/workflows/ci.yml)
 
 </div>
 
