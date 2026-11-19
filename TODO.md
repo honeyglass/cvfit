@@ -1,11 +1,17 @@
 # TODO
 
 Open work on oriko, the CLI and its skill.
-<!-- last item number: 27 -->
+<!-- last item number: 28 -->
 
 ## Next
 
 - #17
+
+## Tools
+
+- [ ] #28 Move the folder README tool of tools/readmes/ into @honeyglass/utils and use it in every repository under honeyglass/, all of which follow the layout of oriko and of lean-code's make-repo; enforce it locally, such as through lint-staged, and in CI once utils ships it; each repository passes its own settings, today 'OPTIONS' in 'tools/readmes/update.ts': the folders without a README ('skip') and the extra pages whose links it checks ('pages'); after #27 (added 2026-11-19)
+      after:#27
+      'tools/readmes/'
 
 ## Community
 
