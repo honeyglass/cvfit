@@ -213,6 +213,7 @@ install script and the agents oriko works with: [Compatibility](docs/compatibili
 - [ ] A new CV from a LinkedIn export or a JSON Resume file
 - [ ] Publish on npm as `oriko`
 - [ ] [adx-cli](.claude/skills/adx-cli/README.md) as its own repository and npm package, `@honeyglass/skills`
+- [ ] The [folder README tool](tools/readmes/README.md) in `@honeyglass/utils`, for every honeyglass repository
 
 ## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/wrench-dark.svg"><img src="brand/icons/wrench.svg" width="24" height="24" alt=""></picture> Development
 
