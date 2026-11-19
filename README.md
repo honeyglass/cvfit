@@ -69,7 +69,8 @@ installs LibreOffice with brew, apt or dnf; without it, the script names the com
 
 Give the agent three things at once, then answer its questions:
 
-- **Your old CV**: a PDF, a Word file, or your oriko CV.
+- **Your old CV**: a PDF, a Word file, your oriko CV, or your profile from LinkedIn or another
+  job portal, saved as PDF.
 - **Notes in your own words**: what you did, how you work, what the old CV leaves out. Short
   lines are enough, in any language.
 - **The job posting**: a file or a link.
@@ -77,6 +78,15 @@ Give the agent three things at once, then answer its questions:
 ```text
 # All three at once
 Create a CV for this job. My CV: ~/cv.pdf. My notes: ~/notes.txt. The posting: ~/job.pdf
+
+# Your LinkedIn profile, saved as PDF, stands in for the old CV
+Create a CV for this job. My CV: ~/Downloads/Profile.pdf. The posting: https://…
+
+# Notes from Claude or ChatGPT: if you have worked with one for a while, ask it first …
+Write a profile of me for my CV: what I work on, what I am good at, what I like to do,
+with years and tools where you know them. Mark what you are not sure of.
+# … save the answer, and hand it over as your notes
+Create a CV for this job. My CV: ~/cv.pdf. My notes: ~/about-me.md. The posting: ~/job.pdf
 
 # Shorter requests work too
 Fit my CV to this job: <paste the job posting>
