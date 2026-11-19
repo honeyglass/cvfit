@@ -44,7 +44,8 @@ one accepts and, in `required`, the options it cannot run without.
 | `read` | reads a posting (`--posting`, with `--profile`), notes (`--notes`) or an old CV (`--resume`) |
 | `profile set`, `profile show` | stores the version for one posting, checked against its CV, and shows it with its posting |
 
-`read` takes a file or an `https://` address and answers its text. The posting is stored as
+`read` takes a file or an `https://` address and answers its text. By design the file may sit at
+any path oriko can read, inside the working directory or not. The posting is stored as
 `profiles/<profile>.posting.md`, notes are added to `cvs/<cv>.notes.md`, and an old CV is stored
 nowhere. The kind comes from the content: PDF, Word, HTML or UTF-8 text; any other is refused. A
 download goes only to a public address over https on port 443, at every redirect, and each
