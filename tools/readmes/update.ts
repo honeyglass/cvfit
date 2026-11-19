@@ -23,7 +23,7 @@ import type { Gap, Options } from './readmes.ts';
  */
 export const OPTIONS: Options = {
   skip: ['assets', 'brand', 'docs', 'examples', 'tests'],
-  pages: ['README.md', '.claude/skills/adx-cli/README.md'],
+  pages: ['README.md', 'CONTRIBUTING.md', '.claude/skills/adx-cli/README.md'],
 };
 
 /** The arguments the script knows; any other one is refused, never ignored. */
