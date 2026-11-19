@@ -9,9 +9,9 @@
 
 [Quickstart](#-quickstart) · [Docs](#-docs) · [Examples](docs/examples.md) · [CLI](docs/cli.md) · [Report an issue](https://github.com/honeyglass/oriko/issues)
 
+[![skills.sh](https://skills.sh/b/honeyglass/oriko?label=skills.sh&labelColor=2b2d42&color=5cc9a7)](https://skills.sh/honeyglass/oriko)
 ![Agent Driven](https://img.shields.io/badge/Agent_Driven-purple.svg)
 ![Version](https://img.shields.io/github/package-json/v/honeyglass/oriko?label=version&color=blue)
-[![skills.sh](https://skills.sh/b/honeyglass/oriko)](https://skills.sh/honeyglass/oriko)
 ![License](https://img.shields.io/github/license/honeyglass/oriko?color=green)
 ![Node](https://img.shields.io/badge/node-24+-brightgreen.svg)
 ![Coverage](https://img.shields.io/badge/coverage-%E2%89%A595%25-brightgreen.svg)
