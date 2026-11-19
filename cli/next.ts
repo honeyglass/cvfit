@@ -20,9 +20,12 @@ type Facts = {
   selector: string;
   data: Record<string, unknown>;
   isDryRun: boolean;
+  /** The options and words of the call without --dry-run, so the step after a dry run repeats it. */
+  repeated: string;
+  /** The input came through stdin, which a repeated call does not hold. */
+  isPiped: boolean;
 };
 
-const AGAIN: Step = { does: 'repeat the call without --dry-run to write' };
 const UPLOAD: Step = {
   does: 'upload the .docx to Google Docs, then choose File, Download, PDF; or build a .pdf with LibreOffice',
 };
@@ -34,7 +37,7 @@ const UPLOAD: Step = {
 export function nextSteps(facts: Facts): Step[] {
   const { data, selector } = facts;
   if ('option' in data) return [];
-  if (facts.isDryRun) return data.written === false ? [AGAIN] : [];
+  if (facts.isDryRun) return data.written === false ? again(facts) : [];
   switch (facts.command) {
     case undefined:
       return Array.isArray(data.cvs) ? startSteps(data) : [];
@@ -72,6 +75,17 @@ export function nextSteps(facts: Facts): Step[] {
         ? [step('preview', selector), step('build', selector, ['out'])]
         : [];
   }
+}
+
+// The call itself without --dry-run; a piped input is not part of it, so the step needs it.
+function again({ command, repeated, isPiped }: Facts): Step[] {
+  // Only a named command takes --dry-run; a call without one is refused before it runs.
+  if (command === undefined) return [];
+  const base = {
+    does: 'repeat the call without --dry-run to write',
+    command: `oriko ${command}${repeated}`,
+  };
+  return [isPiped ? { ...base, needs: ['json'] } : base];
 }
 
 const step = (name: CommandName, args = '', needs?: string[]): Step => {

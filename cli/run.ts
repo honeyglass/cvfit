@@ -62,7 +62,7 @@ async function answered(argv: string[], io: Io) {
   const asText = isKnownOutput && values.output !== undefined ? values.output === 'text' : io.isTTY;
   const home = values.home === undefined ? io.home : resolve(io.cwd, values.home);
   const found = commandOf(args.words);
-  const call = { io, home, values, rest: found.rest, command: found.name };
+  const call = { io: readsStdinOnce(io), home, values, rest: found.rest, command: found.name };
   // An empty --home is refused below; until then no folder, not even the default one, is opened.
   const isHomeEmpty = args.empty.includes('home');
   const issues = [
@@ -75,4 +75,10 @@ async function answered(argv: string[], io: Io) {
     return { result: await withCommands(call, rejected('oriko', issues)), asText };
   const result = args.empty.length === 0 ? await dispatched(call) : await emptied(call, args.empty);
   return { result: await withCommands(call, withNext(call, result)), asText };
+}
+
+// A pipe gives its text only once; a refusal that looks at the input again gets the same text.
+function readsStdinOnce(io: Io): Io {
+  let text: Promise<string | null> | undefined;
+  return { ...io, stdin: () => (text ??= io.stdin()) };
 }

@@ -34,8 +34,8 @@ from the other folders, so every feature can rely on it.
   fit.
 - `zip.ts`: makes a finished .docx the same bytes for the same input, and sets the photo line so
   Google Docs lays it out right.
-- `options.ts`: lists every option of every command, and writes an option with its value quoted
-  for a shell.
+- `options.ts`: lists every option of every command, and writes the options of a call with their
+  values quoted for a shell.
 - `errors.ts`: holds the one error shape, a refusal that lists every issue, and the `Result` that
   holds either `data` or an `error`. [docs/cli.md](../docs/cli.md#a-refusal) shows how a refusal
   reads.

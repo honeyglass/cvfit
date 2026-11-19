@@ -6,6 +6,7 @@
  * Switch, Many, One: the options without a value, with several values, and with one value.
  * missingHint, NEW_NAME: what to add to an option without a value, or one that takes a new name.
  * optionText, isDashed: one option with its value, quoted so a shell reads the value back.
+ * optionsText, shellWord: every option of a call, and one word, written back the same way.
  *
  * Several features name options in their issues and next steps, so the table lives here.
  * A command oriko names may be run by an agent as it stands, so every value in it is quoted.
@@ -48,7 +49,7 @@ export const OPTIONS = {
   },
   json: {
     type: 'string',
-    text: 'the input of an edit command; without it the input comes from stdin',
+    text: 'the JSON input of the command, in the shape oriko schema <command> shows; without it the input comes from stdin',
     missing: 'Run the command for the input shape, then pass it as one JSON object',
   },
   block: {
@@ -131,6 +132,29 @@ export const isDashed = (arg: string | undefined) =>
  * @returns ' --name value', or ' --name=value' when the value starts with a dash
  */
 export function optionText(name: One, value: string) {
+  return valueText(name, value);
+}
+
+/**
+ * @param values - the options of a call as its arguments gave them; one left undefined is left out
+ * @returns each option in the order given, a switch alone and a repeated one once per value
+ */
+export function optionsText(values: { [Name in OptionName]?: string | boolean | string[] }) {
+  return Object.entries(values)
+    .map(([name, value]) => givenText(name, value))
+    .join('');
+}
+
+function givenText(name: string, value: string | boolean | string[] | undefined) {
+  if (value === undefined || value === false) return '';
+  if (value === true) return ` --${name}`;
+  return [value]
+    .flat()
+    .map(one => valueText(name, one))
+    .join('');
+}
+
+function valueText(name: string, value: string) {
   const word = shellWord(value);
   return isDashed(value) ? ` --${name}=${word}` : ` --${name} ${word}`;
 }
@@ -138,7 +162,7 @@ export function optionText(name: One, value: string) {
 // Only letters, digits and '_ . / -' stay bare; a visible value, '~' too, goes in single quotes.
 // A value with a character that does not show as itself goes in $'…' with that character as
 // escaped bytes, so the command stays one visible line that bash, zsh and ksh read back.
-function shellWord(word: string) {
+export function shellWord(word: string) {
   if (/^[\w./-]+$/.test(word)) return word;
   if (UNSAFE_CHAR.test(word) === false) return `'${word.replaceAll("'", `'\\''`)}'`;
   return `$'${[...word].map(escapedChar).join('')}'`;

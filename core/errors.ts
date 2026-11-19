@@ -47,7 +47,7 @@ function kindOf(issues: Issue[]) {
 
 const NEXT = {
   fix: 'fix every listed issue and call again',
-  retry: 'call again in a minute; after a few tries, tell the person',
+  retry: 'call again in a minute; after three tries, tell the person',
   ask: 'stop, tell the person every listed issue, and call again once they solved it',
 } as const;
 

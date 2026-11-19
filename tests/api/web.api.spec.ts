@@ -168,4 +168,6 @@ test('names who acts on a failed download', async () => {
       ['NETWORK_FAILED', 'retry'],
     ],
   );
+  // The agent skill counts the same tries, so the refusal names their number.
+  assert.match(answers[1]?.error?.refusal.next ?? '', /after three tries/);
 });

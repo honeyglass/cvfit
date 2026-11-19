@@ -220,7 +220,8 @@ export function unknownProfile(name: string, names: string[]): Issue {
       code: 'UNKNOWN_PROFILE',
       path: 'profile',
       message,
-      hint: 'Add a profile as profiles/NAME.json to the data folder',
+      hint: 'Run the command for the shape of a profile, then store one with oriko profile set',
+      command: 'oriko schema profile set',
     };
   return {
     code: 'UNKNOWN_PROFILE',

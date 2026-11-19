@@ -45,5 +45,12 @@ export function schema(name: string): Result<Fields> {
     [...command.options, ...EVERYWHERE].map(option => [option, OPTIONS[option].text]),
   );
   const input = command.input === undefined ? null : z.toJSONSchema(command.input);
-  return done({ name, does: command.does, options, words: command.words ?? [], input });
+  return done({
+    name,
+    does: command.does,
+    options,
+    required: command.required ?? [],
+    words: command.words ?? [],
+    input,
+  });
 }

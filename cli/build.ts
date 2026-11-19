@@ -47,34 +47,47 @@ function planned(cv: Master, hasCredits: boolean) {
 }
 
 export async function build(call: Call): Promise<Result<Fields>> {
-  const style = STYLES.find(known => known === (call.values.style ?? 'classic'));
-  if (style === undefined) return rejected('build', [issue.unknownStyle(call.values.style ?? '')]);
-  const hasCredits = call.values.credits === true;
-  if (hasCredits && style !== 'terminal') return rejected('build', [issue.creditsNeedTerminal()]);
-  const out = await outputPath(call.io.cwd, call.values.out);
-  if (out.error !== null) return out;
+  const options = await buildOptions(call);
+  if (options.error !== null) return options;
+  const { style, hasCredits, out } = options.data;
   const cv = await checked(call.home, call.values.cv, call.values.profile);
   if (cv.error !== null) return cv;
   const sheet = planned(cv.data, hasCredits);
   const placed = sheet.placed;
   if (placed.error !== null) return placed;
-  const isPdf = out.data.name.endsWith('.pdf');
+  const isPdf = out.name.endsWith('.pdf');
   const engine = isPdf ? 'libreoffice' : 'google';
   const docx = await rendered(call.home, sheet.cv, placed.data, style, engine);
   if (docx.error !== null) return docx;
   const file = isPdf ? await toPdf(docx.data, call.io.soffice) : docx;
   if (file.error !== null) return file;
   const isDryRun = call.values['dry-run'] === true;
-  const files = [{ path: out.data.path, content: file.data }];
+  const files = [{ path: out.path, content: file.data }];
   const written = isDryRun ? done(undefined) : await writeAll(files, 'out');
   if (written.error !== null) return written;
   return done({
-    out: out.data.name,
+    out: out.name,
     style,
     bytes: file.data.length,
     pages: placed.data.pages.length,
     written: isDryRun === false,
   });
+}
+
+// The look, the credits and the file of a build, checked together so one refusal names them all.
+async function buildOptions(call: Call) {
+  const style = STYLES.find(known => known === (call.values.style ?? 'classic'));
+  const hasCredits = call.values.credits === true;
+  const out = await outputPath(call.io.cwd, call.values.out);
+  const issues = [
+    ...(style === undefined ? [issue.unknownStyle(call.values.style ?? '')] : []),
+    ...(hasCredits && style !== 'terminal' ? [issue.creditsNeedTerminal()] : []),
+    ...(out.error?.issues ?? []),
+  ];
+  if (style === undefined || out.error !== null)
+    return rejected('build', issues, out.error?.refusal.cause);
+  if (issues.length > 0) return rejected('build', issues);
+  return done({ style, hasCredits, out: out.data });
 }
 
 // Only the classic look shows the photo, so only it reads the photo file. The terminal look sets

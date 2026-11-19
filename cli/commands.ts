@@ -22,6 +22,8 @@ export const EVERYWHERE: OptionName[] = ['home', 'output'];
 export type Command = {
   does: string;
   options: OptionName[];
+  /** The options the command refuses to run without. */
+  required?: OptionName[];
   /** The words after the command's name, such as the file of photo set. */
   words?: string[];
   /** The words after the name are one value, such as the command schema shows. */
@@ -47,6 +49,7 @@ export const COMMANDS = {
   init: {
     does: 'creates a CV',
     options: ['cv', 'json', 'dry-run'],
+    required: ['cv'],
     input: NewCv,
     fresh: ['cv'],
   },
@@ -57,6 +60,7 @@ export const COMMANDS = {
   build: {
     does: 'writes the Word file, or its PDF through LibreOffice',
     options: ['cv', 'profile', 'out', 'style', 'credits', 'dry-run'],
+    required: ['out'],
   },
   read: {
     does: 'reads a posting, notes or an old CV from a file or an https address',
@@ -65,6 +69,7 @@ export const COMMANDS = {
   'profile set': {
     does: 'stores the profile of one job posting, checked against its CV',
     options: ['profile', 'json', 'replace', 'dry-run'],
+    required: ['profile'],
     input: Profile,
   },
   'profile show': {

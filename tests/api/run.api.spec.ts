@@ -8,6 +8,7 @@ import {
   readFileSync,
   readdirSync,
   realpathSync,
+  rmSync,
   symlinkSync,
   writeFileSync,
 } from 'node:fs';
@@ -17,6 +18,7 @@ import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { PNG } from 'pngjs';
 import { z } from 'zod';
+import { run } from '../../cli/run.ts';
 import { NEW_CV, call, workspace } from '../utils/cli.ts';
 import type { Space } from '../utils/cli.ts';
 import { docx, pdf } from '../utils/documents.ts';
@@ -354,6 +356,17 @@ test('a refusal names a command that lists the fitting values, and that command 
       'UNKNOWN_BLOCK',
       'oriko show --cv jane --block',
     ],
+    [
+      ['profile', 'set', '--profile', 'globex', '--json', '{"cv":"jane","order":["nobody"]}'],
+      'UNKNOWN_BLOCK',
+      'oriko show --cv jane --block',
+    ],
+    [
+      ['build', '--cv', 'jane', '--out', 'x.docx', '--style', 'neon'],
+      'UNKNOWN_STYLE',
+      'oriko build --style',
+    ],
+    [['preview', '--output', 'pdf'], 'UNKNOWN_OUTPUT', 'oriko --output'],
     [['block', 'remove', '--cv', 'jane'], 'MISSING_INPUT', 'oriko schema block remove'],
     [['block', 'add', '--cv', 'jane', '--json'], 'MISSING_VALUE', 'oriko schema block add'],
     [['paint'], 'UNKNOWN_COMMAND', 'oriko schema'],
@@ -367,6 +380,36 @@ test('a refusal names a command that lists the fitting values, and that command 
     const listed = await call(space, `${command}${home}`.split(' ').slice(1));
     assert.equal(listed.answer.ok, true, command);
   }
+  // Without any profile there is no name to list; the refusal points to the checked write.
+  rmSync(join(space.home, 'profiles'), { recursive: true });
+  const [none] = (await call(space, ['plan', '--profile', 'acme'])).answer.issues ?? [];
+  assert.deepEqual([none?.code, none?.command], ['UNKNOWN_PROFILE', 'oriko schema profile set']);
+  assert.match(String(none?.hint), /oriko profile set/);
+});
+
+// stdin can be read only once, so the CV of a piped input is found from the text read before.
+test('a refusal of a piped input finds the CV the input names', async () => {
+  const space = workspace();
+  await call(space, ['init', '--cv', 'erika', '--json', NEW_CV]);
+  const piped = [JSON.stringify({ cv: 'jane', order: ['nobody'] })];
+  let out = '';
+  await run(['profile', 'set', '--profile', 'globex'], {
+    home: space.home,
+    cwd: space.cwd,
+    web: fakeWeb({}, {}).web,
+    soffice: [],
+    isTTY: false,
+    stdin: async () => piped.shift() ?? null,
+    write: text => (out += text),
+  });
+  const Refused = z.object({
+    issues: z.array(z.looseObject({ code: z.string(), command: z.string() })),
+  });
+  const [issue] = Refused.parse(JSON.parse(out)).issues;
+  assert.deepEqual(
+    [issue?.code, issue?.command],
+    ['UNKNOWN_BLOCK', 'oriko show --cv jane --block'],
+  );
 });
 
 test('schema answers every command and every shape it lists', async () => {
@@ -377,8 +420,19 @@ test('schema answers every command and every shape it lists', async () => {
     assert.equal((await call(space, ['schema', ...name.split(' ')])).answer.ok, true, name);
   const plan = (await call(space, ['schema', 'plan'])).answer;
   assert.deepEqual(
-    [plan.name, plan.input, Object.keys(z.record(z.string(), z.unknown()).parse(plan.options))],
-    ['plan', null, ['cv', 'profile', 'home', 'output']],
+    [
+      plan.name,
+      plan.input,
+      plan.required,
+      Object.keys(z.record(z.string(), z.unknown()).parse(plan.options)),
+    ],
+    ['plan', null, [], ['cv', 'profile', 'home', 'output']],
+  );
+  const required = async (name: string[]) =>
+    (await call(space, ['schema', ...name])).answer.required;
+  assert.deepEqual(
+    [await required(['build']), await required(['init']), await required(['profile', 'set'])],
+    [['out'], ['cv'], ['profile']],
   );
 });
 
@@ -414,6 +468,14 @@ test('checks the call against its command and names every mistake at once', asyn
     [['plan', '--out', 'x.docx'], [['OPTION_NOT_ALLOWED', 'out']]],
     [['plan', '--cv', 'jane', '--cv', 'jane'], [['REPEATED_OPTION', 'cv']]],
     [['build', '--out', 'x.docx', '--dry-run=true'], [['UNEXPECTED_VALUE', 'dry-run']]],
+    [
+      ['build', '--out', 'x.txt', '--style', 'neon', '--credits', '--dry-run'],
+      [
+        ['UNKNOWN_STYLE', 'style'],
+        ['CREDITS_NEED_TERMINAL', 'credits'],
+        ['WRONG_EXTENSION', 'out'],
+      ],
+    ],
     [
       ['plan', '--color', '--size'],
       [

@@ -30,7 +30,7 @@ Every command answers one JSON object: on one line when another program reads it
 terminal, where `preview` shows its sheets and a refusal shows as readable lines. oriko ends with
 exit code 0 when all went well, 1 when the input needs a fix (each issue with a hint), and 2 when
 something broke. `oriko schema` lists every command and option, `oriko schema <command>` the input
-one accepts.
+one accepts and, in `required`, the options it cannot run without.
 
 | Command | What it does |
 | :--- | :--- |
@@ -79,6 +79,23 @@ always holds them:
       "does": "writes the Word file",
       "command": "oriko build --profile go-e",
       "needs": ["out"]
+    }
+  ]
+}
+```
+
+After `--dry-run` the one step is the call itself without `--dry-run`, with its data folder and
+every value quoted for the shell; an input that came through stdin is not part of the call, so
+that step names `json` in `needs`:
+
+```json
+{
+  "ok": true,
+  "written": false,
+  "next": [
+    {
+      "does": "repeat the call without --dry-run to write",
+      "command": "oriko build --profile go-e --out go-e.docx"
     }
   ]
 }

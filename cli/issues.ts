@@ -111,14 +111,16 @@ export const unknownOutput = (output: string): Issue => ({
   code: 'UNKNOWN_OUTPUT',
   path: 'output',
   message: `No output is called ${shown(output)}`,
-  hint: `Use one of: ${OUTPUTS.join(', ')}`,
+  hint: `Run the command and use one of the outputs it lists: ${OUTPUTS.join(', ')}`,
+  command: 'oriko --output',
 });
 
 export const unknownStyle = (style: string): Issue => ({
   code: 'UNKNOWN_STYLE',
   path: 'style',
   message: `No look is called ${shown(style)}`,
-  hint: `Use one of: ${STYLES.join(', ')}`,
+  hint: `Run the command and use one of the looks it lists: ${STYLES.join(', ')}`,
+  command: 'oriko build --style',
 });
 
 export const creditsNeedTerminal = (): Issue => ({
