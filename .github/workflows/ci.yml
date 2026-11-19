@@ -57,6 +57,14 @@ jobs:
           node-version: ${{ matrix.node }}
           package-manager-cache: false
       - run: node --version && pnpm --version
+      # The test script measures coverage with --experimental-test-coverage. On the newest LTS this
+      # step fails once Node offers a stable --test-coverage, so the script switches in time.
+      - if: matrix.node == 'lts/*'
+        run: |
+          if node --help | grep -qE '^ +--test-coverage( |$)'; then
+            echo '::error::Node has a stable --test-coverage; replace --experimental-test-coverage in package.json'
+            exit 1
+          fi
       - run: pnpm run format:check
       # Every repository names its scripts lint, typecheck and test, so this file stays the
       # same everywhere. --if-present skips the step in a repository without that script.
