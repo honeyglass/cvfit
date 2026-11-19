@@ -11,6 +11,9 @@ import * as issue from './issues.ts';
 import { COLUMN } from './cv.limits.ts';
 import { Block, Master, PATCH, Profile } from './cv.schema.ts';
 
+type Rated = Extract<Block, { kind: 'rated' }>;
+type Entries = Extract<Block, { kind: 'entries' }>;
+
 /**
  * Checks in layers: the shape first, then the profile, then the rules between blocks.
  *
@@ -49,10 +52,12 @@ function applyProfile(master: Master, value: unknown): Result<Master> {
   const profile = parsed.data;
   const issues = unknownIds(master, profile);
   const blocks = master.blocks.map(block => patched(block, profile.blocks?.[block.id], issues));
-  issues.push(...itemsNotInMaster(master.blocks, blocks));
+  issues.push(...changedFacts(master.blocks, blocks));
+  const sorted = ordered(blocks, profile.order ?? []);
+  if (jobsMoved(master.blocks, sorted)) issues.push(issue.jobMoved());
   if (issues.length > 0) return rejected('check', issues);
   const person = { ...master.person, ...profile.person };
-  return done(withoutHidden({ ...master, person }, ordered(blocks, profile.order ?? [])));
+  return done(withoutHidden({ ...master, person }, sorted));
 }
 
 function unknownIds(master: Master, profile: Profile) {
@@ -68,22 +73,77 @@ function unknownIds(master: Master, profile: Profile) {
 }
 
 /**
- * The list items a profile adds, since a profile may drop and reorder items but never claim new ones.
+ * The facts of the master a profile changes: a profile may hide, drop, reorder, shorten and reword,
+ * but never claim what the master does not.
  *
- * Jobs and entries stay free, as a profile may shorten or reword their text.
+ * A job keeps its dates, employer, title and place; its bullets stay free. A list, a rated block and
+ * an entries block keep only items of the master, and a level never rises above the master's.
  *
  * @param master - the blocks of the master file
  * @param blocks - the same blocks with the profile laid over them, in the same order
- * @returns one issue per list block that holds an item the master does not
+ * @returns one issue per block with a changed fact, and one per changed field of a job
  */
-function itemsNotInMaster(master: Block[], blocks: Block[]) {
-  return master.flatMap((block, index) => {
-    const result = blocks[index];
-    if (block.kind !== 'list' || result?.kind !== 'list') return [];
-    const added = result.items.filter(item => block.items.includes(item) === false);
-    return added.length === 0 ? [] : [issue.itemsNotInMaster(block.id, added)];
-  });
+function changedFacts(master: Block[], blocks: Block[]) {
+  return master.flatMap((block, index) => blockFacts(block, blocks[index]));
 }
+
+/** The fields of a job that state a fact, unlike its bullets, which a profile may reword. */
+const JOB_FACTS = ['from', 'to', 'employer', 'title', 'place'] as const;
+
+function blockFacts(block: Block, result: Block | undefined): Issue[] {
+  if (block.kind === 'job' && result?.kind === 'job')
+    return JOB_FACTS.filter(field => result[field] !== block[field]).map(field =>
+      issue.factChanged(block.id, field),
+    );
+  if (block.kind === 'list' && result?.kind === 'list')
+    return added(
+      block.id,
+      result.items.filter(item => block.items.includes(item) === false),
+    );
+  if (block.kind === 'rated' && result?.kind === 'rated') return ratedFacts(block, result);
+  if (block.kind === 'entries' && result?.kind === 'entries')
+    return added(
+      block.id,
+      result.items.filter(item => knownEntry(block, item) === false).map(item => item.title),
+    );
+  return [];
+}
+
+// An entry keeps its note whole, since the note of an award or a course is often its date.
+function knownEntry(block: Entries, item: Entries['items'][number]) {
+  return block.items.some(known => known.title === item.title && known.note === item.note);
+}
+
+function ratedFacts(block: Rated, result: Rated) {
+  const levels = new Map(block.items.map(item => [item.name, item.level]));
+  const unknown = result.items.filter(item => levels.has(item.name) === false);
+  const raised = result.items.filter(item => item.level > (levels.get(item.name) ?? item.level));
+  return [
+    ...added(
+      block.id,
+      unknown.map(item => item.name),
+    ),
+    ...(raised.length === 0
+      ? []
+      : [
+          issue.levelRaised(
+            block.id,
+            raised.map(item => item.name),
+          ),
+        ]),
+  ];
+}
+
+const added = (id: string, items: string[]) =>
+  items.length === 0 ? [] : [issue.itemsNotInMaster(id, items)];
+
+// Jobs stand newest first in the master; a profile hides an old job, but never moves one.
+function jobsMoved(master: Block[], blocks: Block[]) {
+  return jobIds(master).join('\n') !== jobIds(blocks).join('\n');
+}
+
+const jobIds = (blocks: Block[]) =>
+  blocks.filter(block => block.kind === 'job').map(block => block.id);
 
 /**
  * A block with a patch laid over it; a null in the patch removes the field.

@@ -168,6 +168,7 @@ Coming back from 4 Check, change only what the refusal names:
 | 'ROLE_TOO_LONG'           | shorten 'person.role' in the profile, keeping only words the master or the posting's title uses   |
 | 'SCHEMA', 'UNKNOWN_BLOCK' | fix the named path                                                                                |
 | 'ITEM_NOT_IN_MASTER'      | drop the named item from the profile; adding it to the master is the user's decision: STOP and ask |
+| 'FACT_CHANGED', 'LEVEL_RAISED', 'JOB_MOVED' | take the named field, level or job back to the master's; a wrong fact in the master is the user's to fix: STOP and ask |
 
 Raising `pages` in the master is the user's decision: STOP and ask.
 

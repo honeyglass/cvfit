@@ -71,16 +71,16 @@ test('refuses an untitled block next to another block of its section', () => {
 test('a profile hides a block, replaces fields, reorders and names its own photo', () => {
   const profile = {
     person: { role: 'Staff Engineer', photo: 'photos/acme.png' },
-    order: ['bluebird', 'northwind'],
+    order: ['languages', 'expertise'],
     blocks: { harbor: { hidden: true }, northwind: { bullets: ['Only this'] } },
   };
   const cv = unwrap(check(fixture(), profile));
   assert.deepEqual([cv.person.role, cv.person.photo], ['Staff Engineer', 'photos/acme.png']);
   assert.deepEqual(
-    cv.blocks.slice(0, 3).map(block => block.id),
-    ['bluebird', 'northwind', 'lumen'],
+    cv.blocks.slice(0, 5).map(block => block.id),
+    ['languages', 'expertise', 'northwind', 'bluebird', 'lumen'],
   );
-  const northwind = cv.blocks[1];
+  const northwind = cv.blocks[2];
   assert.deepEqual(northwind?.kind === 'job' && northwind.bullets, ['Only this']);
 });
 
@@ -92,20 +92,54 @@ test('a profile shows a block the master hides', () => {
   assert.equal(unwrap(check(cv, { blocks: { northwind: { hidden: false } } })).blocks.length, 15);
 });
 
-test('a profile drops and reorders the items of a list', () => {
-  const profile = { blocks: { 'additional-skills': { items: ['Terraform', 'PostgreSQL'] } } };
-  const skills = unwrap(check(fixture(), profile)).blocks.find(b => b.id === 'additional-skills');
-  assert.deepEqual(skills?.kind === 'list' && skills.items, ['Terraform', 'PostgreSQL']);
+test('a profile drops and reorders the items of its master, and may lower a level', () => {
+  const profile = {
+    blocks: {
+      'additional-skills': { items: ['Terraform', 'PostgreSQL'] },
+      languages: { items: [{ name: 'English', level: 3 }] },
+      awards: { items: [{ title: 'Team Award', note: '03/2019' }] },
+    },
+  };
+  assert.equal(check(fixture(), profile).error, null);
 });
 
-test('refuses a profile that adds an item the master does not list', () => {
-  const profile = { blocks: { 'additional-skills': { items: ['Go', 'Kubernetes'] } } };
-  const result = check(fixture(), profile);
-  assert.deepEqual(codes(result), ['ITEM_NOT_IN_MASTER']);
-  assert.deepEqual(
-    result.error?.issues.map(issue => issue.path),
-    ['blocks.additional-skills.items'],
-  );
+test('refuses a profile that changes a fact of its master', () => {
+  const cases = [
+    [
+      { blocks: { 'additional-skills': { items: ['Go', 'Kubernetes'] } } },
+      'ITEM_NOT_IN_MASTER',
+      'blocks.additional-skills.items',
+    ],
+    [
+      { blocks: { languages: { items: [{ name: 'Spanish', level: 2 }] } } },
+      'ITEM_NOT_IN_MASTER',
+      'blocks.languages.items',
+    ],
+    [
+      { blocks: { 'programming-languages': { items: [{ name: 'Rust', level: 5 }] } } },
+      'LEVEL_RAISED',
+      'blocks.programming-languages.items',
+    ],
+    [
+      { blocks: { awards: { items: [{ title: 'Team Award', note: '03/2018' }] } } },
+      'ITEM_NOT_IN_MASTER',
+      'blocks.awards.items',
+    ],
+    [
+      { blocks: { northwind: { employer: 'Google' } } },
+      'FACT_CHANGED',
+      'blocks.northwind.employer',
+    ],
+    [{ blocks: { northwind: { title: 'CTO' } } }, 'FACT_CHANGED', 'blocks.northwind.title'],
+    [{ blocks: { bluebird: { from: '01/2010' } } }, 'FACT_CHANGED', 'blocks.bluebird.from'],
+    [{ blocks: { bluebird: { to: 'today' } } }, 'FACT_CHANGED', 'blocks.bluebird.to'],
+    [{ blocks: { harbor: { place: 'Remote' } } }, 'FACT_CHANGED', 'blocks.harbor.place'],
+    [{ order: ['bluebird', 'northwind'] }, 'JOB_MOVED', 'order'],
+  ] as const;
+  for (const [profile, code, path] of cases) {
+    const issues = check(fixture(), profile).error?.issues.map(found => [found.code, found.path]);
+    assert.deepEqual(issues, [[code, path]], JSON.stringify(profile));
+  }
 });
 
 test('refuses a profile that names an unknown block or changes a kind', () => {

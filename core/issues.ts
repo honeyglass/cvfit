@@ -1,8 +1,8 @@
 /**
  * The issues core raises, and those several folders raise, each made by one function.
  *
- * schemaIssues, duplicateId, unknownBlock, untitledNotAlone, itemsNotInMaster: what the check
- * of a CV finds.
+ * schemaIssues, duplicateId, unknownBlock, untitledNotAlone: what the check of a CV finds.
+ * itemsNotInMaster, levelRaised, factChanged, jobMoved: a fact of the master a profile changes.
  * fileNotFound, notAFile, notAFolder, tooLarge, invalidJson, pathOutside: the failures of a file.
  * pathRefused, systemRefused: a refusal of the system on a path, by who can solve it.
  * missingOption, cvNameMissing: an option a command needs and the call leaves out.
@@ -67,6 +67,27 @@ export const itemsNotInMaster = (id: string, items: string[]): Issue => ({
   path: `blocks.${id}.items`,
   message: `The block ${shown(id)} lists ${items.map(shown).join(', ')}, which the master does not hold`,
   hint: 'Keep only items of the master, or add the item to the master first',
+});
+
+export const levelRaised = (id: string, names: string[]): Issue => ({
+  code: 'LEVEL_RAISED',
+  path: `blocks.${id}.items`,
+  message: `The block ${shown(id)} rates ${names.map(shown).join(', ')} higher than the master does`,
+  hint: 'Keep the level of the master, or a lower one',
+});
+
+export const factChanged = (id: string, field: string): Issue => ({
+  code: 'FACT_CHANGED',
+  path: `blocks.${id}.${field}`,
+  message: `The profile changes the ${field} of the job ${shown(id)}, a fact only the master holds`,
+  hint: `Leave ${field} out of the profile, so the job keeps the value of the master`,
+});
+
+export const jobMoved = (): Issue => ({
+  code: 'JOB_MOVED',
+  path: 'order',
+  message: 'The profile moves a job out of the order of the master, where jobs stand newest first',
+  hint: 'Take the job out of order, and hide an old or unrelated job instead of moving it',
 });
 
 export const fileNotFound = (path: string, option: string): Issue => ({
