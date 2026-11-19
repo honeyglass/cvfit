@@ -82,7 +82,7 @@ function sectionsOf(blocks: Block[], text: string) {
     if (open !== undefined && closes) sections.push(closed(open, block.token.start.line - 1, text));
     if (closes) open = undefined;
     if (depth === 2)
-      open = { title: headingText(block, text), line: block.token.start.line - 1, body: [] };
+      open = { title: headingText(block, text).trim(), line: block.token.start.line - 1, body: [] };
     else open?.body.push(block);
   }
   if (open !== undefined) sections.push(closed(open, text.split('\n').length, text));
@@ -128,13 +128,13 @@ function headingDepth(block: Block, text: string) {
   return text[underline.start.offset] === '=' ? 1 : 2;
 }
 
-// The text a reader sees in a heading: its plain text and the insides of its code spans.
+// The text a reader sees in a heading: its plain text and the insides of its code spans. A space
+// after an image stays, as GitHub keeps it in the anchor: '## <img …> Docs' answers '#-docs'.
 function headingText(block: Block, text: string) {
   return block.children
     .filter(token => token.type === 'data' || token.type === 'codeTextData')
     .map(token => sliceOf(text, token))
-    .join('')
-    .trim();
+    .join('');
 }
 
 /**

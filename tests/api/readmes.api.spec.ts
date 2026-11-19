@@ -136,13 +136,14 @@ test('refuses a README it cannot read, and leaves it as it was', () => {
 test('names every link that leads nowhere', () => {
   const links = [
     '[web](https://example.com) [mail](mailto:a@b.c) [file](a.ts) [here](#modules)',
-    '[heading](../other.md#-compatibility) [second](../other.md#setup-1) [space](../my%20file.md)',
+    '[heading](../other.md#-compatibility) [second](../other.md#setup-1) [icon](../other.md#-docs) [space](../my%20file.md)',
     '[missing](nope.ts) [outside](../../x.md) [anchor](#nope) [their anchor](../other.md#nope)',
     '[code anchor](a.ts#x) [scheme](ftp://x) [empty](#) [broken](%E0%A4%A.md)',
   ].join('\n');
   const root = repository({
     'README.md': '# root\n',
-    'other.md': '# other\n\n## 🔌 Compatibility\n\nSetup\n=====\n\n## Setup\n',
+    'other.md':
+      '# other\n\n## 🔌 Compatibility\n\nSetup\n=====\n\n## Setup\n\n## <img src="i.svg" alt=""> Docs\n',
     'my file.md': '# mine\n',
     'a/README.md': readme('- `a.ts`: links.').replace('What a/ is for.', links),
     'a/a.ts': 'export const a = 1;\n',
