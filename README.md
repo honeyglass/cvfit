@@ -17,7 +17,7 @@
 
 ---
 
-## 📄 What is oriko?
+## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/file-text-dark.svg"><img src="brand/icons/file-text.svg" width="24" height="24" alt=""></picture> What is oriko?
 
 oriko makes a fitting version of your CV for every job you apply to. You write your CV once,
 with your jobs, skills, languages and contact details. When you find a job you like, you give the
@@ -44,7 +44,7 @@ when LibreOffice is installed.
   it is three days old, and no package may run programs while it installs. More in
   [SECURITY.md](SECURITY.md).
 
-## 🚀 Quickstart
+## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/terminal-dark.svg"><img src="brand/icons/terminal.svg" width="24" height="24" alt=""></picture> Quickstart
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/honeyglass/oriko/main/install.sh | sh
@@ -128,7 +128,7 @@ Create a new CV for me. Since 03/2021 I have worked as a data engineer at …
 
 No CV yet? See [Good to know](docs/good-to-know.md#-no-cv-yet).
 
-## 🧩 Agentic meets deterministic
+## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/puzzle-dark.svg"><img src="brand/icons/puzzle.svg" width="24" height="24" alt=""></picture> Agentic meets deterministic
 
 An agent alone can be wrong without noticing, and a tool alone cannot read a job posting. oriko
 puts the two together: the agent does what needs judgment, and every step it takes runs through
@@ -147,7 +147,7 @@ command that fixes it, and an option without a value lists the values it accepts
 page](docs/cli.md) lists every rule and how oriko meets it; the rules on their own, for any CLI,
 are the skill [agent-dx-rules](.claude/skills/agent-dx-rules/SKILL.md).
 
-## 🖥️ Terminal preview
+## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/monitor-dark.svg"><img src="brand/icons/monitor.svg" width="24" height="24" alt=""></picture> Terminal preview
 
 **See your CV before the file exists.** `oriko preview` draws every page in the terminal, the left
 column beside the right one, as in the finished document:
@@ -202,7 +202,7 @@ oriko build --profile go-e-senior-backend --style terminal --out go-e-terminal.d
 
 What each mark of the preview means: [the terminal preview page](docs/terminal-preview.md).
 
-## 🗂️ Your data
+## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/folder-lock-dark.svg"><img src="brand/icons/folder-lock.svg" width="24" height="24" alt=""></picture> Your data
 
 Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points oriko at another one.
 
@@ -213,7 +213,7 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
   profiles/backend-job.json   one version per job posting, naming its CV in "cv"
 ```
 
-## 🔌 Compatibility
+## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/plug-dark.svg"><img src="brand/icons/plug.svg" width="24" height="24" alt=""></picture> Compatibility
 
 - **Google Docs**: the layout is tuned to how Google Docs sets the file, with Open Sans and
   Calibri. Open the Word file there and save it as PDF.
@@ -238,7 +238,7 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
   agent the skills CLI finds; any agent that can run a command can use the CLI through
   `oriko schema`.
 
-## 📖 Docs
+## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/book-open-dark.svg"><img src="brand/icons/book-open.svg" width="24" height="24" alt=""></picture> Docs
 
 - [**Examples**](docs/examples.md)
 - [**By hand**](docs/by-hand.md)
@@ -249,7 +249,7 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
 - [**Security**](SECURITY.md)
 - [**Agent skill**](.claude/skills/oriko/SKILL.md)
 
-## 🗺️ Roadmap
+## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/map-dark.svg"><img src="brand/icons/map.svg" width="24" height="24" alt=""></picture> Roadmap
 
 - [ ] More CV templates
 - [ ] An [ATS check](https://enhancv.com/resources/resume-checker/) of the classic CV after every build
@@ -260,7 +260,7 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
 - [ ] A new CV from a LinkedIn export or a JSON Resume file
 - [ ] Publish on npm as `oriko`
 
-## 🛠️ Development
+## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/wrench-dark.svg"><img src="brand/icons/wrench.svg" width="24" height="24" alt=""></picture> Development
 
 oriko is developed on Node 26, the newest LTS, and runs for its users on Node 24 and up.
 [flake.nix](flake.nix) brings Node 26 and pnpm: `nix develop`, or with direnv once `direnv allow`,
@@ -280,7 +280,7 @@ Every top-level folder has a README that says what it is for, such as [core/](co
 [cli/](cli/README.md). `pnpm readmes` keeps their file lists and connections true to the code:
 [tools/readmes/](tools/readmes/README.md).
 
-## ⚖️ License
+## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/scale-dark.svg"><img src="brand/icons/scale.svg" width="24" height="24" alt=""></picture> License
 
 Copyright (C) 2026 Serkan Sipahi. oriko is free software under the
 [GNU Affero General Public License v3.0](LICENSE): you may use, change and share it. Anyone who
