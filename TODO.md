@@ -26,13 +26,8 @@ Open work on oriko, the CLI and its skill.
 
 ## Skills
 
-- [ ] #27 Move adx-cli into its own repository and npm package @honeyglass/skills, as adx/cli, beside the later adx/mcp and adx/api (added 2026-11-19)
+- [x] #27 Move adx-cli into its own repository and npm package @honeyglass/skills, as adx/cli, beside the later adx/mcp and adx/api (added 2026-11-19, done 2026-11-19)
       '.claude/skills/adx-cli/'
-- [ ] #18 When adx-cli moves to its own package @honeyglass/skills (as adx/cli), settle how it points to the refusal library of @honeyglass/utils, and to rules that the user's ~/.claude may override, such as errors, without depending on either (added 2026-11-19)
-      after:#27
-      '.claude/skills/adx-cli/'
-- [ ] #19 Work out how best to build an MCP extension as a wrapper around an ADX tool, for @honeyglass/skills beside adx/cli, such as adx/mcp; start only once #18 is fully done (added 2026-11-19)
-      after:#18
 
 ## README
 

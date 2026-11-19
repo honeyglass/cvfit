@@ -19,11 +19,11 @@ import type { Gap, Options } from './readmes.ts';
 
 /**
  * tests/ lists what the tests use itself; the other skipped folders hold no code to describe yet.
- * The root README holds the most links of all; the README of a skill lies in a hidden folder.
+ * The root README and the contributing guide hold the most links of all.
  */
 export const OPTIONS: Options = {
   skip: ['assets', 'brand', 'docs', 'examples', 'tests'],
-  pages: ['README.md', 'CONTRIBUTING.md', '.claude/skills/adx-cli/README.md'],
+  pages: ['README.md', 'CONTRIBUTING.md'],
 };
 
 /** The arguments the script knows; any other one is refused, never ignored. */
