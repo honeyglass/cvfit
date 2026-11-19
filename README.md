@@ -233,23 +233,8 @@ Your CVs live outside the repository, in `~/.oriko`; `--home <folder>` points or
 
 ## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/wrench-dark.svg"><img src="brand/icons/wrench.svg" width="24" height="24" alt=""></picture> Development
 
-oriko is developed on Node 26, the newest LTS, and runs for its users on Node 24 and up.
-[flake.nix](flake.nix) brings Node 26 and pnpm: `nix develop`, or with direnv once `direnv allow`,
-and every `cd` into the folder loads them.
-
-```sh
-pnpm test             # api and internals tests, fails below 95 % coverage
-pnpm run typecheck
-pnpm run format:check
-sh tests/e2e/install.e2e.sh   # the install script in empty home folders
-pnpm baselines:update         # new Google PDFs and page images for changed showcase files (macOS)
-```
-
-How to sign gws in once for `baselines:update`: [Baselines](docs/baselines.md).
-
-Every top-level folder has a README that says what it is for, such as [core/](core/README.md) or
-[cli/](cli/README.md). `pnpm readmes` keeps their file lists and connections true to the code:
-[tools/readmes/](tools/readmes/README.md).
+How to set up oriko, how its code is laid out, its checks, and how to send a change:
+[Contributing](CONTRIBUTING.md). Everyone here follows the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## <picture><source media="(prefers-color-scheme: dark)" srcset="brand/icons/scale-dark.svg"><img src="brand/icons/scale.svg" width="24" height="24" alt=""></picture> License
 
