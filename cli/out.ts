@@ -18,17 +18,13 @@ import { isMissing, leaves, pathIssue } from '../core/files.ts';
 
 /**
  * @param cwd - the working directory
- * @param out - the path the caller named, or nothing
+ * @param out - the path the caller named
  * @returns the file to write, in the folder the check resolved, and its path from the working directory
  */
 export async function outputPath(
   cwd: string,
-  out: string | undefined,
+  out: string,
 ): Promise<Result<{ path: string; name: string }>> {
-  if (out === undefined)
-    return rejected('build', [
-      coreIssue.missingOption('out', 'the path of the .docx or .pdf to write'),
-    ]);
   if (OUTPUTS.some(extension => out.endsWith(extension)) === false)
     return rejected('build', [issue.wrongExtension(out)]);
   const path = resolve(cwd, out);

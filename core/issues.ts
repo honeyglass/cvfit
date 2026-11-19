@@ -5,7 +5,6 @@
  * itemsNotInMaster, levelRaised, factChanged, jobMoved: a fact of the master a profile changes.
  * fileNotFound, notAFile, notAFolder, tooLarge, invalidJson, pathOutside: the failures of a file.
  * pathRefused, systemRefused: a refusal of the system on a path, by who can solve it.
- * missingOption, cvNameMissing: an option a command needs and the call leaves out.
  * noCv, cvRequired, unknownCv, unknownCvOfProfile, cvMismatch, unknownProfile: what the data
  * folder does not hold.
  * roleTooLong, blockTooTall, pageOverflow: what does not fit the pages.
@@ -18,8 +17,6 @@ import type { z } from 'zod';
 import { SYSTEM_REFUSED } from './errors.ts';
 import type { Issue } from './errors.ts';
 import { FILE_LIMITS } from './files.limits.ts';
-import { NEW_NAME, missingHint } from './options.ts';
-import type { OptionName } from './options.ts';
 
 export const FILE_NOT_FOUND = 'FILE_NOT_FOUND';
 export const UNKNOWN_BLOCK = 'UNKNOWN_BLOCK';
@@ -144,30 +141,6 @@ export const systemRefused = (path: string, option: string, code: string): Issue
   path: option,
   message: `The system refused ${shown(path)}: ${code}`,
   hint: 'Tell the person what the system answered, such as a full disk, and call again once solved',
-});
-
-/**
- * @param option - the option the command needs
- * @param what - what its value is
- * @param hint - what to add; the option's own text when it has one, so a missing and an empty
- *   option name the same step
- * @returns the issue
- */
-export const missingOption = (
-  option: OptionName,
-  what: string,
-  hint = missingHint(option),
-): Issue => ({
-  code: 'MISSING_OPTION',
-  path: option,
-  message: `The command needs --${option}, ${what}`,
-  hint,
-});
-
-/** The issue of an init without --cv; the command lists the names already taken. */
-export const cvNameMissing = (): Issue => ({
-  ...missingOption('cv', 'the name of the new CV', NEW_NAME),
-  command: 'oriko show --cv',
 });
 
 // A missing folder and an empty one are both no CV; the message says which it is.

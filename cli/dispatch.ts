@@ -5,9 +5,8 @@
  *
  * @example const result = await dispatched(call);
  */
-import { done, rejected } from '../core/errors.ts';
+import { done } from '../core/errors.ts';
 import type { Result } from '../core/errors.ts';
-import * as coreIssue from '../core/issues.ts';
 import { place } from '../core/place.ts';
 import { cvNames, profileNames } from '../core/home.ts';
 import { checked, profileCv } from '../core/load.ts';
@@ -75,11 +74,9 @@ async function start(call: Call): Promise<Result<Fields>> {
   });
 }
 
-// Without a name and an input, both are named in one answer.
 async function init(call: Call): Promise<Result<Fields>> {
   const input = await payload(call, 'init');
-  const name = call.values.cv === undefined ? [coreIssue.cvNameMissing()] : [];
-  if (input.error !== null) return rejected('init', [...name, ...input.error.issues]);
+  if (input.error !== null) return input;
   const isDryRun = call.values['dry-run'] === true;
   return createCv({ home: call.home, name: call.values.cv, input: input.data, isDryRun });
 }

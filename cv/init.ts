@@ -29,7 +29,6 @@ type Request = { home: string; name: string | undefined; input: unknown; isDryRu
  */
 export async function createCv(request: Request): Promise<Result<Record<string, unknown>>> {
   const { home, input, isDryRun } = request;
-  if (request.name === undefined) return rejected('init', [coreIssue.cvNameMissing()]);
   const name = Id.safeParse(request.name);
   if (name.success === false)
     return rejected('init', coreIssue.schemaIssues(name.error, ['cv'], 'init'));

@@ -3,6 +3,7 @@
  *
  * commandOf: the command whose words lead the call, and the words after it.
  * commandIssues: every option and word the command does not take.
+ * requiredIssues: every option the command needs and the call leaves out.
  * actionsOf: the actions of a group, such as 'block add' for 'block'.
  * isCommandName, isShapeName, isSchemaName: whether a name is a command, a shape, or either.
  *
@@ -48,6 +49,23 @@ export function commandIssues(found: Found, given: OptionName[]): Issue[] {
       .filter(option => allowed.includes(option) === false)
       .map(option => issue.optionNotAllowed(option, `The command ${name}`, `oriko schema ${name}`)),
     ...words.map(word => issue.unexpectedArgument(word, name)),
+  ];
+}
+
+// A command needs its required options, and an option given needs the ones it requires beside it.
+export function requiredIssues(found: Found, given: OptionName[]): Issue[] {
+  if (found.name === undefined) return [];
+  const name = found.name;
+  const command: Command = COMMANDS[name];
+  const options = [...new Set(given)];
+  const isMissing = (option: OptionName) => options.includes(option) === false;
+  return [
+    ...(command.required ?? []).filter(isMissing).map(option => issue.missingOption(option, name)),
+    ...options.flatMap(by =>
+      (command.requiredWith?.[by] ?? [])
+        .filter(isMissing)
+        .map(option => issue.missingOption(option, name, by)),
+    ),
   ];
 }
 

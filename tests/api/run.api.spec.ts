@@ -371,6 +371,15 @@ test('a refusal names a command that lists the fitting values, and that command 
     [['block', 'add', '--cv', 'jane', '--json'], 'MISSING_VALUE', 'oriko schema block add'],
     [['paint'], 'UNKNOWN_COMMAND', 'oriko schema'],
     [['plan', '--color'], 'UNKNOWN_OPTION', 'oriko schema'],
+    [['init', '--json', NEW_CV], 'MISSING_OPTION', 'oriko show --cv'],
+    [['build'], 'MISSING_OPTION', 'oriko schema build'],
+    [
+      ['profile', 'set', '--json', '{"cv":"jane"}'],
+      'MISSING_OPTION',
+      'oriko profile set --profile',
+    ],
+    [['profile', 'show'], 'MISSING_OPTION', 'oriko profile show --profile'],
+    [['read', '--posting', 'job.pdf'], 'MISSING_OPTION', 'oriko read --profile'],
   ];
   // The command keeps the --home of the call, or it would list the CVs of another data folder.
   for (const [argv, code, command] of cases) {
@@ -428,11 +437,27 @@ test('schema answers every command and every shape it lists', async () => {
     ],
     ['plan', null, [], ['cv', 'profile', 'home', 'output']],
   );
-  const required = async (name: string[]) =>
-    (await call(space, ['schema', ...name])).answer.required;
+  const required = async (name: string[]) => {
+    const { answer } = await call(space, ['schema', ...name]);
+    return [answer.required, answer.requiredWith];
+  };
   assert.deepEqual(
-    [await required(['build']), await required(['init']), await required(['profile', 'set'])],
-    [['out'], ['cv'], ['profile']],
+    [
+      await required(['plan']),
+      await required(['build']),
+      await required(['init']),
+      await required(['profile', 'set']),
+      await required(['profile', 'show']),
+      await required(['read']),
+    ],
+    [
+      [[], {}],
+      [['out'], {}],
+      [['cv'], {}],
+      [['profile'], {}],
+      [['profile'], {}],
+      [[], { posting: ['profile'] }],
+    ],
   );
 });
 
@@ -456,11 +481,19 @@ test('a refusal for a wrong shape names the schema command, and it runs', async 
 test('checks the call against its command and names every mistake at once', async () => {
   const space = workspace();
   const cases: [string[], [string, string][]][] = [
+    [['init'], [['MISSING_OPTION', 'cv']]],
     [
-      ['init'],
+      ['profile', 'set', '--out', 'x.docx', '--json', '{}'],
       [
-        ['MISSING_OPTION', 'cv'],
-        ['MISSING_INPUT', 'json'],
+        ['OPTION_NOT_ALLOWED', 'out'],
+        ['MISSING_OPTION', 'profile'],
+      ],
+    ],
+    [
+      ['read', '--posting', 'job.pdf', '--out', 'x.docx'],
+      [
+        ['OPTION_NOT_ALLOWED', 'out'],
+        ['MISSING_OPTION', 'profile'],
       ],
     ],
     [['cvs', 'extra'], [['UNEXPECTED_ARGUMENT', 'extra']]],

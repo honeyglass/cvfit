@@ -1,7 +1,7 @@
 /**
  * The issues the command read raises, each made by one function.
  *
- * missingInput, profileMissing, postingExists: nothing to read, no profile, a posting stored.
+ * missingInput, postingExists: nothing to read, a posting already stored.
  * unsupportedKind, unreadable, noText: a document oriko cannot turn into text.
  * urlNotAllowed, privateAddress, tooManyRedirects, encodingNotAllowed, notUnpacked: a download
  * the checks refuse.
@@ -12,7 +12,6 @@
 import { shown } from '@honeyglass/utils/ts';
 import { NETWORK_FAILED, SERVER_BUSY } from '../core/errors.ts';
 import type { Issue } from '../core/errors.ts';
-import * as coreIssue from '../core/issues.ts';
 import { READ_LIMITS } from './limits.ts';
 
 export const missingInput = (): Issue => ({
@@ -21,15 +20,6 @@ export const missingInput = (): Issue => ({
   message: 'The command names nothing to read',
   hint: 'Run the command and pass --posting, --notes or --resume with a file or an https:// address',
   command: 'oriko schema read',
-});
-
-export const profileMissing = (): Issue => ({
-  ...coreIssue.missingOption(
-    'profile',
-    'the profile the posting belongs to',
-    'Run the command for the existing profiles, or pass a new name in lower-case words joined by hyphens',
-  ),
-  command: 'oriko read --profile',
 });
 
 export const postingExists = (path: string): Issue => ({

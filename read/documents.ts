@@ -92,8 +92,8 @@ async function targetOf(request: Request): Promise<Result<Target>> {
   return done({ profile: request.profile, cv: cv.data });
 }
 
+// The shell refuses --posting without --profile before it runs; the pattern refuses undefined too.
 function profileIssues(profile: string | undefined): Issue[] {
-  if (profile === undefined) return [issue.profileMissing()];
   const name = Id.safeParse(profile);
   return name.success ? [] : coreIssue.schemaIssues(name.error, ['profile'], 'read');
 }

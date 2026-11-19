@@ -20,8 +20,7 @@ refused once it names a block or an item the master no longer holds.
 - `show.ts`: shows a stored profile and the job posting that `oriko read` stored for it.
 - `list.ts`: lists the profiles with their CV and says whether each fits its pages.
 - `name.ts`: checks a profile name before it becomes a file name.
-- `issues.ts`: the refusals for a missing profile name, a profile that is already stored, and an
-  unknown profile.
+- `issues.ts`: the refusals for a profile that is already stored, and an unknown profile.
 
 ## Example
 

@@ -24,6 +24,8 @@ export type Command = {
   options: OptionName[];
   /** The options the command refuses to run without. */
   required?: OptionName[];
+  /** The options another option needs beside it, such as --profile beside --posting for read. */
+  requiredWith?: Partial<Record<OptionName, OptionName[]>>;
   /** The words after the command's name, such as the file of photo set. */
   words?: string[];
   /** The words after the name are one value, such as the command schema shows. */
@@ -65,6 +67,7 @@ export const COMMANDS = {
   read: {
     does: 'reads a posting, notes or an old CV from a file or an https address',
     options: ['cv', 'profile', 'posting', 'notes', 'resume', 'replace', 'dry-run'],
+    requiredWith: { posting: ['profile'] },
   },
   'profile set': {
     does: 'stores the profile of one job posting, checked against its CV',
@@ -75,6 +78,7 @@ export const COMMANDS = {
   'profile show': {
     does: 'shows a stored profile and the posting read for it',
     options: ['profile'],
+    required: ['profile'],
   },
   'photo set': {
     does: 'stores the square photo of a CV, or of one profile',

@@ -17,7 +17,8 @@ for the PDF.
 - `run.ts`: runs one call from start to end and ends with its exit code.
 - `args.ts`: reads every argument of a call, so one answer can name all its mistakes at once.
 - `commands.ts`: the one table of all commands, with what each does, its options and its input.
-- `route.ts`: picks the command a call names and refuses an option or word it does not take.
+- `route.ts`: picks the command a call names, refuses an option or word it does not take, and
+  refuses a call that leaves out an option the command requires.
 - `dispatch.ts`: hands a checked call to the feature that does the work.
 - `input.ts`: reads the JSON input of a command from `--json` or from stdin.
 - `values.ts`: lists the values an option accepts when it is given without one, such as `--cv`.

@@ -78,7 +78,8 @@ export async function build(call: Call): Promise<Result<Fields>> {
 async function buildOptions(call: Call) {
   const style = STYLES.find(known => known === (call.values.style ?? 'classic'));
   const hasCredits = call.values.credits === true;
-  const out = await outputPath(call.io.cwd, call.values.out);
+  // The shell refuses a build without --out before it runs; '' would fail the extension check.
+  const out = await outputPath(call.io.cwd, call.values.out ?? '');
   const issues = [
     ...(style === undefined ? [issue.unknownStyle(call.values.style ?? '')] : []),
     ...(hasCredits && style !== 'terminal' ? [issue.creditsNeedTerminal()] : []),

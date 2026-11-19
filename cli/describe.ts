@@ -50,6 +50,7 @@ export function schema(name: string): Result<Fields> {
     does: command.does,
     options,
     required: command.required ?? [],
+    requiredWith: command.requiredWith ?? {},
     words: command.words ?? [],
     input,
   });

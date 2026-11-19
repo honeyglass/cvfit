@@ -30,7 +30,10 @@ Every command answers one JSON object: on one line when another program reads it
 terminal, where `preview` shows its sheets and a refusal shows as readable lines. oriko ends with
 exit code 0 when all went well, 1 when the input needs a fix (each issue with a hint), and 2 when
 something broke. `oriko schema` lists every command and option, `oriko schema <command>` the input
-one accepts and, in `required`, the options it cannot run without.
+one accepts, in `required` the options it cannot run without, and in `requiredWith` the options
+another option needs beside it, such as `--profile` beside `--posting` for `read`. A call that
+leaves out a required option is refused before the command runs, with the command that lists
+what the option may hold.
 
 | Command | What it does |
 | :--- | :--- |

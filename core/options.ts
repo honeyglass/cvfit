@@ -20,7 +20,7 @@ type Option = {
   /** The values sit in a list, so the option without a value answers that list. */
   listed?: true;
   text: string;
-  /** What to add when the option comes without a value and no list holds its values. */
+  /** What to add when the option is missing, or comes without a value and no list holds its values. */
   missing?: string;
   /** The option may come several times, each with a value of its own. */
   multiple?: true;
@@ -35,12 +35,14 @@ export const OPTIONS = {
   cv: {
     type: 'string',
     listed: true,
-    text: 'the name of one CV; needed only when the data folder holds several and no profile names one',
+    text: 'the name of one CV, or of the new one for init; any other command may leave it out when the data folder holds one CV or the profile names it',
   },
   profile: {
     type: 'string',
     listed: true,
     text: 'the name of one profile; it names its CV in its field cv',
+    missing:
+      'Run the command for the existing profiles, or pass a new name in lower-case words joined by hyphens',
   },
   out: {
     type: 'string',
