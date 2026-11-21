@@ -2,9 +2,9 @@
 
 ## Agent DX rules
 
-The rules start from Justin Poehnelt's article
-[Rewrite your CLI for AI agents](https://justin.poehnelt.com/posts/rewrite-your-cli-for-ai-agents/).
-The rules marked ➕ oriko are new: the author of oriko added them from building tools for agents.
+oriko follows 15 of the [16 Agent DX rules of adx](https://github.com/honeyglass/adx#-the-16-agent-dx-rules),
+which names where each rule comes from. The rules marked ➕ oriko are new: the author of oriko added
+them from building tools for agents.
 
 | Rule | What oriko does | Why it helps the agent | Source |
 | :--- | :--- | :--- | :--- |
